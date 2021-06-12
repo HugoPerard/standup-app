@@ -1,0 +1,26 @@
+{
+  "projects": [
+    {
+      "name": "MyGreffe",
+      "speakers": [
+        {
+          "name": "Hugo Pérard"
+        },
+        {
+          "name": "Ivan Dalmet"
+        }
+      ]
+    },
+    {
+      "name": "Commerce",
+      "speakers": [
+        {
+          "name": "Nathan Lesouef"
+        },
+        {
+          "name": "Nhung Dhung"
+        }
+      ]
+    }
+  ]
+}

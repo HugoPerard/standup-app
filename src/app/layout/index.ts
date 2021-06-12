@@ -1,4 +1,3 @@
-export * from './AccountMenu';
 export * from './hooks/useFocusMode';
 export * from './LayoutContext';
 export * from './Layout';

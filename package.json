@@ -37,6 +37,7 @@
     "i18next": "20.3.0",
     "next": "10.2.0",
     "react": "17.0.2",
+    "react-beautiful-dnd": "13.1.0",
     "react-currency-input-field": "3.4.1",
     "react-day-picker": "7.4.10",
     "react-dom": "17.0.2",
@@ -46,6 +47,7 @@
     "react-query": "3.16.0",
     "react-router-dom": "5.2.0",
     "react-select": "4.3.1",
+    "react-timer-hook": "3.0.3",
     "swagger-cli": "4.0.4",
     "swagger-ui-react": "3.49.0"
   },

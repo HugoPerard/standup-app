@@ -15,7 +15,7 @@ const Index = () => {
   return (
     <>
       <Head>
-        <title>Start UI</title>
+        <title>Standup</title>
       </Head>
       <Center flex="1">
         <Loader />

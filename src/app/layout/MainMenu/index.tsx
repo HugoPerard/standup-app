@@ -3,7 +3,6 @@ import React from 'react';
 import { Stack, Box } from '@chakra-ui/react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 
-import { useAccount } from '@/app/account/account.service';
 import { useLayoutContext } from '@/app/layout';
 
 const MainMenuItem = ({ to, ...rest }: any) => {
@@ -58,11 +57,9 @@ const MainMenuItem = ({ to, ...rest }: any) => {
 };
 
 export const MainMenu = ({ ...rest }) => {
-  const { isAdmin } = useAccount();
   return (
     <Stack direction="row" spacing="1" {...rest}>
-      <MainMenuItem to="/dashboard">Dashboard</MainMenuItem>
-      {isAdmin && <MainMenuItem to="/admin">Admin</MainMenuItem>}
+      <MainMenuItem to="/standup">Standup</MainMenuItem>
     </Stack>
   );
 };
