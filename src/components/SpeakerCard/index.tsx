@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import {
+  Center,
   Checkbox,
   IconButton,
   Menu,
@@ -13,6 +14,7 @@ import { Draggable } from 'react-beautiful-dnd';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { useStopwatch } from 'react-timer-hook';
 
+import { useProjects, useUpdateProjects } from '@/app/standup/standup.service';
 import { Speaker } from '@/app/standup/standup.types';
 import { ConfirmMenuItem, MenuItem } from '@/components';
 
@@ -25,6 +27,9 @@ export const SpeakerCard: React.FC<SpeakerCardProps> = ({ speaker, index }) => {
   const { seconds, minutes, isRunning, start, pause, reset } = useStopwatch({
     autoStart: false,
   });
+
+  const { data: projects } = useProjects();
+  const { mutate: updateProjects } = useUpdateProjects();
 
   const [isSpeaked, setIsSpeaked] = useState(false);
 
@@ -41,6 +46,17 @@ export const SpeakerCard: React.FC<SpeakerCardProps> = ({ speaker, index }) => {
     reset();
     setIsSpeaked(false);
     pause();
+  };
+
+  const handleDelete = () => {
+    const projectIndex = projects?.findIndex((project) =>
+      project?.speakers?.includes(speaker)
+    );
+    const newProjects = projects;
+    newProjects[projectIndex].speakers = projects[
+      projectIndex
+    ].speakers?.filter((spk) => spk?.name !== speaker?.name);
+    updateProjects(newProjects);
   };
 
   return (
@@ -93,6 +109,7 @@ export const SpeakerCard: React.FC<SpeakerCardProps> = ({ speaker, index }) => {
                 _hover={{ bg: 'gray.300' }}
                 _focus={{ bg: 'gray.400' }}
                 confirmContent="Confirmer la suppression"
+                onClick={() => handleDelete()}
               >
                 Supprimer
               </ConfirmMenuItem>
@@ -101,5 +118,13 @@ export const SpeakerCard: React.FC<SpeakerCardProps> = ({ speaker, index }) => {
         </Stack>
       )}
     </Draggable>
+  );
+};
+
+export const EmptySpeakerCard = (props) => {
+  return (
+    <Center bg="gray.600" py={2} px={4} borderRadius="md" {...props}>
+      <Text>Personne n'est sur ce projet</Text>
+    </Center>
   );
 };

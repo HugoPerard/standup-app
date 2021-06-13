@@ -6,14 +6,17 @@ import { Stack } from '@chakra-ui/layout';
 import { DragDropContext } from 'react-beautiful-dnd';
 
 import { Loader, Page, PageContent } from '@/app/layout';
-import { SpeakerGroup } from '@/components/SpeakerGroup';
+import { NoProjectGroup, SpeakerGroup } from '@/components/SpeakerGroup';
 
 import { useProjects, useUpdateProjects } from './standup.service';
 
 export const PageStandup = () => {
   const { data: projects, isLoading } = useProjects();
 
-  const { mutate: updateProjects } = useUpdateProjects();
+  const {
+    mutate: updateProjects,
+    isLoading: isLoadingUpdateProjects,
+  } = useUpdateProjects();
 
   const [newProject, setNewProject] = useState('');
   const [newSpeaker, setNewSpeaker] = useState('');
@@ -39,12 +42,44 @@ export const PageStandup = () => {
     const destinationIndex = projects.findIndex(
       (project) => project?.name === destination
     );
-    newProjects[destinationIndex].speakers = projects[
-      destinationIndex
-    ]?.speakers?.concat({
+    newProjects[destinationIndex].speakers = (
+      projects[destinationIndex]?.speakers || []
+    )?.concat({
       name: speaker,
     });
     updateProjects(newProjects);
+  };
+
+  const handleAddProject = () => {
+    if (!newProject) {
+      return;
+    }
+    updateProjects([
+      ...projects,
+      {
+        name: newProject,
+        speakers: [],
+      },
+    ]);
+    setNewProject('');
+  };
+
+  const handleAddSpeaker = () => {
+    if (!newSpeaker) {
+      return;
+    }
+
+    const noProjectSpeakers = (
+      projects?.find((project) => project?.name === 'noProject')?.speakers || []
+    )?.concat({ name: newSpeaker });
+    updateProjects([
+      ...projects?.filter((project) => project?.name !== 'noProject'),
+      {
+        name: 'noProject',
+        speakers: noProjectSpeakers,
+      },
+    ]);
+    setNewSpeaker('');
   };
 
   return (
@@ -65,18 +100,11 @@ export const PageStandup = () => {
                 />
                 <Button
                   variant="@primary"
-                  onClick={() =>
-                    updateProjects([
-                      ...projects,
-                      {
-                        name: newProject,
-                        speakers: [],
-                      },
-                    ])
-                  }
+                  onClick={() => handleAddProject()}
                   flex="1"
+                  isDisabled={isLoadingUpdateProjects}
                 >
-                  Ajouter un projet
+                  {isLoadingUpdateProjects ? <Loader /> : 'Ajouter un projet'}
                 </Button>
                 <Input
                   value={newSpeaker}
@@ -85,18 +113,30 @@ export const PageStandup = () => {
                   flex="2"
                   color="gray.800"
                 />
-                <Button variant="@primary" flex="1">
-                  Ajouter une personne
+                <Button
+                  variant="@primary"
+                  flex="1"
+                  onClick={() => handleAddSpeaker()}
+                >
+                  {isLoadingUpdateProjects ? (
+                    <Loader />
+                  ) : (
+                    'Ajouter une personne'
+                  )}
                 </Button>
               </Stack>
               <Stack spacing={3}>
-                {projects?.map((project) => (
-                  <SpeakerGroup
-                    key={project?.name}
-                    name={project?.name}
-                    speakers={project?.speakers}
-                  />
-                ))}
+                {projects?.map((project) =>
+                  project?.name === 'noProject' ? (
+                    <NoProjectGroup speakers={project?.speakers} />
+                  ) : (
+                    <SpeakerGroup
+                      key={project?.name}
+                      name={project?.name}
+                      speakers={project?.speakers}
+                    />
+                  )
+                )}
               </Stack>
             </>
           )}

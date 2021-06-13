@@ -1,11 +1,11 @@
-import { IconButton, Stack, Text, Wrap, WrapItem } from '@chakra-ui/react';
+import { Box, IconButton, Stack, Text, Wrap, WrapItem } from '@chakra-ui/react';
 import { Droppable } from 'react-beautiful-dnd';
 import { FiTrash } from 'react-icons/fi';
 
 import { useProjects, useUpdateProjects } from '@/app/standup/standup.service';
 import { Speaker } from '@/app/standup/standup.types';
 
-import { SpeakerCard } from '../SpeakerCard';
+import { EmptySpeakerCard, SpeakerCard } from '../SpeakerCard';
 
 interface SpeakerGroupProps {
   name: string;
@@ -39,19 +39,53 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
             </Text>
             <IconButton
               aria-label="Supprimer"
+              onClick={() => handleDelete()}
               icon={<FiTrash />}
               variant="@primary"
               size="sm"
-              onClick={() => handleDelete()}
             />
           </Stack>
           <Wrap>
-            {speakers?.map((speaker, index) => (
-              <WrapItem key={speaker?.name}>
-                <SpeakerCard speaker={speaker} index={index} />
-              </WrapItem>
-            ))}
+            {speakers?.length > 0 ? (
+              speakers?.map((speaker, index) => (
+                <WrapItem key={speaker?.name}>
+                  <SpeakerCard speaker={speaker} index={index} />
+                </WrapItem>
+              ))
+            ) : (
+              <EmptySpeakerCard />
+            )}
           </Wrap>
+          {provided.placeholder}
+        </Stack>
+      )}
+    </Droppable>
+  );
+};
+
+export const NoProjectGroup = ({ speakers = [], ...rest }) => {
+  return (
+    <Droppable droppableId={`droppable-noProject`}>
+      {(provided) => (
+        <Stack
+          ref={provided.innerRef}
+          {...provided.droppableProps}
+          p={3}
+          borderRadius="md"
+          border="dashed 1px"
+          {...rest}
+        >
+          {speakers?.length > 0 ? (
+            <Wrap {...rest}>
+              {speakers?.map((speaker, index) => (
+                <WrapItem key={speaker?.name}>
+                  <SpeakerCard speaker={speaker} index={index} />
+                </WrapItem>
+              ))}
+            </Wrap>
+          ) : (
+            <Box h={10} />
+          )}
           {provided.placeholder}
         </Stack>
       )}
