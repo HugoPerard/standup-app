@@ -24,7 +24,7 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
   };
 
   return (
-    <Droppable droppableId={`draggable-${name}`}>
+    <Droppable droppableId={`droppable-${name}`}>
       {(provided) => (
         <Stack
           ref={provided.innerRef}
@@ -46,12 +46,13 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
             />
           </Stack>
           <Wrap>
-            {speakers?.map((speaker) => (
+            {speakers?.map((speaker, index) => (
               <WrapItem key={speaker?.name}>
-                <SpeakerCard speaker={speaker} />
+                <SpeakerCard speaker={speaker} index={index} />
               </WrapItem>
             ))}
           </Wrap>
+          {provided.placeholder}
         </Stack>
       )}
     </Droppable>

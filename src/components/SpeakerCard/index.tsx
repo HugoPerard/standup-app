@@ -18,9 +18,10 @@ import { ConfirmMenuItem, MenuItem } from '@/components';
 
 interface SpeakerCardProps {
   speaker: Speaker;
+  index: number;
 }
 
-export const SpeakerCard: React.FC<SpeakerCardProps> = ({ speaker }) => {
+export const SpeakerCard: React.FC<SpeakerCardProps> = ({ speaker, index }) => {
   const { seconds, minutes, isRunning, start, pause, reset } = useStopwatch({
     autoStart: false,
   });
@@ -43,8 +44,8 @@ export const SpeakerCard: React.FC<SpeakerCardProps> = ({ speaker }) => {
   };
 
   return (
-    <Draggable draggableId={`draggable-${speaker?.name}`} index={0}>
-      {(provided, snapshot) => (
+    <Draggable draggableId={`draggable-${speaker?.name}`} index={index}>
+      {(provided) => (
         <Stack
           ref={provided.innerRef}
           {...provided.draggableProps}

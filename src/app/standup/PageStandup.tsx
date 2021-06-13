@@ -18,9 +18,38 @@ export const PageStandup = () => {
   const [newProject, setNewProject] = useState('');
   const [newSpeaker, setNewSpeaker] = useState('');
 
+  const handleDragAndDrop = (e) => {
+    const source = e?.source?.droppableId?.split('droppable-')[1];
+    const destination = e?.destination?.droppableId?.split('droppable-')[1];
+    const speaker = e?.draggableId?.split('draggable-')[1];
+
+    if (!destination) {
+      return;
+    }
+
+    const newProjects = projects;
+
+    const sourceIndex = projects.findIndex(
+      (project) => project?.name === source
+    );
+    newProjects[sourceIndex].speakers = projects[sourceIndex].speakers?.filter(
+      (spk) => spk?.name !== speaker
+    );
+
+    const destinationIndex = projects.findIndex(
+      (project) => project?.name === destination
+    );
+    newProjects[destinationIndex].speakers = projects[
+      destinationIndex
+    ]?.speakers?.concat({
+      name: speaker,
+    });
+    updateProjects(newProjects);
+  };
+
   return (
     <Page containerSize="full" bg="gray.800">
-      <DragDropContext>
+      <DragDropContext onDragEnd={handleDragAndDrop}>
         <PageContent color="gray.200">
           {isLoading ? (
             <Loader />
@@ -30,6 +59,7 @@ export const PageStandup = () => {
                 <Input
                   value={newProject}
                   onChange={(e) => setNewProject(e?.target?.value)}
+                  placeholder="Saisir le nom d'un projet"
                   flex="2"
                   color="gray.800"
                 />
@@ -51,6 +81,7 @@ export const PageStandup = () => {
                 <Input
                   value={newSpeaker}
                   onChange={(e) => setNewSpeaker(e?.target?.value)}
+                  placeholder="Saisir le nom d'une personne"
                   flex="2"
                   color="gray.800"
                 />
