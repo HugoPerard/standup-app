@@ -10,8 +10,8 @@ import { SpeakerCard } from '@/components/SpeakerCard';
 import { SpeakerGroup } from '@/components/SpeakerGroup';
 
 import {
-  useAddProject,
-  useAddSpeaker,
+  useProjectAdd,
+  useSpeakerAdd,
   useProjects,
   useSpeakers,
 } from './standup.service';
@@ -25,12 +25,12 @@ export const PageStandup = () => {
   const {
     mutate: addSpeaker,
     isLoading: isLoadingAddProject,
-  } = useAddSpeaker();
+  } = useSpeakerAdd();
 
   const {
     mutate: addProject,
     isLoading: isLoadingAddSpeaker,
-  } = useAddProject();
+  } = useProjectAdd();
 
   const [newProject, setNewProject] = useState('');
   const [newSpeaker, setNewSpeaker] = useState('');
@@ -131,7 +131,7 @@ export const PageStandup = () => {
               {projects?.map((project) => (
                 <SpeakerGroup
                   key={project?.id}
-                  name={project?.name}
+                  project={project}
                   speakers={speakers?.filter(
                     (speaker) => speaker?.projectId === project?.id
                   )}

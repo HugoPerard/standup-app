@@ -1,19 +1,32 @@
-import { Box, IconButton, Stack, Text, Wrap, WrapItem } from '@chakra-ui/react';
-import { FiTrash } from 'react-icons/fi';
+import {
+  Box,
+  ButtonGroup,
+  IconButton,
+  Stack,
+  Text,
+  Wrap,
+  WrapItem,
+} from '@chakra-ui/react';
+import { FiPlus, FiTrash2 } from 'react-icons/fi';
 
-import { Speaker } from '@/app/standup/standup.types';
+import { useProjectDelete, useSpeakerAdd } from '@/app/standup/standup.service';
+import { Project, Speaker } from '@/app/standup/standup.types';
 
+import { PopoverInput } from '../PopoverInput';
 import { EmptySpeakerCard, SpeakerCard } from '../SpeakerCard';
 
 interface SpeakerGroupProps {
-  name: string;
+  project: Project;
   speakers: Speaker[];
 }
 
 export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
-  name,
+  project,
   speakers,
 }) => {
+  const { mutate: deleteProject } = useProjectDelete();
+  const { mutate: addSpeaker } = useSpeakerAdd();
+
   return (
     // <Droppable droppableId={`droppable-${name}`}>
     // {(provided) => (
@@ -26,15 +39,32 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
     >
       <Stack direction="row" justifyContent="space-between">
         <Text fontWeight="bold" mb={1}>
-          {name}
+          {project?.name}
         </Text>
-        <IconButton
-          aria-label="Supprimer"
-          // onClick={() => handleDelete()}
-          icon={<FiTrash />}
-          variant="@primary"
-          size="sm"
-        />
+        <ButtonGroup spacing={1}>
+          <PopoverInput
+            onSubmit={(value) =>
+              addSpeaker({ name: value, projectId: project?.id })
+            }
+            title="Ajouter une personne"
+            submitLabel="Ajouter une personne"
+            placeholder="Saisir le nom d'une personne"
+          >
+            <IconButton
+              aria-label="Ajouter une personne"
+              icon={<FiPlus />}
+              variant="@primary"
+              size="sm"
+            />
+          </PopoverInput>
+          <IconButton
+            aria-label="Supprimer"
+            onClick={() => deleteProject(project?.id)}
+            icon={<FiTrash2 />}
+            variant="@primary"
+            size="sm"
+          />
+        </ButtonGroup>
       </Stack>
       <Wrap>
         {speakers?.length > 0 ? (

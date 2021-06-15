@@ -50,7 +50,7 @@ export const useSpeaker = (
   );
 };
 
-export const useAddProject = (
+export const useProjectAdd = (
   config: UseMutationOptions<string, unknown, string> = {}
 ) => {
   const { data: projects } = useProjects();
@@ -70,16 +70,16 @@ export const useAddProject = (
   );
 };
 
-export const useAddSpeaker = (
-  config: UseMutationOptions<string, unknown, string> = {}
+export const useSpeakerAdd = (
+  config: UseMutationOptions<any, unknown, any> = {}
 ) => {
   const { data: speakers } = useSpeakers();
   const queryCache = useQueryClient();
   return useMutation(
-    (name) =>
+    ({ name, projectId }) =>
       Axios.post(ENDPOINT_STANDUP_SPEAKERS, [
         ...speakers,
-        { name, id: speakers?.length },
+        { name, id: speakers?.length, projectId },
       ]),
     {
       ...config,
@@ -118,7 +118,7 @@ export const useProjectDelete = (
   return useMutation(
     (id) =>
       Axios.post(
-        ENDPOINT_STANDUP_SPEAKERS,
+        ENDPOINT_STANDUP_PROJECTS,
         projects?.filter((project) => project?.id !== id)
       ),
     {
