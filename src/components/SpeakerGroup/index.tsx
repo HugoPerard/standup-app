@@ -1,8 +1,6 @@
 import { Box, IconButton, Stack, Text, Wrap, WrapItem } from '@chakra-ui/react';
-import { Droppable } from 'react-beautiful-dnd';
 import { FiTrash } from 'react-icons/fi';
 
-import { useProjects, useUpdateProjects } from '@/app/standup/standup.service';
 import { Speaker } from '@/app/standup/standup.types';
 
 import { EmptySpeakerCard, SpeakerCard } from '../SpeakerCard';
@@ -16,79 +14,70 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
   name,
   speakers,
 }) => {
-  const { data: projects } = useProjects();
-  const { mutate: updateProjects } = useUpdateProjects();
-
-  const handleDelete = () => {
-    updateProjects(projects?.filter((project) => project?.name !== name));
-  };
-
   return (
-    <Droppable droppableId={`droppable-${name}`}>
-      {(provided) => (
-        <Stack
-          ref={provided.innerRef}
-          {...provided.droppableProps}
-          bg="gray.700"
-          p={3}
-          borderRadius="md"
-        >
-          <Stack direction="row" justifyContent="space-between">
-            <Text fontWeight="bold" mb={1}>
-              {name}
-            </Text>
-            <IconButton
-              aria-label="Supprimer"
-              onClick={() => handleDelete()}
-              icon={<FiTrash />}
-              variant="@primary"
-              size="sm"
-            />
-          </Stack>
-          <Wrap>
-            {speakers?.length > 0 ? (
-              speakers?.map((speaker, index) => (
-                <WrapItem key={speaker?.name}>
-                  <SpeakerCard speaker={speaker} index={index} />
-                </WrapItem>
-              ))
-            ) : (
-              <EmptySpeakerCard />
-            )}
-          </Wrap>
-          {provided.placeholder}
-        </Stack>
-      )}
-    </Droppable>
+    // <Droppable droppableId={`droppable-${name}`}>
+    // {(provided) => (
+    <Stack
+      // ref={provided.innerRef}
+      // {...provided.droppableProps}
+      bg="gray.700"
+      p={3}
+      borderRadius="md"
+    >
+      <Stack direction="row" justifyContent="space-between">
+        <Text fontWeight="bold" mb={1}>
+          {name}
+        </Text>
+        <IconButton
+          aria-label="Supprimer"
+          // onClick={() => handleDelete()}
+          icon={<FiTrash />}
+          variant="@primary"
+          size="sm"
+        />
+      </Stack>
+      <Wrap>
+        {speakers?.length > 0 ? (
+          speakers?.map((speaker, index) => (
+            <SpeakerCard key={speaker?.id} speaker={speaker} index={index} />
+          ))
+        ) : (
+          <EmptySpeakerCard />
+        )}
+      </Wrap>
+      {/* {provided.placeholder} */}
+    </Stack>
+    // )}
+    // </Droppable>
   );
 };
 
 export const NoProjectGroup = ({ speakers = [], ...rest }) => {
   return (
-    <Droppable droppableId={`droppable-noProject`}>
-      {(provided) => (
-        <Stack
-          ref={provided.innerRef}
-          {...provided.droppableProps}
-          p={3}
-          borderRadius="md"
-          border="dashed 1px"
-          {...rest}
-        >
-          {speakers?.length > 0 ? (
-            <Wrap {...rest}>
-              {speakers?.map((speaker, index) => (
-                <WrapItem key={speaker?.name}>
-                  <SpeakerCard speaker={speaker} index={index} />
-                </WrapItem>
-              ))}
-            </Wrap>
-          ) : (
-            <Box h={10} />
-          )}
-          {provided.placeholder}
-        </Stack>
+    // <Droppable droppableId={`droppable-noProject`}>
+    // {(provided) => (
+    <Stack
+      // ref={provided.innerRef}
+      // {...provided.droppableProps}
+      p={3}
+      borderRadius="md"
+      border="dashed 1px"
+      {...rest}
+    >
+      {speakers?.length > 0 ? (
+        <Wrap {...rest}>
+          {speakers?.map((speaker, index) => (
+            <WrapItem key={speaker?.id}>
+              <SpeakerCard speaker={speaker} index={index} />
+            </WrapItem>
+          ))}
+        </Wrap>
+      ) : (
+        <Box h={10} />
       )}
-    </Droppable>
+      {/* {provided.placeholder} */}
+    </Stack>
+    //   )}
+    // </Droppable>
   );
 };

@@ -10,11 +10,10 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-import { Draggable } from 'react-beautiful-dnd';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { useStopwatch } from 'react-timer-hook';
 
-import { useProjects, useUpdateProjects } from '@/app/standup/standup.service';
+import { useSpeakerDelete } from '@/app/standup/standup.service';
 import { Speaker } from '@/app/standup/standup.types';
 import { ConfirmMenuItem, MenuItem } from '@/components';
 
@@ -23,14 +22,10 @@ interface SpeakerCardProps {
   index: number;
 }
 
-export const SpeakerCard: React.FC<SpeakerCardProps> = ({ speaker, index }) => {
+export const SpeakerCard: React.FC<SpeakerCardProps> = ({ speaker }) => {
   const { seconds, minutes, isRunning, start, pause, reset } = useStopwatch({
     autoStart: false,
   });
-
-  const { data: projects } = useProjects();
-  const { mutate: updateProjects } = useUpdateProjects();
-
   const [isSpeaked, setIsSpeaked] = useState(false);
 
   const controlStopWatch = () => {
@@ -48,78 +43,68 @@ export const SpeakerCard: React.FC<SpeakerCardProps> = ({ speaker, index }) => {
     pause();
   };
 
-  const handleDelete = () => {
-    const projectIndex = projects?.findIndex((project) =>
-      project?.speakers?.includes(speaker)
-    );
-    const newProjects = projects;
-    newProjects[projectIndex].speakers = projects[
-      projectIndex
-    ].speakers?.filter((spk) => spk?.name !== speaker?.name);
-    updateProjects(newProjects);
-  };
+  const { mutate: deleteSpeaker } = useSpeakerDelete();
 
   return (
-    <Draggable draggableId={`draggable-${speaker?.name}`} index={index}>
-      {(provided) => (
-        <Stack
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          direction="row"
-          spacing={3}
-          alignItems="center"
-          bg="gray.600"
-          p={2}
-          borderRadius="md"
-        >
-          <Checkbox
-            colorScheme="blackAlpha"
-            isIndeterminate={isRunning}
-            isChecked={isSpeaked}
-          />
-          <Stack
-            onClick={controlStopWatch}
-            direction="row"
-            spacing={3}
-            cursor="pointer"
+    // <Draggable draggableId={`draggable-${speaker?.name}`} index={index}>
+    //   {(provided) => (
+    <Stack
+      //       ref={provided.innerRef}
+      //       {...provided.draggableProps}
+      //       {...provided.dragHandleProps}
+      direction="row"
+      spacing={3}
+      alignItems="center"
+      bg="gray.600"
+      p={2}
+      borderRadius="md"
+    >
+      <Checkbox
+        colorScheme="blackAlpha"
+        isIndeterminate={isRunning}
+        isChecked={isSpeaked}
+      />
+      <Stack
+        onClick={controlStopWatch}
+        direction="row"
+        spacing={3}
+        cursor="pointer"
+      >
+        <Text fontWeight="medium">{speaker?.name}</Text>
+        <Text w={45}>
+          {minutes?.toString()?.length === 1 ? `0${minutes}` : minutes}:
+          {seconds?.toString()?.length === 1 ? `0${seconds}` : seconds}
+        </Text>
+      </Stack>
+      <Menu>
+        <MenuButton
+          as={IconButton}
+          icon={<BsThreeDotsVertical />}
+          variant="@primary"
+          size="xs"
+        />
+        <MenuList color="gray.700" bg="gray.200">
+          <MenuItem
+            _hover={{ bg: 'gray.300' }}
+            _focus={{ bg: 'gray.400' }}
+            onClick={() => resetStopwatch()}
           >
-            <Text fontWeight="medium">{speaker?.name}</Text>
-            <Text w={45}>
-              {minutes?.toString()?.length === 1 ? `0${minutes}` : minutes}:
-              {seconds?.toString()?.length === 1 ? `0${seconds}` : seconds}
-            </Text>
-          </Stack>
-          <Menu>
-            <MenuButton
-              as={IconButton}
-              icon={<BsThreeDotsVertical />}
-              variant="@primary"
-              size="xs"
-            />
-            <MenuList color="gray.700" bg="gray.200">
-              <MenuItem
-                _hover={{ bg: 'gray.300' }}
-                _focus={{ bg: 'gray.400' }}
-                onClick={() => resetStopwatch()}
-              >
-                Réinitialiser
-              </MenuItem>
-              <ConfirmMenuItem
-                _hover={{ bg: 'gray.300' }}
-                _focus={{ bg: 'gray.400' }}
-                confirmContent="Confirmer la suppression"
-                onClick={() => handleDelete()}
-              >
-                Supprimer
-              </ConfirmMenuItem>
-            </MenuList>
-          </Menu>
-        </Stack>
-      )}
-    </Draggable>
+            Réinitialiser
+          </MenuItem>
+          <ConfirmMenuItem
+            _hover={{ bg: 'gray.300' }}
+            _focus={{ bg: 'gray.400' }}
+            confirmContent="Confirmer la suppression"
+            onClick={() => deleteSpeaker(speaker?.id)}
+          >
+            Supprimer
+          </ConfirmMenuItem>
+        </MenuList>
+      </Menu>
+    </Stack>
   );
 };
+// </Draggable>
 
 export const EmptySpeakerCard = (props) => {
   return (

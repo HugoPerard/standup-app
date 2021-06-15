@@ -6,8 +6,8 @@
   "scripts": {
     "postinstall": "husky install",
     "test": "jest --roots src --watch",
-    "dev": "yarn docs:build && next dev",
-    "build": "yarn docs:build && next build",
+    "dev": "next dev",
+    "build": "next build",
     "start": "next start",
     "pretty": "prettier -w .",
     "lint": "eslint ./src --fix",
@@ -19,8 +19,7 @@
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,json}": "prettier --write",
-    "*.{ts,tsx,js,jsx}": "eslint --cache --fix",
-    "src/mocks/**/*.{yaml,yml}": "yarn docs:build"
+    "*.{ts,tsx,js,jsx}": "eslint --cache --fix"
   },
   "dependencies": {
     "@chakra-ui/react": "1.6.2",
