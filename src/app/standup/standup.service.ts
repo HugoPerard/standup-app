@@ -59,7 +59,7 @@ export const useProjectAdd = (
     (name) =>
       Axios.post(ENDPOINT_STANDUP_PROJECTS, [
         ...projects,
-        { name, id: projects?.length },
+        { name, id: projects?.length + 1 },
       ]),
     {
       ...config,
@@ -79,7 +79,7 @@ export const useSpeakerAdd = (
     ({ name, projectId }) =>
       Axios.post(ENDPOINT_STANDUP_SPEAKERS, [
         ...speakers,
-        { name, id: speakers?.length, projectId },
+        { name, id: (Math.random() * 10000).toFixed(0), projectId },
       ]),
     {
       ...config,
@@ -115,16 +115,41 @@ export const useProjectDelete = (
 ) => {
   const queryCache = useQueryClient();
   const { data: projects } = useProjects();
+  const { data: speakers } = useSpeakers();
+  const { mutate: updateSpeakers } = useSpeakersUpdate();
+
   return useMutation(
-    (id) =>
-      Axios.post(
+    (id) => {
+      updateSpeakers(
+        speakers?.map((speaker) => ({
+          ...speaker,
+          projectId: speaker?.projectId === id ? undefined : speaker?.projectId,
+        }))
+      );
+      return Axios.post(
         ENDPOINT_STANDUP_PROJECTS,
         projects?.filter((project) => project?.id !== id)
-      ),
+      );
+    },
     {
       ...config,
       onSuccess: () => {
         queryCache.invalidateQueries('projects');
+      },
+    }
+  );
+};
+
+export const useSpeakersUpdate = (
+  config: UseMutationOptions<Speaker[], unknown, Speaker[]> = {}
+) => {
+  const queryCache = useQueryClient();
+  return useMutation(
+    (speakers) => Axios.post(ENDPOINT_STANDUP_SPEAKERS, speakers),
+    {
+      ...config,
+      onSuccess: () => {
+        queryCache.invalidateQueries('speakers');
       },
     }
   );

@@ -8,6 +8,7 @@ import {
   InputRightElement,
   Spinner,
   IconButton,
+  forwardRef,
 } from '@chakra-ui/react';
 import { FieldProps, useField } from '@formiz/core';
 import { RiEyeLine, RiEyeCloseLine } from 'react-icons/ri';
@@ -21,7 +22,7 @@ export interface FieldInputProps
   size?: 'sm' | 'md' | 'lg';
 }
 
-export const FieldInput = (props: FieldInputProps) => {
+export const FieldInput = forwardRef((props: FieldInputProps, ref) => {
   const {
     errorMessage,
     id,
@@ -65,6 +66,7 @@ export const FieldInput = (props: FieldInputProps) => {
     <FormGroup {...formGroupProps}>
       <InputGroup size={size}>
         <Input
+          ref={ref}
           type={showPassword ? 'text' : type || 'text'}
           id={id}
           value={value ?? ''}
@@ -96,4 +98,4 @@ export const FieldInput = (props: FieldInputProps) => {
       {children}
     </FormGroup>
   );
-};
+});

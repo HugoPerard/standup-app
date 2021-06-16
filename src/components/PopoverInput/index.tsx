@@ -1,3 +1,5 @@
+import React from 'react';
+
 import {
   Box,
   Button,
@@ -40,8 +42,15 @@ export const PopoverInput: React.FC<PopoverInputProps> = ({
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const initialFocusRef = React.useRef();
+
   return (
-    <Popover colorScheme="gray" isOpen={isOpen} onClose={onClose}>
+    <Popover
+      colorScheme="gray"
+      isOpen={isOpen}
+      onClose={onClose}
+      initialFocusRef={initialFocusRef}
+    >
       <PopoverTrigger>
         <Box onClick={() => onOpen()}>{children}</Box>
       </PopoverTrigger>
@@ -66,6 +75,7 @@ export const PopoverInput: React.FC<PopoverInputProps> = ({
                   name="input"
                   placeholder={placeholder}
                   color="gray.800"
+                  ref={initialFocusRef}
                 />
               </PopoverBody>
               <PopoverFooter

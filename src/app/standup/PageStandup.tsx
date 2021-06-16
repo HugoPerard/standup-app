@@ -24,12 +24,12 @@ export const PageStandup = () => {
 
   const {
     mutate: addSpeaker,
-    isLoading: isLoadingAddProject,
+    isLoading: isLoadingAddSpeaker,
   } = useSpeakerAdd();
 
   const {
     mutate: addProject,
-    isLoading: isLoadingAddSpeaker,
+    isLoading: isLoadingAddProject,
   } = useProjectAdd();
 
   const [newProject, setNewProject] = useState('');
@@ -76,7 +76,7 @@ export const PageStandup = () => {
     if (!newSpeaker) {
       return;
     }
-    addSpeaker(newSpeaker);
+    addSpeaker({ name: newSpeaker, projectId: undefined });
     setNewSpeaker('');
   };
 
