@@ -75,7 +75,7 @@ export const useSpeakers = (config: UseQueryOptions<Speaker[]> = {}) => {
 };
 
 const addSpeaker = (name: string, projectId: string = null): any => {
-  return speakersCollectionRef?.add({ name, projectId });
+  return speakersCollectionRef?.add({ name, projectId, index: 0 });
 };
 
 export const useSpeakerAdd = (
@@ -99,6 +99,22 @@ export const useSpeakerDelete = (
 ) => {
   const queryCache = useQueryClient();
   return useMutation((id) => deleteSpeaker(id), {
+    ...config,
+    onSuccess: () => {
+      queryCache.invalidateQueries('speakers');
+    },
+  });
+};
+
+const updateSpeaker = (id, payload) => {
+  return speakersCollectionRef?.doc(id)?.update({ ...payload });
+};
+
+export const useSpeakerUpdate = (
+  config: UseMutationOptions<any, unknown, any> = {}
+) => {
+  const queryCache = useQueryClient();
+  return useMutation(({ id, payload }) => updateSpeaker(id, { ...payload }), {
     ...config,
     onSuccess: () => {
       queryCache.invalidateQueries('speakers');
