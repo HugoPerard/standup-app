@@ -9,7 +9,10 @@ import {
 } from '@chakra-ui/react';
 import { FiPlus, FiTrash2 } from 'react-icons/fi';
 
-import { useProjectDelete, useSpeakerAdd } from '@/app/standup/standup.service';
+import {
+  useProjectDelete,
+  useSpeakerAdd,
+} from '@/app/standup/standup.firebase';
 import { Project, Speaker } from '@/app/standup/standup.types';
 
 import { PopoverInput } from '../PopoverInput';

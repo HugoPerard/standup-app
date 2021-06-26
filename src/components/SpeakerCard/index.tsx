@@ -13,7 +13,7 @@ import {
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { useStopwatch } from 'react-timer-hook';
 
-import { useSpeakerDelete } from '@/app/standup/standup.service';
+import { useSpeakerDelete } from '@/app/standup/standup.firebase';
 import { Speaker } from '@/app/standup/standup.types';
 import { ConfirmMenuItem, MenuItem } from '@/components';
 

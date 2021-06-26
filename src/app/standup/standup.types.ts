@@ -1,10 +1,12 @@
 export interface Speaker {
-  id: number;
+  id: string;
   name: string;
-  projectId: number;
+  projectId: string;
+  index: number;
 }
 
 export interface Project {
-  id: number;
+  id: string;
   name: string;
+  index: number;
 }

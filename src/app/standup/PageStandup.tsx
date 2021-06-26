@@ -10,11 +10,11 @@ import { SpeakerCard } from '@/components/SpeakerCard';
 import { SpeakerGroup } from '@/components/SpeakerGroup';
 
 import {
-  useProjectAdd,
-  useSpeakerAdd,
   useProjects,
   useSpeakers,
-} from './standup.service';
+  useProjectAdd,
+  useSpeakerAdd,
+} from './standup.firebase';
 
 export const PageStandup = () => {
   const { data: projects, isLoading: isLoadingProjects } = useProjects();
@@ -43,25 +43,6 @@ export const PageStandup = () => {
   //   if (!destination) {
   //     return;
   //   }
-
-  //   const newProjects = projects;
-
-  //   const sourceIndex = projects.findIndex(
-  //     (project) => project?.name === source
-  //   );
-  //   newProjects[sourceIndex].speakers = projects[sourceIndex].speakers?.filter(
-  //     (spk) => spk?.name !== speaker
-  //   );
-
-  //   const destinationIndex = projects.findIndex(
-  //     (project) => project?.name === destination
-  //   );
-  //   newProjects[destinationIndex].speakers = (
-  //     projects[destinationIndex]?.speakers || []
-  //   )?.concat({
-  //     name: speaker,
-  //   });
-  //   updateProjects(newProjects);
   // };
 
   const handleAddProject = () => {
@@ -76,7 +57,7 @@ export const PageStandup = () => {
     if (!newSpeaker) {
       return;
     }
-    addSpeaker({ name: newSpeaker, projectId: undefined });
+    addSpeaker({ name: newSpeaker });
     setNewSpeaker('');
   };
 
@@ -88,43 +69,69 @@ export const PageStandup = () => {
           <Loader />
         ) : (
           <Stack spacing={6}>
-            <Stack direction="row">
-              <Input
-                value={newProject}
-                onChange={(e) => setNewProject(e?.target?.value)}
-                placeholder="Saisir le nom d'un projet"
-                flex="2"
-                color="gray.800"
-              />
-              <Button
-                variant="@primary"
-                onClick={() => handleAddProject()}
-                flex="1"
-                isDisabled={isLoadingAddProject}
+            <Stack direction={{ base: 'column', md: 'row' }}>
+              <form
+                noValidate
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleAddProject();
+                }}
+                style={{ flex: 1 }}
               >
-                {isLoadingAddProject ? <Loader /> : 'Ajouter un projet'}
-              </Button>
-              <Input
-                value={newSpeaker}
-                onChange={(e) => setNewSpeaker(e?.target?.value)}
-                placeholder="Saisir le nom d'une personne"
-                flex="2"
-                color="gray.800"
-              />
-              <Button
-                variant="@primary"
-                flex="1"
-                onClick={() => handleAddSpeaker()}
-                isDisabled={isLoadingAddSpeaker}
+                <Stack direction="row">
+                  <Input
+                    value={newProject}
+                    onChange={(e) => setNewProject(e?.target?.value)}
+                    placeholder="Saisir le nom d'un projet"
+                    flex="2"
+                    color="gray.800"
+                  />
+                  <Button
+                    type="submit"
+                    variant="@primary"
+                    flex="1"
+                    isDisabled={isLoadingAddProject}
+                  >
+                    {isLoadingAddProject ? <Loader /> : 'Ajouter un projet'}
+                  </Button>
+                </Stack>
+              </form>
+              <form
+                noValidate
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleAddSpeaker();
+                }}
+                style={{ flex: 1 }}
               >
-                {isLoadingAddSpeaker ? <Loader /> : 'Ajouter une personne'}
-              </Button>
+                <Stack direction="row">
+                  <Input
+                    value={newSpeaker}
+                    onChange={(e) => setNewSpeaker(e?.target?.value)}
+                    placeholder="Saisir le nom d'une personne"
+                    flex="2"
+                    color="gray.800"
+                  />
+                  <Button
+                    type="submit"
+                    variant="@primary"
+                    flex="1"
+                    isDisabled={isLoadingAddSpeaker}
+                  >
+                    {isLoadingAddSpeaker ? <Loader /> : 'Ajouter une personne'}
+                  </Button>
+                </Stack>
+              </form>
             </Stack>
             <Wrap>
               {speakers
                 ?.filter((speaker) => !speaker?.projectId)
                 .map((speaker, index) => (
-                  <SpeakerCard speaker={speaker} index={index} />
+                  <SpeakerCard
+                    key={speaker?.id}
+                    speaker={speaker}
+                    index={index}
+                  />
                 ))}
             </Wrap>
             <Stack spacing={3}>
