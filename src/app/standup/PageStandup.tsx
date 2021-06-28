@@ -143,15 +143,25 @@ export const PageStandup = () => {
                 columns={{ base: 1, sm: 2, md: 3, lg: 4, xl: 5 }}
                 spacing="2"
               >
-                {projects?.map((project) => (
-                  <SpeakerGroup
-                    key={project?.id}
-                    project={project}
-                    speakers={speakers?.filter(
-                      (speaker) => speaker?.projectId === project?.id
-                    )}
-                  />
-                ))}
+                {projects
+                  ?.sort((a, b) => {
+                    if (a?.index < b?.index) {
+                      return 1;
+                    }
+                    if (a?.index > b?.index) {
+                      return -1;
+                    }
+                    return 0;
+                  })
+                  ?.map((project) => (
+                    <SpeakerGroup
+                      key={project?.id}
+                      project={project}
+                      speakers={speakers?.filter(
+                        (speaker) => speaker?.projectId === project?.id
+                      )}
+                    />
+                  ))}
               </SimpleGrid>
             </Stack>
           )}
