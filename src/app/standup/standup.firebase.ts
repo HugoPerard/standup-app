@@ -60,18 +60,28 @@ export const useProjectDelete = (
 
 const speakersCollectionRef = firebase?.firestore?.()?.collection('speakers');
 
-const getSpeakers = async (): Promise<any> => {
-  const snapshot = await speakersCollectionRef.get();
+const getSpeakers = async (projectId = null): Promise<any> => {
+  const snapshot = projectId
+    ? await speakersCollectionRef.where('projectId', '==', projectId).get()
+    : await speakersCollectionRef.get();
+  // const snapshot = await speakersCollectionRef.get();
   return snapshot.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
   }));
 };
 
-export const useSpeakers = (config: UseQueryOptions<Speaker[]> = {}) => {
-  return useQuery(['speakers'], (): Promise<Speaker[]> => getSpeakers(), {
-    ...config,
-  });
+export const useSpeakers = (
+  projectId: string = null,
+  config: UseQueryOptions<Speaker[]> = {}
+) => {
+  return useQuery(
+    ['speakers', projectId],
+    (): Promise<Speaker[]> => getSpeakers(projectId),
+    {
+      ...config,
+    }
+  );
 };
 
 const addSpeaker = (name: string, projectId: string = null): any => {

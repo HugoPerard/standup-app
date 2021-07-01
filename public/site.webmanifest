@@ -1,6 +1,6 @@
 {
-    "name": "Start UI",
-    "short_name": "Start UI",
+    "name": "StandUp",
+    "short_name": "StandUp",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",

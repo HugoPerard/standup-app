@@ -15,7 +15,7 @@ const Index = () => {
   return (
     <>
       <Head>
-        <title>Standup</title>
+        <title>StandUp</title>
       </Head>
       <Center flex="1">
         <Loader />

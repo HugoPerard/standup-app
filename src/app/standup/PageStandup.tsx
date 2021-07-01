@@ -3,16 +3,14 @@ import React, { useState } from 'react';
 import { Button } from '@chakra-ui/button';
 import { Input } from '@chakra-ui/input';
 import { Stack } from '@chakra-ui/layout';
-import { SimpleGrid, Wrap } from '@chakra-ui/react';
+import { SimpleGrid } from '@chakra-ui/react';
 import { DragDropContext } from 'react-beautiful-dnd';
 
 import { Loader, Page, PageContent } from '@/app/layout';
-import { SpeakerCard } from '@/components/SpeakerCard';
 import { SpeakerGroup } from '@/components/SpeakerGroup';
 
 import {
   useProjects,
-  useSpeakers,
   useProjectAdd,
   useSpeakerAdd,
   useSpeakerUpdate,
@@ -20,7 +18,6 @@ import {
 
 export const PageStandup = () => {
   const { data: projects, isLoading: isLoadingProjects } = useProjects();
-  const { data: speakers } = useSpeakers();
 
   const isLoading = isLoadingProjects;
 
@@ -58,7 +55,7 @@ export const PageStandup = () => {
     if (!newSpeaker) {
       return;
     }
-    addSpeaker({ name: newSpeaker });
+    addSpeaker({ name: newSpeaker, projectId: '0' });
     setNewSpeaker('');
   };
 
@@ -128,17 +125,6 @@ export const PageStandup = () => {
                   </Stack>
                 </form>
               </Stack>
-              <Wrap>
-                {speakers
-                  ?.filter((speaker) => !speaker?.projectId)
-                  .map((speaker, index) => (
-                    <SpeakerCard
-                      key={speaker?.id}
-                      speaker={speaker}
-                      index={index}
-                    />
-                  ))}
-              </Wrap>
               <SimpleGrid
                 columns={{ base: 1, sm: 2, md: 3, lg: 4, xl: 5 }}
                 spacing="2"
@@ -154,15 +140,10 @@ export const PageStandup = () => {
                     return 0;
                   })
                   ?.map((project) => (
-                    <SpeakerGroup
-                      key={project?.id}
-                      project={project}
-                      speakers={speakers?.filter(
-                        (speaker) => speaker?.projectId === project?.id
-                      )}
-                    />
+                    <SpeakerGroup key={project?.id} project={project} />
                   ))}
               </SimpleGrid>
+              <SpeakerGroup project={{ id: '0', name: '' }} />
             </Stack>
           )}
         </PageContent>

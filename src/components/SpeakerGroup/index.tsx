@@ -9,27 +9,33 @@ import {
 import { Droppable } from 'react-beautiful-dnd';
 import { FiPlus, FiTrash2 } from 'react-icons/fi';
 
+import { Loader } from '@/app/layout';
 import {
   useProjectDelete,
   useSpeakerAdd,
+  useSpeakers,
 } from '@/app/standup/standup.firebase';
-import { Project, Speaker } from '@/app/standup/standup.types';
+import { Project } from '@/app/standup/standup.types';
 
 import { PopoverInput } from '../PopoverInput';
 import { EmptySpeakerCard, SpeakerCard } from '../SpeakerCard';
 
 interface SpeakerGroupProps extends StackProps {
   project: Project;
-  speakers: Speaker[];
 }
 
 export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
   project,
-  speakers,
   ...rest
 }) => {
   const { mutate: deleteProject } = useProjectDelete();
   const { mutate: addSpeaker } = useSpeakerAdd();
+
+  const {
+    data: speakers,
+    isLoading: isLoadingSpeakers,
+    isError: isErrorSpeakers,
+  } = useSpeakers(project?.id);
 
   return (
     <Droppable droppableId={`droppable-${project?.id}`}>
@@ -71,7 +77,13 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
               />
             </ButtonGroup>
           </Stack>
-          {speakers?.length > 0 ? (
+          {isLoadingSpeakers && <Loader />}
+          {isErrorSpeakers && (
+            <EmptySpeakerCard>
+              Erreur lors de la récupération des personnes sur ce projet
+            </EmptySpeakerCard>
+          )}
+          {!isLoadingSpeakers && !isErrorSpeakers && speakers?.length > 0 && (
             <Wrap>
               {speakers?.map((speaker, index) => (
                 <SpeakerCard
@@ -82,8 +94,9 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
                 />
               ))}
             </Wrap>
-          ) : (
-            <EmptySpeakerCard />
+          )}
+          {!isLoadingSpeakers && !isErrorSpeakers && speakers?.length <= 0 && (
+            <EmptySpeakerCard>Personne n'est sur ce projet</EmptySpeakerCard>
           )}
           {provided.placeholder}
         </Stack>

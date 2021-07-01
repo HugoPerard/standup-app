@@ -59,7 +59,8 @@ const MainMenuItem = ({ to, ...rest }: any) => {
 export const MainMenu = ({ ...rest }) => {
   return (
     <Stack direction="row" spacing="1" {...rest}>
-      <MainMenuItem to="/standup">Standup</MainMenuItem>
+      <MainMenuItem to="/objectifs">Objectifs</MainMenuItem>
+      <MainMenuItem to="/standup">StandUp</MainMenuItem>
     </Stack>
   );
 };

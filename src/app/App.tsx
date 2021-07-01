@@ -7,7 +7,8 @@ import { Layout, Loader } from '@/app/layout';
 import { Route, RoutePublic } from '@/app/router';
 import { Error404, ErrorBoundary } from '@/errors';
 
-const StandupRoutes = React.lazy(() => import('@/app/standup/StandupRoutes'));
+import { PageGoals } from './goals/PageGoals';
+import { PageStandup } from './standup/PageStandup';
 
 export const App = () => {
   return (
@@ -19,10 +20,11 @@ export const App = () => {
               <RoutePublic
                 exact
                 path="/"
-                render={() => <Redirect to="/standup" />}
+                render={() => <Redirect to="/objectifs" />}
               />
 
-              <Route path="/standup" render={() => <StandupRoutes />} />
+              <Route path="/standup" render={() => <PageStandup />} />
+              <Route path="/objectifs" render={() => <PageGoals />} />
 
               <RoutePublic path="*" render={() => <Error404 />} />
             </Switch>

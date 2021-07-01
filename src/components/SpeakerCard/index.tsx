@@ -116,10 +116,10 @@ export const SpeakerCard: React.FC<SpeakerCardProps> = ({
   );
 };
 
-export const EmptySpeakerCard = (props) => {
+export const EmptySpeakerCard = ({ children, ...props }) => {
   return (
     <Center bg="gray.600" py={2} px={4} borderRadius="md" {...props}>
-      <Text>Personne n'est sur ce projet</Text>
+      <Text>{children}</Text>
     </Center>
   );
 };
