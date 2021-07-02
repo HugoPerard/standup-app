@@ -12,31 +12,41 @@ import {
   PopoverFooter,
   PopoverHeader,
   PopoverTrigger,
+  Stack,
   useDisclosure,
 } from '@chakra-ui/react';
 import { Formiz, useForm } from '@formiz/core';
 
-import { FieldInput } from '../FieldInput';
+import { Goal } from '@/app/goals/goal.types';
+import { useSpeakers } from '@/app/standup/standup.firebase';
 
-interface PopoverInputProps extends Omit<PopoverContentProps, 'onSubmit'> {
-  onSubmit(value: string): void;
-  title: string;
-  submitLabel: string;
-  placeholder: string;
+import { FieldInput } from '../FieldInput';
+import { FieldSelect } from '../FieldSelect';
+
+interface GoalPopoverProps extends Omit<PopoverContentProps, 'onSubmit'> {
+  goal?: Goal;
+  onSubmit(values: { description: string; people: string[] }): void;
 }
 
-export const PopoverInput: React.FC<PopoverInputProps> = ({
+export const GoalPopover: React.FC<GoalPopoverProps> = ({
   children,
+  goal,
   onSubmit = () => {},
-  title = '',
-  submitLabel = 'Valider',
-  placeholder = 'Saisir...',
   ...rest
 }) => {
   const internalForm = useForm({ subscribe: { fields: ['input'] } });
 
+  const { data: speakers } = useSpeakers();
+  const peopleOptions = speakers?.map((speaker) => ({
+    value: speaker?.name,
+    label: speaker?.name,
+  }));
+
   const handleSubmit = (values) => {
-    onSubmit(values?.input);
+    onSubmit({
+      ...values,
+      people: [values?.people],
+    });
     onClose();
   };
 
@@ -65,14 +75,23 @@ export const PopoverInput: React.FC<PopoverInputProps> = ({
           <PopoverCloseButton />
           {isOpen && (
             <>
-              <PopoverHeader borderColor="transparent">{title}</PopoverHeader>
+              <PopoverHeader borderColor="transparent">
+                {goal ? 'Editer un objectif' : 'Créer un objectif'}
+              </PopoverHeader>
               <PopoverBody>
-                <FieldInput
-                  name="input"
-                  placeholder={placeholder}
-                  color="gray.800"
-                  ref={initialFocusRef}
-                />
+                <Stack>
+                  <FieldInput
+                    name="description"
+                    label="Description"
+                    color="gray.800"
+                    ref={initialFocusRef}
+                  />
+                  <FieldSelect
+                    name="people"
+                    label="Personnes concernées"
+                    options={peopleOptions}
+                  />
+                </Stack>
               </PopoverBody>
               <PopoverFooter
                 borderColor="transparent"
@@ -80,7 +99,7 @@ export const PopoverInput: React.FC<PopoverInputProps> = ({
                 justifyContent="flex-end"
               >
                 <Button type="submit" variant="@primary" size="sm">
-                  {submitLabel}
+                  {goal ? 'Editer un objectif' : 'Créer un objectif'}
                 </Button>
               </PopoverFooter>
             </>

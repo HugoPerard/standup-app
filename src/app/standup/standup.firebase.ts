@@ -84,15 +84,15 @@ export const useSpeakers = (
   );
 };
 
-const addSpeaker = (name: string, projectId: string = null): any => {
-  return speakersCollectionRef?.add({ name, projectId, index: 0 });
+const addSpeaker = (payload: Speaker): any => {
+  return speakersCollectionRef?.add(payload);
 };
 
 export const useSpeakerAdd = (
   config: UseMutationOptions<any, unknown, any> = {}
 ) => {
   const queryCache = useQueryClient();
-  return useMutation(({ name, projectId }) => addSpeaker(name, projectId), {
+  return useMutation((payload) => addSpeaker(payload), {
     ...config,
     onSuccess: () => {
       queryCache.invalidateQueries('speakers');

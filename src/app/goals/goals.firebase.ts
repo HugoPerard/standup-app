@@ -26,15 +26,15 @@ export const useGoals = (config: UseQueryOptions<Goal[]> = {}) => {
   });
 };
 
-const addGoal = (description: string, date: string): any => {
-  return goalsCollectionRef?.add({ description, date });
+const addGoal = (payload: Goal): any => {
+  return goalsCollectionRef?.add(payload);
 };
 
 export const useGoalAdd = (
-  config: UseMutationOptions<any, unknown, any> = {}
+  config: UseMutationOptions<Goal, unknown, Goal> = {}
 ) => {
   const queryCache = useQueryClient();
-  return useMutation(({ description, date }) => addGoal(description, date), {
+  return useMutation((payload) => addGoal(payload), {
     ...config,
     onSuccess: () => {
       queryCache.invalidateQueries('goals');
