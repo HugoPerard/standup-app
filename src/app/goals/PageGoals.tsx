@@ -13,13 +13,16 @@ const DAY_FORMAT = 'DD-MM-YYYY';
 
 export const PageGoals = () => {
   const firstDayCurrentWeek = dayjs().startOf('week');
+  const weekdays = [...Array(5)].map((_, index) =>
+    firstDayCurrentWeek?.add(index, 'day').format('DD-MM-YYYY')
+  );
 
   const { data: goals, isLoading: isLoadingGoals } = useGoals();
   const pastGoals = goals?.filter((goal) =>
     dayjs(goal?.date)?.isBefore(firstDayCurrentWeek)
   );
 
-  const groupByDay = (goals: Goal[]) => {
+  const groupByDay = (goals: Goal[]): { date: string; goals: Goal[] }[] => {
     return (goals || [])
       .reduce((groups: { date: string; goals: Goal[] }[], goal: Goal) => {
         let group = groups.find((g) => g.date === goal.date);
@@ -49,10 +52,15 @@ export const PageGoals = () => {
       <PageContent color="gray.200">
         <Stack spacing={6}>
           <GoalGroup name="Semaine dernière" goals={pastGoals} />
-          {groupedGoals.map(({ date, goals }) => (
+          {weekdays.map((date) => (
             <GoalGroup
+              key={date}
               name={dayjs(date, 'DD-MM-YYYY').format('dddd D MMMM')}
-              goals={goals}
+              date={date}
+              goals={
+                groupedGoals?.find((goalsGroup) => goalsGroup?.date === date)
+                  ?.goals
+              }
             />
           ))}
         </Stack>

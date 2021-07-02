@@ -1,21 +1,31 @@
-import { IconButton, Stack, StackProps, Text, Wrap } from '@chakra-ui/react';
+import {
+  IconButton,
+  SimpleGrid,
+  Stack,
+  StackProps,
+  Text,
+} from '@chakra-ui/react';
 import { FiPlus } from 'react-icons/fi';
 
 import { Goal } from '@/app/goals/goal.types';
+import { useGoalAdd } from '@/app/goals/goals.firebase';
 
 import { GoalCard } from '../GoalCard';
 import { PopoverInput } from '../PopoverInput';
 
 interface GoalGroupProps extends StackProps {
   name: string;
+  date?: string;
   goals: Goal[];
 }
 
 export const GoalGroup: React.FC<GoalGroupProps> = ({
   name,
+  date,
   goals,
   ...rest
 }) => {
+  const { mutate: addGoal } = useGoalAdd();
   return (
     <Stack bg="gray.700" p={3} borderRadius="md" {...rest}>
       <Stack direction="row" justifyContent="space-between" mb="1">
@@ -23,7 +33,7 @@ export const GoalGroup: React.FC<GoalGroupProps> = ({
           {name}
         </Text>
         <PopoverInput
-          onSubmit={(value) => console.log({ value })}
+          onSubmit={(value) => addGoal({ description: value, date })}
           title="Ajouter une personne"
           submitLabel="Ajouter une personne"
           placeholder="Saisir le nom d'une personne"
@@ -36,11 +46,11 @@ export const GoalGroup: React.FC<GoalGroupProps> = ({
           />
         </PopoverInput>
       </Stack>
-      <Wrap>
+      <SimpleGrid columns={2} spacing={2}>
         {goals?.map((goal) => (
-          <GoalCard goal={goal} />
+          <GoalCard key={goal?.id} goal={goal} />
         ))}
-      </Wrap>
+      </SimpleGrid>
     </Stack>
   );
 };
