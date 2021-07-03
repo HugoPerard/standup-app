@@ -33,7 +33,10 @@ export const PageThanks = () => {
 
   const isLoading = isLoadingThanks;
 
-  const { mutate: clearAllThanks } = useThanksDelete();
+  const {
+    mutate: clearAllThanks,
+    isLoading: isLoadingClearAllThanks,
+  } = useThanksDelete();
 
   const handleSaveName = () => {
     window.localStorage.setItem('Thank_author', authorName);
@@ -76,6 +79,7 @@ export const PageThanks = () => {
                 onClick={() => clearAllThanks()}
                 flex="1"
                 minH={8}
+                isDisabled={isLoadingClearAllThanks}
               >
                 Clear
               </Button>
