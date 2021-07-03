@@ -69,9 +69,7 @@ const deleteAllThanks = async () => {
   return snapshot.docs.map((doc) => deleteThank(doc?.id));
 };
 
-export const useThanksDelete = (
-  config: UseMutationOptions<void, unknown, void> = {}
-) => {
+export const useThanksDelete = (config: UseMutationOptions<any> = {}) => {
   const queryCache = useQueryClient();
   return useMutation(() => deleteAllThanks(), {
     ...config,
