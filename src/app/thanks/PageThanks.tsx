@@ -52,7 +52,7 @@ export const PageThanks = () => {
           <Stack spacing={6}>
             <Stack
               direction={{ base: 'column', sm: 'row' }}
-              alignItems="flex-end"
+              alignItems={{ sm: 'flex-end' }}
             >
               <Stack flex="2">
                 <Text fontSize="sm">C'est qui lô</Text>
@@ -66,6 +66,7 @@ export const PageThanks = () => {
                 variant="@primary"
                 onClick={() => handleSaveName()}
                 flex="1"
+                minH={8}
               >
                 Sauvegarder
               </Button>
@@ -74,6 +75,7 @@ export const PageThanks = () => {
                 variant="@primary"
                 onClick={() => clearAllThanks()}
                 flex="1"
+                minH={8}
               >
                 Clear
               </Button>

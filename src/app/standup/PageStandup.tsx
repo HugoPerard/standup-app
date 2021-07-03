@@ -1,12 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { Button } from '@chakra-ui/button';
-import { Input } from '@chakra-ui/input';
 import { Stack } from '@chakra-ui/layout';
-import { SimpleGrid } from '@chakra-ui/react';
+import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
+  Box,
+  SimpleGrid,
+} from '@chakra-ui/react';
+import { Formiz, useForm } from '@formiz/core';
 import { DragDropContext } from 'react-beautiful-dnd';
 
 import { Loader, Page, PageContent } from '@/app/layout';
+import { FieldInput } from '@/components';
 import { SpeakerGroup } from '@/components/SpeakerGroup';
 
 import {
@@ -31,9 +40,6 @@ export const PageStandup = () => {
     isLoading: isLoadingAddProject,
   } = useProjectAdd();
 
-  const [newProject, setNewProject] = useState('');
-  const [newSpeaker, setNewSpeaker] = useState('');
-
   const { mutate: updateSpeaker } = useSpeakerUpdate();
 
   const handleDragAndDrop = (e) => {
@@ -43,20 +49,23 @@ export const PageStandup = () => {
     updateSpeaker({ id: speakerId, payload: { projectId: destination } });
   };
 
-  const handleAddProject = () => {
-    if (!newProject) {
+  const projectForm = useForm();
+  const speakerForm = useForm();
+
+  const handleAddProject = (projectName) => {
+    if (!projectName) {
       return;
     }
-    addProject(newProject);
-    setNewProject('');
+    addProject(projectName);
+    projectForm?.setFieldsValues({ projectName: '' });
   };
 
-  const handleAddSpeaker = () => {
-    if (!newSpeaker) {
+  const handleAddSpeaker = (speakerName) => {
+    if (!speakerName) {
       return;
     }
-    addSpeaker({ name: newSpeaker, projectId: '0' });
-    setNewSpeaker('');
+    addSpeaker({ name: speakerName, projectId: '0' });
+    speakerForm?.setFieldsValues({ speakerName: '' });
   };
 
   return (
@@ -67,64 +76,120 @@ export const PageStandup = () => {
             <Loader />
           ) : (
             <Stack spacing={6}>
-              <Stack direction={{ base: 'column', md: 'row' }}>
-                <form
-                  noValidate
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    handleAddProject();
-                  }}
-                  style={{ flex: 1 }}
-                >
-                  <Stack direction="row">
-                    <Input
-                      value={newProject}
-                      onChange={(e) => setNewProject(e?.target?.value)}
-                      placeholder="Saisir le nom d'un projet"
-                      flex="2"
-                      color="gray.800"
-                    />
-                    <Button
-                      type="submit"
-                      variant="@primary"
-                      flex="1"
-                      isDisabled={isLoadingAddProject}
-                    >
-                      {isLoadingAddProject ? <Loader /> : 'Ajouter un projet'}
-                    </Button>
-                  </Stack>
-                </form>
-                <form
-                  noValidate
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    handleAddSpeaker();
-                  }}
-                  style={{ flex: 1 }}
-                >
-                  <Stack direction="row">
-                    <Input
-                      value={newSpeaker}
-                      onChange={(e) => setNewSpeaker(e?.target?.value)}
-                      placeholder="Saisir le nom d'une personne"
-                      flex="2"
-                      color="gray.800"
-                    />
-                    <Button
-                      type="submit"
-                      variant="@primary"
-                      flex="1"
-                      isDisabled={isLoadingAddSpeaker}
-                    >
-                      {isLoadingAddSpeaker ? (
-                        <Loader />
-                      ) : (
-                        'Ajouter une personne'
-                      )}
-                    </Button>
-                  </Stack>
-                </form>
-              </Stack>
+              <Accordion allowToggle>
+                <AccordionItem>
+                  <AccordionButton>
+                    <Box flex="1" textAlign="left">
+                      Ajouter un projet et/ou une personne
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                  <AccordionPanel>
+                    <Stack direction={{ base: 'column', md: 'row' }}>
+                      <Formiz
+                        connect={projectForm}
+                        onSubmit={(values: { projectName: string }) =>
+                          handleAddProject(values?.projectName)
+                        }
+                      >
+                        <form
+                          noValidate
+                          onSubmit={projectForm?.submit}
+                          style={{
+                            flex: 1,
+                          }}
+                        >
+                          <Stack
+                            direction={{
+                              base: 'column',
+                              sm: 'row',
+                              md: 'column',
+                              lg: 'row',
+                            }}
+                          >
+                            <FieldInput
+                              name="projectName"
+                              placeholder="Saisir le nom d'un projet"
+                              color="gray.800"
+                              size="sm"
+                              flex={{
+                                base: 1,
+                                sm: 2,
+                                md: 1,
+                                lg: 2,
+                              }}
+                            />
+                            <Button
+                              type="submit"
+                              variant="@primary"
+                              isDisabled={isLoadingAddProject}
+                              size="sm"
+                              flex={1}
+                              minH={8}
+                            >
+                              {isLoadingAddProject ? (
+                                <Loader />
+                              ) : (
+                                'Ajouter un projet'
+                              )}
+                            </Button>
+                          </Stack>
+                        </form>
+                      </Formiz>
+                      <Formiz
+                        connect={speakerForm}
+                        onSubmit={(values: { speakerName: string }) =>
+                          handleAddSpeaker(values?.speakerName)
+                        }
+                      >
+                        <form
+                          noValidate
+                          onSubmit={speakerForm?.submit}
+                          style={{
+                            flex: 1,
+                          }}
+                        >
+                          <Stack
+                            direction={{
+                              base: 'column',
+                              sm: 'row',
+                              md: 'column',
+                              lg: 'row',
+                            }}
+                          >
+                            <FieldInput
+                              name="speakerName"
+                              placeholder="Saisir le nom d'une personne"
+                              color="gray.800"
+                              size="sm"
+                              flex={{
+                                base: 1,
+                                sm: 2,
+                                md: 1,
+                                lg: 2,
+                              }}
+                            />
+                            <Button
+                              type="submit"
+                              variant="@primary"
+                              isDisabled={isLoadingAddSpeaker}
+                              size="sm"
+                              flex={1}
+                              minH={8}
+                            >
+                              {isLoadingAddSpeaker ? (
+                                <Loader />
+                              ) : (
+                                'Ajouter une personne'
+                              )}
+                            </Button>
+                          </Stack>
+                        </form>
+                      </Formiz>
+                    </Stack>
+                  </AccordionPanel>
+                </AccordionItem>
+              </Accordion>
               <SimpleGrid
                 columns={{ base: 1, sm: 2, md: 3, lg: 4, xl: 5 }}
                 spacing="2"

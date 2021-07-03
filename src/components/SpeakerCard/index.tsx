@@ -63,6 +63,7 @@ export const SpeakerCard: React.FC<SpeakerCardProps> = ({
           bg="gray.600"
           p={2}
           borderRadius="md"
+          opacity={isSpeaked && '0.5'}
           {...rest}
         >
           <Checkbox
