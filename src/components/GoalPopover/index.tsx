@@ -10,7 +10,6 @@ import {
   PopoverContent,
   PopoverContentProps,
   PopoverFooter,
-  PopoverHeader,
   PopoverTrigger,
   Stack,
   useDisclosure,
@@ -21,7 +20,7 @@ import { Goal } from '@/app/goals/goal.types';
 import { useSpeakers } from '@/app/standup/standup.firebase';
 
 import { FieldInput } from '../FieldInput';
-import { FieldSelect } from '../FieldSelect';
+import { FieldMultiSelect } from '../FieldMultiSelect';
 
 interface GoalPopoverProps extends Omit<PopoverContentProps, 'onSubmit'> {
   goal?: Goal;
@@ -45,7 +44,6 @@ export const GoalPopover: React.FC<GoalPopoverProps> = ({
   const handleSubmit = (values) => {
     onSubmit({
       ...values,
-      people: [values?.people],
     });
     onClose();
   };
@@ -72,23 +70,21 @@ export const GoalPopover: React.FC<GoalPopoverProps> = ({
           {...rest}
         >
           <PopoverArrow bg="gray.600" />
-          <PopoverCloseButton />
+          <PopoverCloseButton zIndex="10" />
           {isOpen && (
             <>
-              <PopoverHeader borderColor="transparent">
-                {goal ? 'Editer un objectif' : 'Créer un objectif'}
-              </PopoverHeader>
               <PopoverBody>
                 <Stack>
                   <FieldInput
                     name="description"
                     label="Description"
-                    color="gray.800"
+                    placeholder="Saisir la description de l'objectif"
                     ref={initialFocusRef}
                   />
-                  <FieldSelect
+                  <FieldMultiSelect
                     name="people"
                     label="Personnes concernées"
+                    placeholder="Sélectionner les personnes concernées"
                     options={peopleOptions}
                   />
                 </Stack>

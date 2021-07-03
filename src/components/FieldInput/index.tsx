@@ -40,7 +40,7 @@ export const FieldInput = forwardRef((props: FieldInputProps, ref) => {
     type,
     placeholder,
     helper,
-    size = 'md',
+    size = 'sm',
     ...rest
   } = otherProps;
   const { required } = props;
@@ -73,6 +73,7 @@ export const FieldInput = forwardRef((props: FieldInputProps, ref) => {
           onChange={(e) => setValue(e.target.value)}
           onBlur={() => setIsTouched(true)}
           placeholder={placeholder ? String(placeholder) : ''}
+          color="gray.800"
         />
 
         {type === 'password' && (

@@ -37,6 +37,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, ...rest }) => {
       bg="gray.600"
       p={3}
       borderRadius="md"
+      opacity={goal?.isComplete && '0.5'}
       {...rest}
     >
       <Checkbox
@@ -47,7 +48,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, ...rest }) => {
         onChange={handleCheckbox}
         pt={1}
       />
-      <Stack bg="gray.600" borderRadius="md" spacing={0}>
+      <Stack bg="gray.600" borderRadius="md" spacing={0} flex="1">
         <Text>{goal?.description}</Text>
         <Text as="span" fontWeight="bold" textAlign="end">
           {goal?.people?.join(' - ')}

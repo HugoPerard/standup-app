@@ -4,22 +4,21 @@ import { Stack } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 
 import { Loader, Page, PageContent } from '@/app/layout';
+import { DATE_FORMAT } from '@/app/shared/constants';
 import { GoalGroup } from '@/components/GoalGroup';
 
 import { Goal } from './goal.types';
 import { useGoals } from './goals.firebase';
 
-const DAY_FORMAT = 'DD-MM-YYYY';
-
 export const PageGoals = () => {
   const firstDayCurrentWeek = dayjs().startOf('week');
   const weekdays = [...Array(5)].map((_, index) =>
-    firstDayCurrentWeek?.add(index, 'day').format('DD-MM-YYYY')
+    firstDayCurrentWeek?.add(index, 'day').format(DATE_FORMAT)
   );
 
   const { data: goals, isLoading: isLoadingGoals } = useGoals();
   const pastGoals = goals?.filter((goal) =>
-    dayjs(goal?.date)?.isBefore(firstDayCurrentWeek)
+    dayjs(goal?.date, DATE_FORMAT)?.isBefore(firstDayCurrentWeek)
   );
 
   const groupByDay = (goals: Goal[]): { date: string; goals: Goal[] }[] => {
@@ -38,7 +37,7 @@ export const PageGoals = () => {
         }
       }, [])
       ?.sort(({ date }, { date: otherDate }) =>
-        dayjs(date, DAY_FORMAT).isAfter(dayjs(otherDate, DAY_FORMAT)) ? 1 : -1
+        dayjs(date, DATE_FORMAT).isAfter(dayjs(otherDate, DATE_FORMAT)) ? 1 : -1
       );
   };
 
@@ -55,7 +54,7 @@ export const PageGoals = () => {
           {weekdays.map((date) => (
             <GoalGroup
               key={date}
-              name={dayjs(date, 'DD-MM-YYYY').format('dddd D MMMM')}
+              name={dayjs(date, DATE_FORMAT).format('dddd D MMMM')}
               date={date}
               goals={
                 groupedGoals?.find((goalsGroup) => goalsGroup?.date === date)

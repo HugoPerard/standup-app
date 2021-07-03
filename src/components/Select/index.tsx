@@ -141,17 +141,18 @@ export const Select = forwardRef<HTMLElement, Props>((props, ref) => {
     })),
     ...getComponentStyles('option', ({ isFocused, isSelected }) => ({
       fontSize: fieldFontSize,
+      color: theme.colors.gray['800'],
       ':active': {
-        backgroundColor: theme.colors.brand['100'],
+        backgroundColor: theme.colors.gray['100'],
       },
       ...getConditionalStyles(isFocused, {
         backgroundColor: theme.colors.gray['100'],
         color: theme.colors.gray['600'],
       }),
       ...getConditionalStyles(isSelected, {
-        backgroundColor: theme.colors.brand['50'],
+        backgroundColor: theme.colors.gray['50'],
         color: theme.colors.gray['700'],
-        borderLeft: `2px solid ${theme.colors.brand['600']}`,
+        borderLeft: `2px solid ${theme.colors.gray['600']}`,
       }),
       ...getConditionalStyles(isFocused && isSelected, {
         backgroundColor: theme.colors.gray['100'],
@@ -170,10 +171,10 @@ export const Select = forwardRef<HTMLElement, Props>((props, ref) => {
       height: `calc(${fieldHeight} - 2px)`,
     })),
     ...getComponentStyles('multiValue', () => ({
-      backgroundColor: theme.colors.brand['100'],
+      backgroundColor: theme.colors.gray['300'],
     })),
     ...getComponentStyles('multiValueLabel', () => ({
-      color: theme.colors.brand['800'],
+      color: theme.colors.gray['800'],
       fontWeight: 'bold',
     })),
     ...getComponentStyles('multiValueRemove', () => ({

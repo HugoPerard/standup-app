@@ -57,7 +57,7 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
                 onSubmit={(value) =>
                   addSpeaker({ name: value, projectId: project?.id })
                 }
-                title="Ajouter une personne"
+                label="Nom"
                 submitLabel="Ajouter une personne"
                 placeholder="Saisir le nom d'une personne"
               >

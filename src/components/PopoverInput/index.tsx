@@ -10,7 +10,6 @@ import {
   PopoverContent,
   PopoverContentProps,
   PopoverFooter,
-  PopoverHeader,
   PopoverTrigger,
   useDisclosure,
 } from '@chakra-ui/react';
@@ -20,7 +19,7 @@ import { FieldInput } from '../FieldInput';
 
 interface PopoverInputProps extends Omit<PopoverContentProps, 'onSubmit'> {
   onSubmit(value: string): void;
-  title: string;
+  label: string;
   submitLabel: string;
   placeholder: string;
 }
@@ -28,7 +27,7 @@ interface PopoverInputProps extends Omit<PopoverContentProps, 'onSubmit'> {
 export const PopoverInput: React.FC<PopoverInputProps> = ({
   children,
   onSubmit = () => {},
-  title = '',
+  label,
   submitLabel = 'Valider',
   placeholder = 'Saisir...',
   ...rest
@@ -62,15 +61,14 @@ export const PopoverInput: React.FC<PopoverInputProps> = ({
           {...rest}
         >
           <PopoverArrow bg="gray.600" />
-          <PopoverCloseButton />
+          <PopoverCloseButton zIndex="10" />
           {isOpen && (
             <>
-              <PopoverHeader borderColor="transparent">{title}</PopoverHeader>
               <PopoverBody>
                 <FieldInput
                   name="input"
+                  label={label}
                   placeholder={placeholder}
-                  color="gray.800"
                   ref={initialFocusRef}
                 />
               </PopoverBody>

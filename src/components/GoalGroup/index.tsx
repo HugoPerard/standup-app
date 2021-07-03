@@ -11,6 +11,7 @@ import { FiPlus } from 'react-icons/fi';
 
 import { Goal } from '@/app/goals/goal.types';
 import { useGoalAdd } from '@/app/goals/goals.firebase';
+import { DATE_FORMAT } from '@/app/shared/constants';
 
 import { EmptyGoalCard, GoalCard } from '../GoalCard';
 import { GoalPopover } from '../GoalPopover';
@@ -28,7 +29,7 @@ export const GoalGroup: React.FC<GoalGroupProps> = ({
   ...rest
 }) => {
   const { mutate: addGoal } = useGoalAdd();
-  const isToday = dayjs()?.format('DD-MM-YYYY') === date;
+  const isToday = dayjs()?.format(DATE_FORMAT) === date;
 
   return (
     <Stack
@@ -63,11 +64,11 @@ export const GoalGroup: React.FC<GoalGroupProps> = ({
           </GoalPopover>
         )}
       </Stack>
-      <SimpleGrid columns={2} spacing={2}>
+      <SimpleGrid columns={{ base: 1, sm: 2, lg: 3 }} spacing={2}>
         {goals?.length > 0 ? (
           goals?.map((goal) => <GoalCard key={goal?.id} goal={goal} />)
         ) : (
-          <GridItem colSpan={2}>
+          <GridItem colSpan={3}>
             <EmptyGoalCard>Aucun objectif</EmptyGoalCard>
           </GridItem>
         )}
