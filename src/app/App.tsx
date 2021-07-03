@@ -9,6 +9,7 @@ import { Error404, ErrorBoundary } from '@/errors';
 
 import { PageGoals } from './goals/PageGoals';
 import { PageStandup } from './standup/PageStandup';
+import { PageThanks } from './thanks/PageThanks';
 
 export const App = () => {
   return (
@@ -25,6 +26,7 @@ export const App = () => {
 
               <Route path="/standup" render={() => <PageStandup />} />
               <Route path="/objectifs" render={() => <PageGoals />} />
+              <Route path="/remerciements" render={() => <PageThanks />} />
 
               <RoutePublic path="*" render={() => <Error404 />} />
             </Switch>

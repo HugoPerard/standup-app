@@ -61,6 +61,7 @@ export const MainMenu = ({ ...rest }) => {
     <Stack direction="row" spacing="1" {...rest}>
       <MainMenuItem to="/objectifs">Objectifs</MainMenuItem>
       <MainMenuItem to="/standup">StandUp</MainMenuItem>
+      <MainMenuItem to="/remerciements">Remerciements</MainMenuItem>
     </Stack>
   );
 };

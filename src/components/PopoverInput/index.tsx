@@ -20,8 +20,8 @@ import { FieldInput } from '../FieldInput';
 interface PopoverInputProps extends Omit<PopoverContentProps, 'onSubmit'> {
   onSubmit(value: string): void;
   label: string;
-  submitLabel: string;
-  placeholder: string;
+  submitLabel?: string;
+  placeholder?: string;
 }
 
 export const PopoverInput: React.FC<PopoverInputProps> = ({
