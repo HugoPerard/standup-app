@@ -4,18 +4,18 @@ import { FiPlus } from 'react-icons/fi';
 import { useThankAdd } from '@/app/thanks/thanks.firebase';
 import { Thank } from '@/app/thanks/thanks.types';
 
-import { PopoverInput } from '../PopoverInput';
-
 interface ThankGroupProps extends StackProps {
   name: string;
   thanks: Thank[];
   type: 'THANK' | 'TO_ADD';
+  author: string;
 }
 
 export const ThankGroup: React.FC<ThankGroupProps> = ({
   name,
   thanks,
   type,
+  author,
   ...rest
 }) => {
   const { mutate: addThank } = useThankAdd();
@@ -31,17 +31,15 @@ export const ThankGroup: React.FC<ThankGroupProps> = ({
         <Text fontWeight="bold" mb={1} flex="1">
           {name}
         </Text>
-        <PopoverInput
-          onSubmit={(value) => addThank({ author: value, type })}
-          label="C'est qui lô"
-        >
-          <IconButton
-            aria-label="Ajouter un objectif"
-            icon={<FiPlus />}
-            variant="@primary"
-            size="sm"
-          />
-        </PopoverInput>
+        <IconButton
+          aria-label="Ajouter un objectif"
+          icon={<FiPlus />}
+          variant="@primary"
+          size="sm"
+          onClick={() => {
+            addThank({ author, type });
+          }}
+        />
       </Stack>
       <Stack>
         {thanks?.map((thank) => (

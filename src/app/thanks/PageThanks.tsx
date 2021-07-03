@@ -1,7 +1,8 @@
 import React from 'react';
+import { useState } from 'react';
 
 import { Stack } from '@chakra-ui/layout';
-import { Button, SimpleGrid } from '@chakra-ui/react';
+import { Button, Input, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 
 import { Loader, Page, PageContent } from '@/app/layout';
@@ -34,6 +35,14 @@ export const PageThanks = () => {
 
   const { mutate: clearAllThanks } = useThanksDelete();
 
+  const handleSaveName = () => {
+    window.localStorage.setItem('Thank_author', authorName);
+  };
+
+  const [authorName, setAuthorName] = useState(
+    window.localStorage.getItem('Thank_author')
+  );
+
   return (
     <Page containerSize="full" bg="gray.800">
       <PageContent color="gray.200">
@@ -41,9 +50,34 @@ export const PageThanks = () => {
           <Loader />
         ) : (
           <Stack spacing={6}>
-            <Button variant="@primary" onClick={() => clearAllThanks()}>
-              Clear
-            </Button>
+            <Stack
+              direction={{ base: 'column', sm: 'row' }}
+              alignItems="flex-end"
+            >
+              <Stack flex="2">
+                <Text fontSize="sm">C'est qui lô</Text>
+                <Input
+                  color="gray.800"
+                  value={authorName || ''}
+                  onChange={(e) => setAuthorName(e?.target?.value)}
+                />
+              </Stack>
+              <Button
+                variant="@primary"
+                onClick={() => handleSaveName()}
+                flex="1"
+              >
+                Sauvegarder
+              </Button>
+              <Spacer flex="2" />
+              <Button
+                variant="@primary"
+                onClick={() => clearAllThanks()}
+                flex="1"
+              >
+                Clear
+              </Button>
+            </Stack>
             <SimpleGrid columns={{ base: 1, sm: 2 }} spacing="2">
               <ThankGroup
                 name="Choses à ajouter"
@@ -51,6 +85,7 @@ export const PageThanks = () => {
                   (thank) => thank?.type === 'TO_ADD'
                 )}
                 type="TO_ADD"
+                author={authorName}
               />
               <ThankGroup
                 name="Remerciements"
@@ -58,6 +93,7 @@ export const PageThanks = () => {
                   (thank) => thank?.type === 'THANK'
                 )}
                 type="THANK"
+                author={authorName}
               />
             </SimpleGrid>
           </Stack>
