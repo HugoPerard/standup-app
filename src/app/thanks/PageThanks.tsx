@@ -2,7 +2,14 @@ import React from 'react';
 import { useState } from 'react';
 
 import { Stack } from '@chakra-ui/layout';
-import { Button, Input, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
+import {
+  Button,
+  ButtonGroup,
+  Input,
+  SimpleGrid,
+  Spacer,
+  Text,
+} from '@chakra-ui/react';
 import dayjs from 'dayjs';
 
 import { Loader, Page, PageContent } from '@/app/layout';
@@ -12,7 +19,11 @@ import { DATE_COMPLETE_FORMAT } from '../shared/constants';
 import { useThanks, useThanksDelete } from './thanks.firebase';
 
 export const PageThanks = () => {
-  const { data: thanks, isLoading: isLoadingThanks } = useThanks();
+  const {
+    data: thanks,
+    isLoading: isLoadingThanks,
+    refetch: refetchThanks,
+  } = useThanks();
   const sortedThanks = thanks?.sort((a, b) => {
     if (
       dayjs(a?.date, DATE_COMPLETE_FORMAT)?.isBefore(
@@ -74,15 +85,26 @@ export const PageThanks = () => {
                 Sauvegarder
               </Button>
               <Spacer flex="2" />
-              <Button
-                variant="@primary"
-                onClick={() => clearAllThanks()}
-                flex="1"
-                minH={8}
-                isDisabled={isLoadingClearAllThanks}
-              >
-                Clear
-              </Button>
+              <ButtonGroup>
+                <Button
+                  variant="@primary"
+                  onClick={() => refetchThanks()}
+                  flex="1"
+                  minH={8}
+                  isDisabled={isLoadingClearAllThanks}
+                >
+                  Refresh
+                </Button>
+                <Button
+                  variant="@primary"
+                  onClick={() => clearAllThanks()}
+                  flex="1"
+                  minH={8}
+                  isDisabled={isLoadingClearAllThanks}
+                >
+                  Clear
+                </Button>
+              </ButtonGroup>
             </Stack>
             <SimpleGrid columns={{ base: 1, sm: 2 }} spacing="2">
               <ThankGroup

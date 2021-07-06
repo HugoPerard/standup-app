@@ -1,7 +1,7 @@
-import { IconButton, Stack, StackProps, Text } from '@chakra-ui/react';
-import { FiPlus } from 'react-icons/fi';
+import { HStack, IconButton, Stack, StackProps, Text } from '@chakra-ui/react';
+import { FiPlus, FiTrash2 } from 'react-icons/fi';
 
-import { useThankAdd } from '@/app/thanks/thanks.firebase';
+import { useThankAdd, useThankDelete } from '@/app/thanks/thanks.firebase';
 import { Thank } from '@/app/thanks/thanks.types';
 
 interface ThankGroupProps extends StackProps {
@@ -19,6 +19,7 @@ export const ThankGroup: React.FC<ThankGroupProps> = ({
   ...rest
 }) => {
   const { mutate: addThank } = useThankAdd();
+  const { mutate: deleteThank } = useThankDelete();
 
   return (
     <Stack bg="gray.700" p={3} borderRadius="md" {...rest}>
@@ -37,13 +38,24 @@ export const ThankGroup: React.FC<ThankGroupProps> = ({
           variant="@primary"
           size="sm"
           onClick={() => {
-            addThank({ author, type });
+            if (author) addThank({ author, type });
           }}
         />
       </Stack>
       <Stack>
         {thanks?.map((thank) => (
-          <Text key={thank?.id}>{thank?.author}</Text>
+          <HStack>
+            <IconButton
+              aria-label="Supprimer l'objectif"
+              icon={<FiTrash2 />}
+              variant="@primary"
+              size="sm"
+              onClick={() => {
+                deleteThank(thank?.id);
+              }}
+            />
+            <Text key={thank?.id}>{thank?.author}</Text>
+          </HStack>
         ))}
       </Stack>
     </Stack>
