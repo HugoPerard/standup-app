@@ -7,12 +7,14 @@ import {
   Menu,
   MenuButton,
   MenuList,
+  Portal,
   Stack,
   StackProps,
   Text,
 } from '@chakra-ui/react';
 import { Draggable } from 'react-beautiful-dnd';
 import { BsThreeDotsVertical } from 'react-icons/bs';
+import { FiTrash, FiWatch } from 'react-icons/fi';
 import { useStopwatch } from 'react-timer-hook';
 
 import { useSpeakerDelete } from '@/app/standup/standup.firebase';
@@ -93,23 +95,27 @@ export const SpeakerCard: React.FC<SpeakerCardProps> = ({
               variant="@primary"
               size="xs"
             />
-            <MenuList color="gray.700" bg="gray.200">
-              <MenuItem
-                _hover={{ bg: 'gray.300' }}
-                _focus={{ bg: 'gray.400' }}
-                onClick={() => resetStopwatch()}
-              >
-                Réinitialiser
-              </MenuItem>
-              <ConfirmMenuItem
-                _hover={{ bg: 'gray.300' }}
-                _focus={{ bg: 'gray.400' }}
-                confirmContent="Confirmer la suppression"
-                onClick={() => deleteSpeaker(speaker?.id)}
-              >
-                Supprimer
-              </ConfirmMenuItem>
-            </MenuList>
+            <Portal>
+              <MenuList color="gray.700" bg="gray.200">
+                <MenuItem
+                  _hover={{ bg: 'gray.300' }}
+                  _focus={{ bg: 'gray.400' }}
+                  icon={<FiWatch />}
+                  onClick={() => resetStopwatch()}
+                >
+                  Réinitialiser
+                </MenuItem>
+                <ConfirmMenuItem
+                  _hover={{ bg: 'gray.300' }}
+                  _focus={{ bg: 'gray.400' }}
+                  icon={<FiTrash />}
+                  confirmContent="Confirmer la suppression"
+                  onClick={() => deleteSpeaker(speaker?.id)}
+                >
+                  Supprimer
+                </ConfirmMenuItem>
+              </MenuList>
+            </Portal>
           </Menu>
         </Stack>
       )}

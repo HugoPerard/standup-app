@@ -29,6 +29,13 @@ yarn install
 yarn build
 ```
 
+## Setup
+
+Go to the [Firebase Console](https://console.firebase.google.com/) and create a
+project.
+Get all the credentials and put them in the `.env` file. An example is available
+in the `.env.example` file.
+
 ## Development
 
 ```bash
