@@ -5,3 +5,5 @@ export * from './Loader';
 export * from './MainMenu';
 export * from './TopBar';
 export * from './Page';
+export * from './AccountMenu';
+export * from './NavDrawer';

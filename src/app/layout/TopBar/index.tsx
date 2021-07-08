@@ -11,8 +11,12 @@ import {
 import { FiMenu } from 'react-icons/fi';
 import { Link as RouterLink } from 'react-router-dom';
 
-import { MainMenu, useLayoutContext } from '@/app/layout';
-import { NavDrawer } from '@/app/layout/NavDrawer';
+import {
+  AccountMenu,
+  MainMenu,
+  NavDrawer,
+  useLayoutContext,
+} from '@/app/layout';
 import { Logo } from '@/components';
 
 const MenuButton = (props) => {
@@ -61,6 +65,7 @@ export const TopBar = () => {
             <Logo color="gray.500" h="1rem" />
           </Box>
           <MainMenu mr="auto" ml="4" display={{ base: 'none', md: 'flex' }} />
+          <AccountMenu />
         </Flex>
       </SlideFade>
       <Box h={theme.layout.topBar.height} />
