@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import {
   Avatar,
@@ -17,8 +17,8 @@ import { FaGoogle } from 'react-icons/fa';
 import { FiCheck, FiCopy, FiLogOut } from 'react-icons/fi';
 
 import appBuild from '@/../app-build.json';
+import { useAuth } from '@/app/auth/useAuth';
 import { Icon } from '@/components';
-import firebase, { googleAuthProvider } from '@/firebase';
 
 const AppVersion = ({ ...rest }) => {
   const { hasCopied, onCopy } = useClipboard(JSON.stringify(appBuild, null, 2));
@@ -77,27 +77,15 @@ const AppVersion = ({ ...rest }) => {
 };
 
 export const AccountMenu = ({ ...rest }) => {
-  const signInWithGoogle = () => {
-    firebase.auth().signInWithPopup(googleAuthProvider);
-  };
-
-  const signOut = () => {
-    firebase.auth().signOut();
-  };
+  const { signInWithGoogle, signOut, onAuthStateChanged } = useAuth();
 
   const [user, setUser] = useState(null);
 
+  const onAuthStateChangedRef = useRef<any>();
+  onAuthStateChangedRef.current = onAuthStateChanged;
+
   useEffect(() => {
-    firebase.auth().onAuthStateChanged((authUser) => {
-      if (!authUser) {
-        setUser(null);
-      } else {
-        setUser({
-          username: authUser.displayName,
-          photoUrl: authUser.photoURL,
-        });
-      }
-    });
+    onAuthStateChangedRef.current(setUser);
   }, []);
 
   if (!user) {
