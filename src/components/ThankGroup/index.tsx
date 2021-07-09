@@ -1,6 +1,7 @@
 import { HStack, IconButton, Stack, StackProps, Text } from '@chakra-ui/react';
 import { FiPlus, FiTrash2 } from 'react-icons/fi';
 
+import { useAuth } from '@/app/auth/useAuth';
 import { useThankAdd, useThankDelete } from '@/app/thanks/thanks.firebase';
 import { Thank } from '@/app/thanks/thanks.types';
 
@@ -8,16 +9,17 @@ interface ThankGroupProps extends StackProps {
   name: string;
   thanks: Thank[];
   type: 'THANK' | 'TO_ADD';
-  author: string;
 }
 
 export const ThankGroup: React.FC<ThankGroupProps> = ({
   name,
   thanks,
   type,
-  author,
   ...rest
 }) => {
+  const { currentUser } = useAuth();
+  const username = currentUser.displayName;
+
   const { mutate: addThank } = useThankAdd();
   const { mutate: deleteThank } = useThankDelete();
 
@@ -37,14 +39,15 @@ export const ThankGroup: React.FC<ThankGroupProps> = ({
           icon={<FiPlus />}
           variant="@primary"
           size="sm"
+          isDisabled={!username}
           onClick={() => {
-            if (author) addThank({ author, type });
+            if (username) addThank({ author: username, type });
           }}
         />
       </Stack>
       <Stack>
         {thanks?.map((thank) => (
-          <HStack>
+          <HStack key={thank?.id}>
             <IconButton
               aria-label="Supprimer l'objectif"
               icon={<FiTrash2 />}
