@@ -7,6 +7,7 @@ import { Layout, Loader } from '@/app/layout';
 import { Route, RoutePublic } from '@/app/router';
 import { Error404, ErrorBoundary } from '@/errors';
 
+import { PageCRA } from './cra/PageCRA';
 import { PageGoals } from './goals/PageGoals';
 import { PageStandup } from './standup/PageStandup';
 import { PageThanks } from './thanks/PageThanks';
@@ -27,6 +28,7 @@ export const App = () => {
               <Route path="/standup" render={() => <PageStandup />} />
               <Route path="/objectifs" render={() => <PageGoals />} />
               <Route path="/remerciements" render={() => <PageThanks />} />
+              <Route path="/cra" render={() => <PageCRA />} />
 
               <RoutePublic path="*" render={() => <Error404 />} />
             </Switch>

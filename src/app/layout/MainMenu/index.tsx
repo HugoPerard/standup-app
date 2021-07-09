@@ -62,6 +62,7 @@ export const MainMenu = ({ ...rest }) => {
       <MainMenuItem to="/objectifs">Objectifs</MainMenuItem>
       <MainMenuItem to="/standup">StandUp</MainMenuItem>
       <MainMenuItem to="/remerciements">Remerciements</MainMenuItem>
+      <MainMenuItem to="/cra">CRA</MainMenuItem>
     </Stack>
   );
 };
