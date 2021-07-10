@@ -9,7 +9,6 @@ import {
 
 import firebase from '@/firebase';
 
-import { DATE_COMPLETE_FORMAT } from '../shared/constants';
 import { Thank } from './thanks.types';
 
 const thanksCollectionRef = firebase?.firestore?.()?.collection('thanks');
@@ -31,7 +30,7 @@ export const useThanks = (config: UseQueryOptions<Thank[]> = {}) => {
 const addThank = (author: string, type: string): any => {
   return thanksCollectionRef?.add({
     author,
-    date: dayjs()?.format(DATE_COMPLETE_FORMAT),
+    date: dayjs()?.unix(),
     type,
   });
 };
