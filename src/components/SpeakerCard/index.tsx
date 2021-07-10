@@ -20,7 +20,7 @@ import { useStopwatch } from 'react-timer-hook';
 
 import { useSpeakerDelete } from '@/app/standup/standup.firebase';
 import { Speaker } from '@/app/standup/standup.types';
-import { ConfirmMenuItem, MenuItem } from '@/components';
+import { ConfirmMenuItem, MenuItem, useToastSuccess } from '@/components';
 
 interface SpeakerCardProps extends StackProps {
   speaker: Speaker;
@@ -31,6 +31,8 @@ export const SpeakerCard: React.FC<SpeakerCardProps> = ({
   speaker,
   ...rest
 }) => {
+  const toastSuccess = useToastSuccess();
+
   const { seconds, minutes, isRunning, start, pause, reset } = useStopwatch({
     autoStart: false,
   });
@@ -52,6 +54,13 @@ export const SpeakerCard: React.FC<SpeakerCardProps> = ({
   };
 
   const { mutate: deleteSpeaker } = useSpeakerDelete();
+
+  const handleDeleteSpeaker = () => {
+    deleteSpeaker(speaker?.id, {
+      onSuccess: async () =>
+        toastSuccess({ title: 'La personne a été supprimé avec succès' }),
+    });
+  };
 
   return (
     <Draggable draggableId={`draggable-${speaker?.id}`} index={speaker?.index}>
@@ -118,7 +127,7 @@ export const SpeakerCard: React.FC<SpeakerCardProps> = ({
                   _focus={{ bg: 'gray.400' }}
                   icon={<FiTrash />}
                   confirmContent="Confirmer la suppression"
-                  onClick={() => deleteSpeaker(speaker?.id)}
+                  onClick={() => handleDeleteSpeaker()}
                 >
                   Supprimer
                 </ConfirmMenuItem>

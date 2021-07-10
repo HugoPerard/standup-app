@@ -4,6 +4,7 @@ import { FiPlus, FiTrash2 } from 'react-icons/fi';
 import { useAuth } from '@/app/auth/useAuth';
 import { useThankAdd, useThankDelete } from '@/app/thanks/thanks.firebase';
 import { Thank } from '@/app/thanks/thanks.types';
+import { useToastSuccess } from '@/components';
 
 interface ThankGroupProps extends StackProps {
   name: string;
@@ -17,11 +18,29 @@ export const ThankGroup: React.FC<ThankGroupProps> = ({
   type,
   ...rest
 }) => {
+  const toastSuccess = useToastSuccess();
+
   const { currentUser } = useAuth();
   const username = currentUser.displayName;
 
   const { mutate: addThank } = useThankAdd();
   const { mutate: deleteThank } = useThankDelete();
+
+  const handleAddThank = () => {
+    if (username)
+      addThank(
+        { author: username, type },
+        {
+          onSuccess: () => {
+            toastSuccess({
+              title: `${
+                type === 'THANK' ? 'Remerciement' : 'Chose à ajouter'
+              } ajouté avec succès`,
+            });
+          },
+        }
+      );
+  };
 
   return (
     <Stack bg="gray.700" p={3} borderRadius="md" {...rest}>
@@ -41,7 +60,7 @@ export const ThankGroup: React.FC<ThankGroupProps> = ({
           size="sm"
           isDisabled={!username}
           onClick={() => {
-            if (username) addThank({ author: username, type });
+            handleAddThank();
           }}
         />
       </Stack>

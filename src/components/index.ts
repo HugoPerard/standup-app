@@ -19,3 +19,8 @@ export * from './Toast';
 export * from './Viewport';
 export * from './TextCurrency';
 export * from './InputCurrency';
+export * from './PopoverInput';
+export * from './SpeakerCard';
+export * from './SpeakerGroup';
+export * from './GoalCard';
+export * from './GoalPopover';

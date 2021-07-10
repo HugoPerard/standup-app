@@ -15,8 +15,7 @@ import { Formiz, useForm } from '@formiz/core';
 import { DragDropContext } from 'react-beautiful-dnd';
 
 import { Loader, Page, PageContent } from '@/app/layout';
-import { FieldInput } from '@/components';
-import { SpeakerGroup } from '@/components/SpeakerGroup';
+import { FieldInput, useToastSuccess, SpeakerGroup } from '@/components';
 
 import {
   useProjects,
@@ -27,6 +26,7 @@ import {
 
 export const PageStandup = () => {
   const { data: projects, isLoading: isLoadingProjects } = useProjects();
+  const toastSuccess = useToastSuccess();
 
   const isLoading = isLoadingProjects;
 
@@ -46,7 +46,14 @@ export const PageStandup = () => {
     const speakerId = e?.draggableId?.split('draggable-')[1];
     const destination = e?.destination?.droppableId?.split('droppable-')[1];
 
-    updateSpeaker({ id: speakerId, payload: { projectId: destination } });
+    updateSpeaker(
+      { id: speakerId, payload: { projectId: destination } },
+      {
+        onSuccess: () => {
+          toastSuccess({ title: 'La personne a été déplacée avec succès' });
+        },
+      }
+    );
   };
 
   const projectForm = useForm();
@@ -56,7 +63,11 @@ export const PageStandup = () => {
     if (!projectName) {
       return;
     }
-    addProject(projectName);
+    addProject(projectName, {
+      onSuccess: () => {
+        toastSuccess({ title: 'Le projet a été créé avec succès' });
+      },
+    });
     projectForm?.setFieldsValues({ projectName: '' });
   };
 
@@ -64,7 +75,14 @@ export const PageStandup = () => {
     if (!speakerName) {
       return;
     }
-    addSpeaker({ name: speakerName, projectId: '0' });
+    addSpeaker(
+      { name: speakerName, projectId: '0' },
+      {
+        onSuccess: () => {
+          toastSuccess({ title: 'Une personne a été créé avec succès' });
+        },
+      }
+    );
     speakerForm?.setFieldsValues({ speakerName: '' });
   };
 

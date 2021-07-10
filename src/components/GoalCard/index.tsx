@@ -16,14 +16,15 @@ import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 
 import { Goal } from '@/app/goals/goal.types';
 import { useGoalDelete, useGoalUpdate } from '@/app/goals/goals.firebase';
-
-import { ConfirmMenuItem } from '../ConfirmMenuItem';
+import { ConfirmMenuItem, useToastSuccess } from '@/components';
 
 interface GoalCardProps extends StackProps {
   goal: Goal;
 }
 
 export const GoalCard: React.FC<GoalCardProps> = ({ goal, ...rest }) => {
+  const toastSuccess = useToastSuccess();
+
   const { mutate: deleteGoal } = useGoalDelete();
   const { mutate: updateGoal, isLoading: isLoadingUpdate } = useGoalUpdate();
 
@@ -78,7 +79,14 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, ...rest }) => {
               _focus={{ bg: 'gray.400' }}
               confirmContent="Confirmer la suppression"
               icon={<FiTrash2 />}
-              onClick={() => deleteGoal(goal?.id)}
+              onClick={() =>
+                deleteGoal(goal?.id, {
+                  onSuccess: async () =>
+                    toastSuccess({
+                      title: "L'objectif a été supprimé avec succès",
+                    }),
+                })
+              }
             >
               Supprimer
             </ConfirmMenuItem>
