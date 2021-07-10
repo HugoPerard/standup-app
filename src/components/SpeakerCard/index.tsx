@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import {
+  Flex,
   Center,
   Checkbox,
   IconButton,
@@ -68,11 +69,18 @@ export const SpeakerCard: React.FC<SpeakerCardProps> = ({
           opacity={isSpeaked && '0.5'}
           {...rest}
         >
-          <Checkbox
-            colorScheme="blackAlpha"
-            isIndeterminate={isRunning}
-            isChecked={isSpeaked}
-          />
+          <Flex
+            onClick={() => {
+              pause();
+              setIsSpeaked(true);
+            }}
+          >
+            <Checkbox
+              colorScheme="blackAlpha"
+              isIndeterminate={isRunning}
+              isChecked={isSpeaked}
+            />
+          </Flex>
           <Stack
             onClick={controlStopWatch}
             direction="row"
