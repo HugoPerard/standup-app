@@ -42,7 +42,11 @@ export const useProjectAdd = (
   });
 };
 
-const deleteProject = (id: string): any => {
+const deleteProject = async (id: string): Promise<any> => {
+  const snapshot = await speakersCollectionRef
+    .where('projectId', '==', id)
+    .get();
+  snapshot.docs.map((doc) => updateSpeaker(doc?.id, { projectId: '0' }));
   return projectsCollectionRef?.doc(id).delete();
 };
 
@@ -53,7 +57,7 @@ export const useProjectDelete = (
   return useMutation((id) => deleteProject(id), {
     ...config,
     onSuccess: () => {
-      queryCache.invalidateQueries('projects');
+      queryCache.invalidateQueries(['projects', 'speakers']);
     },
   });
 };
@@ -64,7 +68,6 @@ const getSpeakers = async (projectId = null): Promise<any> => {
   const snapshot = projectId
     ? await speakersCollectionRef.where('projectId', '==', projectId).get()
     : await speakersCollectionRef.get();
-  // const snapshot = await speakersCollectionRef.get();
   return snapshot.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
@@ -85,7 +88,7 @@ export const useSpeakers = (
 };
 
 const addSpeaker = (payload: Speaker): any => {
-  return speakersCollectionRef?.add(payload);
+  return speakersCollectionRef?.add({ ...payload, index: 0 });
 };
 
 export const useSpeakerAdd = (

@@ -12,9 +12,12 @@ import { FiPlus } from 'react-icons/fi';
 import { Goal } from '@/app/goals/goal.types';
 import { useGoalAdd } from '@/app/goals/goals.firebase';
 import { DATE_FORMAT } from '@/app/shared/constants';
-
-import { EmptyGoalCard, GoalCard } from '../GoalCard';
-import { GoalPopover } from '../GoalPopover';
+import {
+  EmptyGoalCard,
+  GoalCard,
+  GoalPopover,
+  useToastSuccess,
+} from '@/components';
 
 interface GoalGroupProps extends StackProps {
   name: string;
@@ -28,6 +31,8 @@ export const GoalGroup: React.FC<GoalGroupProps> = ({
   goals,
   ...rest
 }) => {
+  const toastSuccess = useToastSuccess();
+
   const { mutate: addGoal } = useGoalAdd();
   const isToday = dayjs()?.format(DATE_FORMAT) === date;
 
@@ -52,7 +57,15 @@ export const GoalGroup: React.FC<GoalGroupProps> = ({
         {date && (
           <GoalPopover
             onSubmit={(values) =>
-              addGoal({ ...values, date, isComplete: false })
+              addGoal(
+                { ...values, date, isComplete: false },
+                {
+                  onSuccess: async () =>
+                    toastSuccess({
+                      title: "L'objectif a été ajouté avec succès",
+                    }),
+                }
+              )
             }
           >
             <IconButton

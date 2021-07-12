@@ -16,9 +16,12 @@ import {
   useSpeakers,
 } from '@/app/standup/standup.firebase';
 import { Project } from '@/app/standup/standup.types';
-
-import { PopoverInput } from '../PopoverInput';
-import { EmptySpeakerCard, SpeakerCard } from '../SpeakerCard';
+import {
+  EmptySpeakerCard,
+  SpeakerCard,
+  PopoverInput,
+  useToastSuccess,
+} from '@/components';
 
 interface SpeakerGroupProps extends StackProps {
   project: Project;
@@ -28,6 +31,8 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
   project,
   ...rest
 }) => {
+  const toastSuccess = useToastSuccess();
+
   const { mutate: deleteProject } = useProjectDelete();
   const { mutate: addSpeaker } = useSpeakerAdd();
 
@@ -36,6 +41,23 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
     isLoading: isLoadingSpeakers,
     isError: isErrorSpeakers,
   } = useSpeakers(project?.id);
+
+  const handleAddSpeaker = (value) => {
+    addSpeaker(
+      { name: value, projectId: project?.id },
+      {
+        onSuccess: async () =>
+          toastSuccess({ title: 'La personne a été crée avec succès' }),
+      }
+    );
+  };
+
+  const handleDeleteProject = () => {
+    deleteProject(project?.id, {
+      onSuccess: async () =>
+        toastSuccess({ title: 'Le projet a été supprimé avec succès' }),
+    });
+  };
 
   return (
     <Droppable droppableId={`droppable-${project?.id}`}>
@@ -54,9 +76,7 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
             </Text>
             <ButtonGroup spacing={1}>
               <PopoverInput
-                onSubmit={(value) =>
-                  addSpeaker({ name: value, projectId: project?.id })
-                }
+                onSubmit={(value) => handleAddSpeaker(value)}
                 label="Nom"
                 submitLabel="Ajouter une personne"
                 placeholder="Saisir le nom d'une personne"
@@ -70,7 +90,7 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
               </PopoverInput>
               <IconButton
                 aria-label="Supprimer"
-                onClick={() => deleteProject(project?.id)}
+                onClick={() => handleDeleteProject()}
                 icon={<FiTrash2 />}
                 variant="@primary"
                 size="sm"

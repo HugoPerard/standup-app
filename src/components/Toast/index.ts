@@ -3,7 +3,7 @@ import { useToast, UseToastOptions } from '@chakra-ui/react';
 export const toastDefaultConfig: UseToastOptions = {
   duration: 3000,
   isClosable: true,
-  position: 'top-right',
+  position: 'bottom',
   variant: 'solid',
 };
 

@@ -6,22 +6,25 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Portal,
   Stack,
   StackProps,
   Text,
 } from '@chakra-ui/react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
+import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 
 import { Goal } from '@/app/goals/goal.types';
 import { useGoalDelete, useGoalUpdate } from '@/app/goals/goals.firebase';
-
-import { ConfirmMenuItem } from '../ConfirmMenuItem';
+import { ConfirmMenuItem, useToastSuccess } from '@/components';
 
 interface GoalCardProps extends StackProps {
   goal: Goal;
 }
 
 export const GoalCard: React.FC<GoalCardProps> = ({ goal, ...rest }) => {
+  const toastSuccess = useToastSuccess();
+
   const { mutate: deleteGoal } = useGoalDelete();
   const { mutate: updateGoal, isLoading: isLoadingUpdate } = useGoalUpdate();
 
@@ -61,23 +64,34 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, ...rest }) => {
           variant="@primary"
           size="xs"
         />
-        <MenuList color="gray.700" bg="gray.200">
-          <MenuItem
-            _hover={{ bg: 'gray.300' }}
-            _focus={{ bg: 'gray.400' }}
-            onClick={() => {}}
-          >
-            Editer
-          </MenuItem>
-          <ConfirmMenuItem
-            _hover={{ bg: 'gray.300' }}
-            _focus={{ bg: 'gray.400' }}
-            confirmContent="Confirmer la suppression"
-            onClick={() => deleteGoal(goal?.id)}
-          >
-            Supprimer
-          </ConfirmMenuItem>
-        </MenuList>
+        <Portal>
+          <MenuList color="gray.700" bg="gray.200">
+            <MenuItem
+              _hover={{ bg: 'gray.300' }}
+              _focus={{ bg: 'gray.400' }}
+              icon={<FiEdit2 />}
+              onClick={() => {}}
+            >
+              Editer
+            </MenuItem>
+            <ConfirmMenuItem
+              _hover={{ bg: 'gray.300' }}
+              _focus={{ bg: 'gray.400' }}
+              confirmContent="Confirmer la suppression"
+              icon={<FiTrash2 />}
+              onClick={() =>
+                deleteGoal(goal?.id, {
+                  onSuccess: async () =>
+                    toastSuccess({
+                      title: "L'objectif a été supprimé avec succès",
+                    }),
+                })
+              }
+            >
+              Supprimer
+            </ConfirmMenuItem>
+          </MenuList>
+        </Portal>
       </Menu>
     </Stack>
   );

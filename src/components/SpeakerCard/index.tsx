@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import {
+  Flex,
   Center,
   Checkbox,
   IconButton,
@@ -19,7 +20,7 @@ import { useStopwatch } from 'react-timer-hook';
 
 import { useSpeakerDelete } from '@/app/standup/standup.firebase';
 import { Speaker } from '@/app/standup/standup.types';
-import { ConfirmMenuItem, MenuItem } from '@/components';
+import { ConfirmMenuItem, MenuItem, useToastSuccess } from '@/components';
 
 interface SpeakerCardProps extends StackProps {
   speaker: Speaker;
@@ -30,6 +31,8 @@ export const SpeakerCard: React.FC<SpeakerCardProps> = ({
   speaker,
   ...rest
 }) => {
+  const toastSuccess = useToastSuccess();
+
   const { seconds, minutes, isRunning, start, pause, reset } = useStopwatch({
     autoStart: false,
   });
@@ -52,6 +55,13 @@ export const SpeakerCard: React.FC<SpeakerCardProps> = ({
 
   const { mutate: deleteSpeaker } = useSpeakerDelete();
 
+  const handleDeleteSpeaker = () => {
+    deleteSpeaker(speaker?.id, {
+      onSuccess: async () =>
+        toastSuccess({ title: 'La personne a été supprimé avec succès' }),
+    });
+  };
+
   return (
     <Draggable draggableId={`draggable-${speaker?.id}`} index={speaker?.index}>
       {(provided) => (
@@ -68,11 +78,18 @@ export const SpeakerCard: React.FC<SpeakerCardProps> = ({
           opacity={isSpeaked && '0.5'}
           {...rest}
         >
-          <Checkbox
-            colorScheme="blackAlpha"
-            isIndeterminate={isRunning}
-            isChecked={isSpeaked}
-          />
+          <Flex
+            onClick={() => {
+              pause();
+              setIsSpeaked(true);
+            }}
+          >
+            <Checkbox
+              colorScheme="blackAlpha"
+              isIndeterminate={isRunning}
+              isChecked={isSpeaked}
+            />
+          </Flex>
           <Stack
             onClick={controlStopWatch}
             direction="row"
@@ -110,7 +127,7 @@ export const SpeakerCard: React.FC<SpeakerCardProps> = ({
                   _focus={{ bg: 'gray.400' }}
                   icon={<FiTrash />}
                   confirmContent="Confirmer la suppression"
-                  onClick={() => deleteSpeaker(speaker?.id)}
+                  onClick={() => handleDeleteSpeaker()}
                 >
                   Supprimer
                 </ConfirmMenuItem>

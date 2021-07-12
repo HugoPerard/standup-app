@@ -9,7 +9,6 @@ import { Loader, Page, PageContent } from '@/app/layout';
 import { Icon } from '@/components';
 import { ThankGroup } from '@/components/ThankGroup';
 
-import { DATE_COMPLETE_FORMAT } from '../shared/constants';
 import { useThanks, useThanksDelete } from './thanks.firebase';
 
 export const PageThanks = () => {
@@ -19,18 +18,10 @@ export const PageThanks = () => {
     refetch: refetchThanks,
   } = useThanks();
   const sortedThanks = thanks?.sort((a, b) => {
-    if (
-      dayjs(a?.date, DATE_COMPLETE_FORMAT)?.isBefore(
-        dayjs(b?.date, DATE_COMPLETE_FORMAT)
-      )
-    ) {
+    if (dayjs(a?.date)?.isBefore(dayjs(b?.date))) {
       return -1;
     }
-    if (
-      dayjs(a?.date, DATE_COMPLETE_FORMAT)?.isAfter(
-        dayjs(b?.date, DATE_COMPLETE_FORMAT)
-      )
-    ) {
+    if (dayjs(a?.date)?.isAfter(dayjs(b?.date))) {
       return 1;
     }
     return 0;
