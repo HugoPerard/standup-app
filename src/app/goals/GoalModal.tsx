@@ -57,7 +57,7 @@ export const GoalModal: React.FC<GoalModalProps> = ({
             <GoalForm ref={initialRef} />
           </ModalBody>
           <ModalFooter justifyContent="space-between">
-            <Button variant="ghost" color="gray.600" onClick={onClose}>
+            <Button color="gray.600" onClick={onClose}>
               Annuler
             </Button>
             <Button variant="@primary" type="submit">

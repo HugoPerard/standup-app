@@ -19,7 +19,7 @@ export const GoalForm = forwardRef<HTMLElement, GoalFormProps>((props, ref) => {
 
   const { data: speakers } = useSpeakers();
   const peopleOptions = [
-    ...speakers?.map((speaker) => ({
+    ...(speakers || []).map((speaker) => ({
       value: speaker?.name,
       label: speaker?.name,
     })),
