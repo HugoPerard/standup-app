@@ -31,7 +31,7 @@ export const FieldMultiSelect = (props: FieldMultiSelectProps) => {
     noOptionsMessage,
     isDisabled,
     isNotClearable,
-    size = 'sm',
+    size = 'md',
     selectOptions = {},
     ...rest
   } = otherProps;

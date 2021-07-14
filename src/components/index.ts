@@ -22,5 +22,3 @@ export * from './InputCurrency';
 export * from './PopoverInput';
 export * from './SpeakerCard';
 export * from './SpeakerGroup';
-export * from './GoalCard';
-export * from './GoalPopover';

@@ -11,16 +11,12 @@ import {
   PopoverContentProps,
   PopoverFooter,
   PopoverTrigger,
-  Stack,
   useDisclosure,
 } from '@chakra-ui/react';
 import { Formiz, useForm } from '@formiz/core';
 
+import { GoalForm } from '@/app/goals/GoalForm';
 import { Goal } from '@/app/goals/goal.types';
-import { useSpeakers } from '@/app/standup/standup.firebase';
-
-import { FieldInput } from '../FieldInput';
-import { FieldMultiSelect } from '../FieldMultiSelect';
 
 interface GoalPopoverProps extends Omit<PopoverContentProps, 'onSubmit'> {
   goal?: Goal;
@@ -33,13 +29,7 @@ export const GoalPopover: React.FC<GoalPopoverProps> = ({
   onSubmit = () => {},
   ...rest
 }) => {
-  const internalForm = useForm({ subscribe: { fields: ['input'] } });
-
-  const { data: speakers } = useSpeakers();
-  const peopleOptions = speakers?.map((speaker) => ({
-    value: speaker?.name,
-    label: speaker?.name,
-  }));
+  const internalForm = useForm({ subscribe: 'fields' });
 
   const handleSubmit = (values) => {
     onSubmit({
@@ -58,6 +48,7 @@ export const GoalPopover: React.FC<GoalPopoverProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       initialFocusRef={initialFocusRef}
+      placement="left-start"
     >
       <PopoverTrigger>
         <Box onClick={() => onOpen()}>{children}</Box>
@@ -74,20 +65,7 @@ export const GoalPopover: React.FC<GoalPopoverProps> = ({
           {isOpen && (
             <>
               <PopoverBody>
-                <Stack>
-                  <FieldInput
-                    name="description"
-                    label="Description"
-                    placeholder="Saisir la description de l'objectif"
-                    ref={initialFocusRef}
-                  />
-                  <FieldMultiSelect
-                    name="people"
-                    label="Personnes concernées"
-                    placeholder="Sélectionner les personnes concernées"
-                    options={peopleOptions}
-                  />
-                </Stack>
+                <GoalForm ref={initialFocusRef} />
               </PopoverBody>
               <PopoverFooter
                 borderColor="transparent"

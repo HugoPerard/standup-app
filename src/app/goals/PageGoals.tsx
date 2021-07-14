@@ -5,8 +5,8 @@ import dayjs from 'dayjs';
 
 import { Loader, Page, PageContent } from '@/app/layout';
 import { DATE_FORMAT } from '@/app/shared/constants';
-import { GoalGroup } from '@/components/GoalGroup';
 
+import { GoalGroup } from './GoalGroup';
 import { Goal } from './goal.types';
 import { useGoals } from './goals.firebase';
 
