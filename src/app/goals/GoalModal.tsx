@@ -13,6 +13,8 @@ import {
 } from '@chakra-ui/react';
 import { Formiz } from '@formiz/core';
 
+import { useCurrentUser } from '@/app/auth/useAuth';
+
 import { GoalForm, GoalFormValues } from './GoalForm';
 
 interface GoalModalProps extends Omit<ModalProps, 'children' | 'isOpen'> {
@@ -35,13 +37,18 @@ export const GoalModal: React.FC<GoalModalProps> = ({
     onSubmit(values);
     onClose();
   };
+
+  const currentUser = useCurrentUser();
   return (
     <Modal isOpen={true} onClose={onClose} initialFocusRef={initialRef}>
       <ModalOverlay />
       <Formiz
         autoForm
         onValidSubmit={handleSubmit}
-        initialValues={initialsValues}
+        initialValues={{
+          ...initialsValues,
+          people: initialsValues?.people || [currentUser.username],
+        }}
       >
         <ModalContent color="gray.100" bg="gray.600">
           <ModalHeader>{title}</ModalHeader>
