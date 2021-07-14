@@ -7748,6 +7748,11 @@ firebase@8.6.7:
     "@firebase/storage" "0.5.4"
     "@firebase/util" "1.1.0"
 
+fireworks-js@1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/fireworks-js/-/fireworks-js-1.2.0.tgz#2ae0bda7fb306e5f100b73ffcdfbc7d497a1efe7"
+  integrity sha512-eRBU2OhE4J0PFEjvsk5ob1lnn++fL9YSTcB7Tt6MCke5Ra6vT4P24IrTWKJFsh4K2KhEypo0497oPX6bWqmupA==
+
 flat-cache@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/flat-cache/-/flat-cache-3.0.4.tgz#61b0338302b2fe9f957dcc32fc2a87f1c3048b11"
