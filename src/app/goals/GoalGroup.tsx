@@ -10,11 +10,13 @@ import {
 import dayjs from 'dayjs';
 import { FiPlus } from 'react-icons/fi';
 
-import { GoalModal } from '@/app/goals/GoalModal';
-import { Goal } from '@/app/goals/goal.types';
-import { useGoalAdd } from '@/app/goals/goals.firebase';
 import { DATE_FORMAT } from '@/app/shared/constants';
-import { EmptyGoalCard, GoalCard, useToastSuccess } from '@/components';
+import { useToastSuccess } from '@/components';
+
+import { EmptyGoalCard, GoalCard } from './GoalCard';
+import { GoalModal } from './GoalModal';
+import { Goal } from './goal.types';
+import { useGoalAdd } from './goals.firebase';
 
 interface GoalGroupProps extends StackProps {
   name: string;

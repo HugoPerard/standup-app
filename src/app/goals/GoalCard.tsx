@@ -15,11 +15,12 @@ import {
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 
-import { GoalFormValues } from '@/app/goals/GoalForm';
-import { GoalModal } from '@/app/goals/GoalModal';
-import { Goal } from '@/app/goals/goal.types';
-import { useGoalDelete, useGoalUpdate } from '@/app/goals/goals.firebase';
 import { ConfirmMenuItem, useToastSuccess } from '@/components';
+
+import { GoalFormValues } from './GoalForm';
+import { GoalModal } from './GoalModal';
+import { Goal } from './goal.types';
+import { useGoalDelete, useGoalUpdate } from './goals.firebase';
 
 interface GoalCardProps extends StackProps {
   goal: Goal;
