@@ -1,4 +1,4 @@
-import { CSSProperties, useState } from 'react';
+import { CSSProperties, useRef, useState } from 'react';
 
 import {
   Center,
@@ -37,15 +37,21 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, ...rest }) => {
 
   const [isFireworksOn, setIsFireworksOn] = useState(false);
 
+  const timeoutRef = useRef<any>();
+
   const handleCheckbox = (value) => {
     const isComplete = value?.target?.checked;
     updateGoal(
       { id: goal?.id, payload: { isComplete } },
       {
         onSuccess: async (_, variable) => {
+          clearTimeout(timeoutRef.current);
           if (variable?.payload?.isComplete) {
             setIsFireworksOn(true);
-            setTimeout(() => setIsFireworksOn(false), 3000);
+            timeoutRef.current = setTimeout(
+              () => setIsFireworksOn(false),
+              3000
+            );
           }
         },
       }
