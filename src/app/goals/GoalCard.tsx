@@ -1,3 +1,5 @@
+import { CSSProperties, useState } from 'react';
+
 import {
   Center,
   Checkbox,
@@ -12,6 +14,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
+import { Fireworks, FireworksOptions } from 'fireworks-js/dist/react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 
@@ -32,9 +35,21 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, ...rest }) => {
   const { mutate: deleteGoal } = useGoalDelete();
   const { mutate: updateGoal, isLoading: isLoadingUpdate } = useGoalUpdate();
 
+  const [isFireworksOn, setIsFireworksOn] = useState(false);
+
   const handleCheckbox = (value) => {
     const isComplete = value?.target?.checked;
-    updateGoal({ id: goal?.id, payload: { isComplete } });
+    updateGoal(
+      { id: goal?.id, payload: { isComplete } },
+      {
+        onSuccess: async (_, variable) => {
+          if (variable?.payload?.isComplete) {
+            setIsFireworksOn(true);
+            setTimeout(() => setIsFireworksOn(false), 3000);
+          }
+        },
+      }
+    );
   };
 
   const handleEdit = (values: GoalFormValues) => {
@@ -47,6 +62,19 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, ...rest }) => {
           }),
       }
     );
+  };
+
+  const options: FireworksOptions = {
+    speed: 8,
+    acceleration: 1.5,
+  };
+
+  const style: CSSProperties = {
+    left: 0,
+    top: 0,
+    width: '100%',
+    height: '100%',
+    position: 'fixed',
   };
 
   const {
@@ -126,6 +154,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, ...rest }) => {
           initialsValues={goal}
         />
       )}
+      {isFireworksOn && <Fireworks options={options} style={style} />}
     </>
   );
 };
