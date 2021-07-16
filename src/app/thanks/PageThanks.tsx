@@ -16,7 +16,7 @@ export const PageThanks = () => {
     data: thanks,
     isLoading: isLoadingThanks,
     refetch: refetchThanks,
-  } = useThanks();
+  } = useThanks({ refetchInterval: 2000 });
   const sortedThanks = thanks?.sort((a, b) => {
     if (dayjs(a?.date)?.isBefore(dayjs(b?.date))) {
       return -1;
