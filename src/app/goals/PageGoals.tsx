@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Stack } from '@chakra-ui/react';
+import { Heading, Stack } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 
 import { Loader, Page, PageContent } from '@/app/layout';
@@ -50,6 +50,10 @@ export const PageGoals = () => {
     <Page containerSize="full" bg="gray.800">
       <PageContent color="gray.200">
         <Stack spacing={6}>
+          <Heading size="lg">
+            On répond par oui ou par non, on ne raconte pas sa vie !
+            Cordialement !
+          </Heading>
           <GoalGroup name="Semaine dernière" goals={pastGoals} />
           {weekdays.map((date) => (
             <GoalGroup
