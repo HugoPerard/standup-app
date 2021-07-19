@@ -6,7 +6,7 @@ import {
   Text,
   Wrap,
 } from '@chakra-ui/react';
-import { Droppable } from 'react-beautiful-dnd';
+import { DropTargetMonitor, useDrop } from 'react-dnd';
 import { FiPlus, FiTrash2 } from 'react-icons/fi';
 
 import { Loader } from '@/app/layout';
@@ -14,14 +14,16 @@ import {
   useProjectDelete,
   useSpeakerAdd,
   useSpeakers,
+  useSpeakerUpdate,
 } from '@/app/standup/standup.firebase';
-import { Project } from '@/app/standup/standup.types';
+import { Project, Speaker } from '@/app/standup/standup.types';
 import {
   EmptySpeakerCard,
   SpeakerCard,
   PopoverInput,
   useToastSuccess,
 } from '@/components';
+import { sortByIndex } from '@/utils/sortByIndex';
 
 interface SpeakerGroupProps extends StackProps {
   project: Project;
@@ -59,68 +61,91 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
     });
   };
 
+  const { mutate: updateSpeaker } = useSpeakerUpdate();
+
+  const onDrop = (speaker: Speaker) => {
+    if (speaker?.projectId === project?.id) {
+      return;
+    }
+    updateSpeaker(
+      { id: speaker?.id, payload: { projectId: project?.id } },
+      {
+        onSuccess: () => {
+          toastSuccess({ title: 'La personne a été déplacée avec succès' });
+        },
+      }
+    );
+  };
+
+  const [{ isOver }, drop] = useDrop(
+    () => ({
+      accept: 'SPEAKER',
+      drop: ({ speaker }) => onDrop(speaker),
+      collect: (monitor: DropTargetMonitor) => ({
+        isOver: !!monitor.isOver(),
+      }),
+    }),
+    [project]
+  );
+
   return (
-    <Droppable droppableId={`droppable-${project?.id}`}>
-      {(provided) => (
-        <Stack
-          ref={provided.innerRef}
-          {...provided.droppableProps}
-          bg="gray.700"
-          p={3}
-          borderRadius="md"
-          {...rest}
-        >
-          <Stack direction="row" justifyContent="space-between" mb="1">
-            <Text fontWeight="bold" mb={1}>
-              {project?.name}
-            </Text>
-            <ButtonGroup spacing={1}>
-              <PopoverInput
-                onSubmit={(value) => handleAddSpeaker(value)}
-                label="Nom"
-                submitLabel="Ajouter une personne"
-                placeholder="Saisir le nom d'une personne"
-              >
-                <IconButton
-                  aria-label="Ajouter une personne"
-                  icon={<FiPlus />}
-                  variant="@primary"
-                  size="sm"
-                />
-              </PopoverInput>
-              <IconButton
-                aria-label="Supprimer"
-                onClick={() => handleDeleteProject()}
-                icon={<FiTrash2 />}
-                variant="@primary"
-                size="sm"
-              />
-            </ButtonGroup>
-          </Stack>
-          {isLoadingSpeakers && <Loader />}
-          {isErrorSpeakers && (
-            <EmptySpeakerCard>
-              Erreur lors de la récupération des personnes sur ce projet
-            </EmptySpeakerCard>
-          )}
-          {!isLoadingSpeakers && !isErrorSpeakers && speakers?.length > 0 && (
-            <Wrap>
-              {speakers?.map((speaker, index) => (
-                <SpeakerCard
-                  key={speaker?.id}
-                  speaker={speaker}
-                  index={index}
-                  flex="1"
-                />
-              ))}
-            </Wrap>
-          )}
-          {!isLoadingSpeakers && !isErrorSpeakers && speakers?.length <= 0 && (
-            <EmptySpeakerCard>Personne n'est sur ce projet</EmptySpeakerCard>
-          )}
-          {provided.placeholder}
-        </Stack>
+    <Stack
+      id={project?.id}
+      ref={drop}
+      bg="gray.700"
+      p={3}
+      borderRadius="md"
+      {...(isOver ? { border: '1px solid', borderColor: 'brand.500' } : {})}
+      {...rest}
+    >
+      <Stack direction="row" justifyContent="space-between" mb="1">
+        <Text fontWeight="bold" mb={1}>
+          {project?.name}
+        </Text>
+        <ButtonGroup spacing={1}>
+          <PopoverInput
+            onSubmit={(value) => handleAddSpeaker(value)}
+            label="Nom"
+            submitLabel="Ajouter une personne"
+            placeholder="Saisir le nom d'une personne"
+          >
+            <IconButton
+              aria-label="Ajouter une personne"
+              icon={<FiPlus />}
+              variant="@primary"
+              size="sm"
+            />
+          </PopoverInput>
+          <IconButton
+            aria-label="Supprimer"
+            onClick={() => handleDeleteProject()}
+            icon={<FiTrash2 />}
+            variant="@primary"
+            size="sm"
+          />
+        </ButtonGroup>
+      </Stack>
+      {isLoadingSpeakers && <Loader />}
+      {isErrorSpeakers && (
+        <EmptySpeakerCard>
+          Erreur lors de la récupération des personnes sur ce projet
+        </EmptySpeakerCard>
       )}
-    </Droppable>
+      {!isLoadingSpeakers && !isErrorSpeakers && speakers?.length > 0 && (
+        <Wrap>
+          {sortByIndex(speakers)?.map((speaker, index) => (
+            <SpeakerCard
+              key={speaker?.id}
+              speaker={speaker}
+              index={index}
+              flex="1"
+            />
+          ))}
+        </Wrap>
+      )}
+      {!isLoadingSpeakers && !isErrorSpeakers && speakers?.length <= 0 && (
+        <EmptySpeakerCard>Personne n'est sur ce projet</EmptySpeakerCard>
+      )}
+    </Stack>
   );
 };

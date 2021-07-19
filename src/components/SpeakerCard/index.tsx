@@ -13,7 +13,7 @@ import {
   StackProps,
   Text,
 } from '@chakra-ui/react';
-import { Draggable } from 'react-beautiful-dnd';
+import { useDrag } from 'react-dnd';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { FiTrash, FiWatch } from 'react-icons/fi';
 import { useStopwatch } from 'react-timer-hook';
@@ -29,6 +29,7 @@ interface SpeakerCardProps extends StackProps {
 
 export const SpeakerCard: React.FC<SpeakerCardProps> = ({
   speaker,
+  index,
   ...rest
 }) => {
   const toastSuccess = useToastSuccess();
@@ -62,81 +63,93 @@ export const SpeakerCard: React.FC<SpeakerCardProps> = ({
     });
   };
 
+  const [{ opacity }, dragRef] = useDrag(
+    () => ({
+      type: 'SPEAKER',
+      item: { speaker },
+      collect: (monitor) => ({
+        opacity: monitor.isDragging() ? 0.5 : 1,
+      }),
+    }),
+    []
+  );
+
   return (
-    <Draggable draggableId={`draggable-${speaker?.id}`} index={speaker?.index}>
-      {(provided) => (
-        <Stack
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          direction="row"
-          spacing={3}
-          alignItems="center"
-          bg="gray.600"
-          p={2}
-          borderRadius="md"
-          opacity={isSpeaked && '0.5'}
-          {...rest}
-        >
-          <Flex
-            onClick={() => {
-              pause();
-              setIsSpeaked(true);
-            }}
-          >
-            <Checkbox
-              colorScheme="blackAlpha"
-              isIndeterminate={isRunning}
-              isChecked={isSpeaked}
-            />
-          </Flex>
-          <Stack
-            onClick={controlStopWatch}
-            direction="row"
-            spacing={3}
-            cursor="pointer"
-            flex="1"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Text fontWeight="medium">{speaker?.name}</Text>
-            <Text w={45}>
-              {minutes?.toString()?.length === 1 ? `0${minutes}` : minutes}:
-              {seconds?.toString()?.length === 1 ? `0${seconds}` : seconds}
-            </Text>
-          </Stack>
-          <Menu>
-            <MenuButton
-              as={IconButton}
-              icon={<BsThreeDotsVertical />}
-              variant="@primary"
-              size="xs"
-            />
-            <Portal>
-              <MenuList color="gray.700" bg="gray.200">
-                <MenuItem
-                  _hover={{ bg: 'gray.300' }}
-                  _focus={{ bg: 'gray.400' }}
-                  icon={<FiWatch />}
-                  onClick={() => resetStopwatch()}
-                >
-                  Réinitialiser
-                </MenuItem>
-                <ConfirmMenuItem
-                  _hover={{ bg: 'gray.300' }}
-                  _focus={{ bg: 'gray.400' }}
-                  icon={<FiTrash />}
-                  confirmContent="Confirmer la suppression"
-                  onClick={() => handleDeleteSpeaker()}
-                >
-                  Supprimer
-                </ConfirmMenuItem>
-              </MenuList>
-            </Portal>
-          </Menu>
-        </Stack>
-      )}
-    </Draggable>
+    <Stack
+      id={speaker?.id}
+      ref={dragRef}
+      direction="row"
+      spacing={3}
+      alignItems="center"
+      bg="gray.600"
+      p={2}
+      borderRadius="md"
+      opacity={(isSpeaked && '0.5') || opacity}
+      {...(isRunning
+        ? {
+            border: '1px solid',
+            borderColor: 'brand.500',
+          }
+        : {})}
+      {...rest}
+    >
+      <Flex
+        onClick={() => {
+          pause();
+          setIsSpeaked(true);
+        }}
+      >
+        <Checkbox
+          colorScheme="blackAlpha"
+          isIndeterminate={isRunning}
+          isChecked={isSpeaked}
+        />
+      </Flex>
+      <Stack
+        onClick={controlStopWatch}
+        direction="row"
+        spacing={3}
+        cursor="pointer"
+        flex="1"
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        <Text fontWeight="medium">{speaker?.name}</Text>
+        <Text w={45}>
+          {minutes?.toString()?.length === 1 ? `0${minutes}` : minutes}:
+          {seconds?.toString()?.length === 1 ? `0${seconds}` : seconds}
+        </Text>
+      </Stack>
+      <Menu>
+        <MenuButton
+          as={IconButton}
+          icon={<BsThreeDotsVertical />}
+          variant="@primary"
+          size="xs"
+        />
+        <Portal>
+          <MenuList color="gray.700" bg="gray.200">
+            <MenuItem
+              _hover={{ bg: 'gray.300' }}
+              _focus={{ bg: 'gray.400' }}
+              icon={<FiWatch />}
+              onClick={() => resetStopwatch()}
+            >
+              Réinitialiser
+            </MenuItem>
+            <ConfirmMenuItem
+              _hover={{ bg: 'gray.300' }}
+              _focus={{ bg: 'gray.400' }}
+              icon={<FiTrash />}
+              confirmContent="Confirmer la suppression"
+              onClick={() => handleDeleteSpeaker()}
+            >
+              Supprimer
+            </ConfirmMenuItem>
+          </MenuList>
+        </Portal>
+      </Menu>
+    </Stack>
   );
 };
 
