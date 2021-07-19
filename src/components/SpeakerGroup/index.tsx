@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import {
   ButtonGroup,
   IconButton,
@@ -63,26 +65,34 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
 
   const { mutate: updateSpeaker } = useSpeakerUpdate();
 
+  const [isReplacingSpeaker, setIsReplacingSpeaker] = useState(false);
+
   const onDrop = (speaker: Speaker) => {
     if (speaker?.projectId === project?.id) {
       return;
     }
+    setIsReplacingSpeaker(true);
     updateSpeaker(
       { id: speaker?.id, payload: { projectId: project?.id } },
       {
         onSuccess: () => {
+          setIsReplacingSpeaker(false);
           toastSuccess({ title: 'La personne a été déplacée avec succès' });
+        },
+        onError: () => {
+          setIsReplacingSpeaker(false);
         },
       }
     );
   };
 
-  const [{ isOver }, drop] = useDrop(
+  const [{ isOver, isDroppable }, drop] = useDrop(
     () => ({
       accept: 'SPEAKER',
       drop: ({ speaker }) => onDrop(speaker),
       collect: (monitor: DropTargetMonitor) => ({
         isOver: !!monitor.isOver(),
+        isDroppable: monitor.canDrop(),
       }),
     }),
     [project]
@@ -95,6 +105,7 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
       bg="gray.700"
       p={3}
       borderRadius="md"
+      {...(isDroppable && { border: '1px dashed', borderColor: 'gray.500' })}
       {...(isOver ? { border: '1px solid', borderColor: 'brand.500' } : {})}
       {...rest}
     >
@@ -146,6 +157,7 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
       {!isLoadingSpeakers && !isErrorSpeakers && speakers?.length <= 0 && (
         <EmptySpeakerCard>Personne n'est sur ce projet</EmptySpeakerCard>
       )}
+      {isReplacingSpeaker && <Loader />}
     </Stack>
   );
 };
