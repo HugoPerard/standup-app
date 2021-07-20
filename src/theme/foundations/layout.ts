@@ -7,4 +7,7 @@ export const layout = {
   topBar: {
     height: `calc(4rem + ${spacing['safe-top']})`,
   },
+  internalBar: {
+    height: '3rem',
+  },
 };

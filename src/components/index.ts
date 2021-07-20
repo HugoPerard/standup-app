@@ -20,5 +20,3 @@ export * from './Viewport';
 export * from './TextCurrency';
 export * from './InputCurrency';
 export * from './PopoverInput';
-export * from './SpeakerCard';
-export * from './SpeakerGroup';

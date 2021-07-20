@@ -19,13 +19,10 @@ import {
   useSpeakerUpdate,
 } from '@/app/standup/standup.firebase';
 import { Project, Speaker } from '@/app/standup/standup.types';
-import {
-  EmptySpeakerCard,
-  SpeakerCard,
-  PopoverInput,
-  useToastSuccess,
-} from '@/components';
+import { PopoverInput, useToastSuccess } from '@/components';
 import { sortByIndex } from '@/utils/sortByIndex';
+
+import { EmptySpeakerCard, SpeakerCard } from './SpeakerCard';
 
 interface SpeakerGroupProps extends StackProps {
   project: Project;

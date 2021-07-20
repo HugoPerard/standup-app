@@ -2,8 +2,11 @@ import { HStack, IconButton, Stack, StackProps, Text } from '@chakra-ui/react';
 import { FiPlus, FiTrash2 } from 'react-icons/fi';
 
 import { useAuth } from '@/app/auth/useAuth';
-import { useThankAdd, useThankDelete } from '@/app/thanks/thanks.firebase';
-import { Thank } from '@/app/thanks/thanks.types';
+import {
+  useThankAdd,
+  useThankDelete,
+} from '@/app/standup/thanks/thanks.firebase';
+import { Thank } from '@/app/standup/thanks/thanks.types';
 import { useToastSuccess } from '@/components';
 
 interface ThankGroupProps extends StackProps {

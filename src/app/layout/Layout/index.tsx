@@ -8,6 +8,7 @@ import { Viewport } from '@/components';
 
 export const Layout = ({ children }) => {
   const [isFocusMode, setIsFocusMode] = useState(false);
+  const [hasSideBar, setHasSideBar] = useState(false);
   const {
     isOpen: navIsOpen,
     onClose: navOnClose,
@@ -21,7 +22,15 @@ export const Layout = ({ children }) => {
 
   return (
     <LayoutContext.Provider
-      value={{ isFocusMode, setIsFocusMode, navIsOpen, navOnClose, navOnOpen }}
+      value={{
+        isFocusMode,
+        setIsFocusMode,
+        navIsOpen,
+        navOnClose,
+        navOnOpen,
+        hasSideBar,
+        setHasSideBar,
+      }}
     >
       <Viewport>
         {!isFocusMode && <TopBar />}

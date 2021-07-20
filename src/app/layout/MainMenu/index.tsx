@@ -4,6 +4,7 @@ import { Stack, Box } from '@chakra-ui/react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 
 import { useLayoutContext } from '@/app/layout';
+import { Routes } from '@/app/routes';
 
 const MainMenuItem = ({ to, ...rest }: any) => {
   const { navOnClose } = useLayoutContext();
@@ -59,9 +60,7 @@ const MainMenuItem = ({ to, ...rest }: any) => {
 export const MainMenu = ({ ...rest }) => {
   return (
     <Stack direction="row" spacing="1" {...rest}>
-      <MainMenuItem to="/objectifs">Objectifs</MainMenuItem>
-      <MainMenuItem to="/standup">StandUp</MainMenuItem>
-      <MainMenuItem to="/remerciements">Remerciements</MainMenuItem>
+      <MainMenuItem to={Routes.STANDUP}>StandUp</MainMenuItem>
       <MainMenuItem to="/cra">CRA</MainMenuItem>
     </Stack>
   );

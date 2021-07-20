@@ -14,9 +14,10 @@ import {
 import { Formiz, useForm } from '@formiz/core';
 
 import { Loader, Page, PageContent } from '@/app/layout';
-import { FieldInput, useToastSuccess, SpeakerGroup } from '@/components';
+import { FieldInput, useToastSuccess } from '@/components';
 import { sortByIndex } from '@/utils/sortByIndex';
 
+import { SpeakerGroup } from './_partials/SpeakerGroup';
 import { useProjects, useProjectAdd, useSpeakerAdd } from './standup.firebase';
 
 export const PageStandup = () => {

@@ -7,3 +7,4 @@ export * from './TopBar';
 export * from './Page';
 export * from './AccountMenu';
 export * from './NavDrawer';
+export * from './InternalBar';

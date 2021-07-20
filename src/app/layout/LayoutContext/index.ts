@@ -6,13 +6,10 @@ type LayoutContextValue = {
   navIsOpen: boolean;
   navOnOpen: () => void;
   navOnClose: () => void;
+  hasSideBar: boolean;
+  setHasSideBar(value: boolean): void;
 };
 
-export const LayoutContext = React.createContext<LayoutContextValue>({
-  isFocusMode: false,
-  setIsFocusMode: undefined,
-  navIsOpen: false,
-  navOnOpen: () => undefined,
-  navOnClose: () => undefined,
-});
+export const LayoutContext = React.createContext<LayoutContextValue>(null);
+
 export const useLayoutContext = () => useContext(LayoutContext);

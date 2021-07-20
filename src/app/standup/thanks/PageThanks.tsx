@@ -6,8 +6,8 @@ import dayjs from 'dayjs';
 import { FiRefreshCcw, FiTrash2 } from 'react-icons/fi';
 
 import { Loader, Page, PageContent } from '@/app/layout';
+import { ThankGroup } from '@/app/standup/thanks/_partials/ThankGroup';
 import { Icon } from '@/components';
-import { ThankGroup } from '@/components/ThankGroup';
 
 import { useThanks, useThanksDelete } from './thanks.firebase';
 
