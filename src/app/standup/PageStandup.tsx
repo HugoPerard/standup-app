@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Button } from '@chakra-ui/button';
 import { Stack } from '@chakra-ui/layout';
@@ -11,16 +11,26 @@ import {
   Box,
 } from '@chakra-ui/react';
 import { Formiz, useForm } from '@formiz/core';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 import { Loader, Page, PageContent } from '@/app/layout';
 import { FieldInput, useToastSuccess } from '@/components';
 import { sortByIndex } from '@/utils/sortByIndex';
 
 import { SpeakerGroup } from './_partials/SpeakerGroup';
-import { useProjects, useProjectAdd, useSpeakerAdd } from './standup.firebase';
+import {
+  useProjects,
+  useProjectAdd,
+  useSpeakerAdd,
+  useSpeakerUpdate,
+} from './standup.firebase';
+import { Project } from './standup.types';
 
 export const PageStandup = () => {
-  const { data: projects, isLoading: isLoadingProjects } = useProjects();
+  const [projects, setProjects] = useState<Project[]>([]);
+  const { isLoading: isLoadingProjects } = useProjects({
+    onSuccess: (data) => setProjects(data),
+  });
   const toastSuccess = useToastSuccess();
 
   const isLoading = isLoadingProjects;
@@ -65,17 +75,68 @@ export const PageStandup = () => {
     speakerForm?.setFieldsValues({ speakerName: '' });
   };
 
+  const { mutate: updateSpeaker } = useSpeakerUpdate();
+
+  const handleDragEnd = ({ draggableId, source, destination, type }) => {
+    if (!destination) {
+      return;
+    }
+
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
+
+    if (type === 'PROJECT') {
+      const movedProject = projects?.find(
+        (project) => project?.id === draggableId
+      );
+
+      const newProjects = [
+        ...projects?.slice(0, destination?.index),
+        movedProject,
+        ...projects?.slice(destination?.index),
+      ].filter(
+        (project, index) =>
+          project?.id !== draggableId || index === destination?.index
+      );
+
+      setProjects(newProjects);
+      return;
+    }
+    if (type === 'SPEAKER') {
+      updateSpeaker(
+        {
+          id: draggableId,
+          payload: {
+            projectId: destination?.droppableId,
+            index: destination?.index,
+          },
+        },
+        {
+          onSuccess: () => {
+            toastSuccess({ title: 'La personne a été déplacée avec succès' });
+          },
+        }
+      );
+      return;
+    }
+    return;
+  };
+
   return (
     <Page containerSize="full" bg="gray.800">
       <PageContent color="gray.200">
         {isLoading ? (
           <Loader />
         ) : (
-          <Stack spacing={6} flex="1">
+          <Stack spacing={6} flex="1" overflowX="hidden">
             <Accordion allowToggle>
               <AccordionItem>
                 <AccordionButton>
-                  <Box flex="1" textAlign="left">
+                  <Box flex="1" textAlign="left" fontSize="sm">
                     Ajouter un projet et/ou une personne
                   </Box>
                   <AccordionIcon />
@@ -186,18 +247,47 @@ export const PageStandup = () => {
                 </AccordionPanel>
               </AccordionItem>
             </Accordion>
-            <Stack
-              direction="row"
-              spacing={1}
-              overflowX="scroll"
-              whiteSpace="nowrap"
-              flex="1"
-              maxWidth={{ base: '96vw', xl: '97vw' }}
-            >
-              {sortByIndex(projects, 'desc')?.map((project) => (
-                <SpeakerGroup key={project?.id} project={project} />
-              ))}
-            </Stack>
+            <DragDropContext onDragEnd={handleDragEnd}>
+              <Droppable
+                droppableId="board"
+                type="PROJECT"
+                direction="horizontal"
+              >
+                {(droppableProvided) => (
+                  <Stack
+                    ref={droppableProvided.innerRef}
+                    direction="row"
+                    spacing={1}
+                    overflowX="scroll"
+                    whiteSpace="nowrap"
+                    flex="1"
+                    maxWidth={{ base: '96vw', xl: '97vw' }}
+                  >
+                    {sortByIndex(projects)?.map((project, index) => (
+                      <Draggable
+                        key={project.id}
+                        draggableId={project.id}
+                        index={index}
+                      >
+                        {(provided) => (
+                          <Box
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            data-react-beautiful-dnd-draggable="0"
+                            data-react-beautiful-dnd-drag-handle="0"
+                          >
+                            <SpeakerGroup project={project} />
+                            {provided.placeholder}
+                          </Box>
+                        )}
+                      </Draggable>
+                    ))}
+                    {droppableProvided.placeholder}
+                  </Stack>
+                )}
+              </Droppable>
+            </DragDropContext>
           </Stack>
         )}
       </PageContent>
