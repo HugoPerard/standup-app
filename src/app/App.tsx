@@ -8,7 +8,7 @@ import { Route, RoutePublic } from '@/app/router';
 import { Error404, ErrorBoundary } from '@/errors';
 
 import { PageCRA } from './cra/PageCRA';
-import { Routes } from './routes';
+import { Routes, STANDUP } from './routes';
 import StandupRoutes from './standup/StandupRoutes';
 
 export const App = () => {
@@ -21,7 +21,7 @@ export const App = () => {
               <RoutePublic
                 exact
                 path="/"
-                render={() => <Redirect to="/objectifs" />}
+                render={() => <Redirect to={STANDUP} />}
               />
 
               <Route path={Routes.STANDUP} render={() => <StandupRoutes />} />

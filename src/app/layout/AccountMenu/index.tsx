@@ -12,6 +12,7 @@ import {
   Text,
   useClipboard,
   Button,
+  Portal,
 } from '@chakra-ui/react';
 import { FaGoogle } from 'react-icons/fa';
 import { FiCheck, FiCopy, FiLogOut } from 'react-icons/fi';
@@ -108,17 +109,19 @@ export const AccountMenu = ({ ...rest }) => {
           <Avatar size="sm" name={user?.username} src={user?.photoURL} />
         )}
       </MenuButton>
-      <MenuList color="gray.800" maxW="12rem" overflow="hidden">
-        <MenuGroup title={user?.username} pb={1} />
-        <MenuDivider />
-        <MenuItem
-          icon={<Icon icon={FiLogOut} fontSize="lg" color="gray.400" />}
-          onClick={() => signOut()}
-        >
-          Se déconnecter
-        </MenuItem>
-        <AppVersion />
-      </MenuList>
+      <Portal>
+        <MenuList color="gray.800" maxW="12rem" overflow="hidden" zIndex="10">
+          <MenuGroup title={user?.username} pb={1} />
+          <MenuDivider />
+          <MenuItem
+            icon={<Icon icon={FiLogOut} fontSize="lg" color="gray.400" />}
+            onClick={() => signOut()}
+          >
+            Se déconnecter
+          </MenuItem>
+          <AppVersion />
+        </MenuList>
+      </Portal>
     </Menu>
   );
 };
