@@ -1,5 +1,5 @@
 import {
-  ButtonGroup,
+  Text,
   Editable,
   EditableInput,
   EditablePreview,
@@ -110,16 +110,27 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
   );
 
   return (
-    <Stack
-      id={project?.id}
-      bg="gray.700"
-      h="fit-content"
-      p={3}
-      borderRadius="md"
-      spacing={3}
-      {...rest}
-    >
-      <Stack direction="row" justifyContent="space-between" mb="1">
+    <Droppable droppableId={project?.id} type="SPEAKER" direction="vertical">
+      {(provided, droppableSnapshot) => (
+        <Stack
+          ref={provided.innerRef}
+          id={project?.id}
+          bg="gray.700"
+          h="fit-content"
+          p={3}
+          borderRadius="md"
+          border={droppableSnapshot?.isDraggingOver ? '1px solid' : undefined}
+          borderColor="yellow.500"
+          shadow="md"
+          spacing={3}
+          {...rest}
+        >
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Stack direction="row" justifyContent="space-between" mb="1">
         <Editable
           fontWeight="bold"
           fontSize="sm"
@@ -130,84 +141,76 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
           <EditablePreview />
           <EditableInput />
         </Editable>
-        <Stack direction="row" spacing={1}>
-          <PopoverInput
-            onSubmit={(value) => handleAddSpeaker(value)}
-            label="Nom"
-            submitLabel="Ajouter une personne"
-            placeholder="Saisir le nom d'une personne"
-          >
-            <IconButton
-              aria-label="Ajouter une personne"
-              icon={<FiPlus />}
-              variant="@primary"
-              size="xs"
-            />
-          </PopoverInput>
-          <IconButton
-            aria-label="Supprimer"
-            onClick={() => handleDeleteProject()}
-            icon={<FiTrash2 />}
-            variant="@primary"
-            size="xs"
-          />
-        </Stack>
-      </Stack>
+            <Stack direction="row" spacing={1}>
+              <PopoverInput
+                onSubmit={(value) => handleAddSpeaker(value)}
+                label="Nom"
+                submitLabel="Ajouter une personne"
+                placeholder="Saisir le nom d'une personne"
+              >
+                <IconButton
+                  aria-label="Ajouter une personne"
+                  icon={<FiPlus />}
+                  variant="@primary"
+                  size="xs"
+                />
+              </PopoverInput>
+              <IconButton
+                aria-label="Supprimer"
+                onClick={() => handleDeleteProject()}
+                icon={<FiTrash2 />}
+                variant="@primary"
+                size="xs"
+              />
+            </Stack>
+          </Stack>
 
-      <Droppable droppableId={project?.id} type="SPEAKER" direction="vertical">
-        {(provided) => (
-          <Box ref={provided.innerRef}>
-            {isLoadingSpeakers && <Loader />}
-            {isErrorSpeakers && (
-              <EmptySpeakerCard>
-                Erreur lors de la récupération des personnes sur ce projet
-              </EmptySpeakerCard>
-            )}
-            {!isLoadingSpeakers && !isErrorSpeakers && speakers?.length > 0 && (
-              <Wrap>
-                {sortByIndex(speakers)?.map((speaker, index) => (
-                  <Draggable
-                    key={speaker?.id}
-                    draggableId={speaker?.id}
-                    index={index}
-                  >
-                    {({
-                      innerRef,
-                      draggableProps,
-                      dragHandleProps,
-                      placeholder,
-                    }) => (
-                      <>
-                        <SpeakerCard
-                          ref={innerRef}
-                          {...draggableProps}
-                          {...dragHandleProps}
-                          data-react-beautiful-dnd-draggable="0"
-                          data-react-beautiful-dnd-drag-handle="0"
-                          key={speaker?.id}
-                          speaker={speaker}
-                          index={index}
-                          flex="1"
-                        />
-                        {placeholder}
-                      </>
-                    )}
-                  </Draggable>
-                ))}
-              </Wrap>
-            )}
-            {!isLoadingSpeakers &&
-              !isErrorSpeakers &&
-              speakers?.length <= 0 && (
-                <EmptySpeakerCard>
-                  Personne n'est sur ce projet
-                </EmptySpeakerCard>
-              )}
-            {/* {isReplacingSpeaker && <Loader />} */}
-            {provided.placeholder}
-          </Box>
-        )}
-      </Droppable>
-    </Stack>
+          {isLoadingSpeakers && <Loader />}
+          {isErrorSpeakers && (
+            <EmptySpeakerCard>
+              Erreur lors de la récupération des personnes sur ce projet
+            </EmptySpeakerCard>
+          )}
+          {!isLoadingSpeakers && !isErrorSpeakers && speakers?.length > 0 && (
+            <Wrap>
+              {sortByIndex(speakers)?.map((speaker, index) => (
+                <Draggable
+                  key={speaker?.id}
+                  draggableId={speaker?.id}
+                  index={index}
+                >
+                  {({
+                    innerRef,
+                    draggableProps,
+                    dragHandleProps,
+                    placeholder,
+                  }) => (
+                    <>
+                      <SpeakerCard
+                        ref={innerRef}
+                        {...draggableProps}
+                        {...dragHandleProps}
+                        data-react-beautiful-dnd-draggable="0"
+                        data-react-beautiful-dnd-drag-handle="0"
+                        key={speaker?.id}
+                        speaker={speaker}
+                        index={index}
+                        flex="1"
+                      />
+                      {placeholder}
+                    </>
+                  )}
+                </Draggable>
+              ))}
+            </Wrap>
+          )}
+          {!isLoadingSpeakers && !isErrorSpeakers && speakers?.length <= 0 && (
+            <EmptySpeakerCard>Personne n'est sur ce projet</EmptySpeakerCard>
+          )}
+          {/* {isReplacingSpeaker && <Loader />} */}
+          {provided.placeholder}
+        </Stack>
+      )}
+    </Droppable>
   );
 };

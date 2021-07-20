@@ -103,6 +103,10 @@ export const PageStandup = () => {
           project?.id !== draggableId || index === destination?.index
       );
 
+      if (newProjects?.length !== projects?.length) {
+        return;
+      }
+
       setProjects(newProjects);
       return;
     }
@@ -276,6 +280,7 @@ export const PageStandup = () => {
                             {...provided.dragHandleProps}
                             data-react-beautiful-dnd-draggable="0"
                             data-react-beautiful-dnd-drag-handle="0"
+                            h="fit-content"
                           >
                             <SpeakerGroup project={project} />
                             {provided.placeholder}
