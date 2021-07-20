@@ -116,6 +116,7 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
       id={project?.id}
       ref={drop}
       bg="gray.700"
+      h="fit-content"
       p={3}
       borderRadius="md"
       {...(isDroppable && { border: '1px dashed', borderColor: 'gray.500' })}

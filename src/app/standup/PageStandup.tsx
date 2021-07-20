@@ -9,7 +9,6 @@ import {
   AccordionItem,
   AccordionPanel,
   Box,
-  SimpleGrid,
 } from '@chakra-ui/react';
 import { Formiz, useForm } from '@formiz/core';
 
@@ -72,7 +71,7 @@ export const PageStandup = () => {
         {isLoading ? (
           <Loader />
         ) : (
-          <Stack spacing={6}>
+          <Stack spacing={6} flex="1">
             <Accordion allowToggle>
               <AccordionItem>
                 <AccordionButton>
@@ -187,15 +186,18 @@ export const PageStandup = () => {
                 </AccordionPanel>
               </AccordionItem>
             </Accordion>
-            <SimpleGrid
-              columns={{ base: 1, sm: 2, md: 3, lg: 4, xl: 5 }}
-              spacing="2"
+            <Stack
+              direction="row"
+              spacing={1}
+              overflowX="scroll"
+              whiteSpace="nowrap"
+              flex="1"
+              maxWidth={{ base: '96vw', xl: '97vw' }}
             >
               {sortByIndex(projects, 'desc')?.map((project) => (
                 <SpeakerGroup key={project?.id} project={project} />
               ))}
-            </SimpleGrid>
-            <SpeakerGroup project={{ id: '0', name: '', index: -1 }} />
+            </Stack>
           </Stack>
         )}
       </PageContent>
