@@ -73,7 +73,7 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
         {...(isRunning
           ? {
               border: '1px solid',
-              borderColor: 'brand.500',
+              borderColor: 'yellow.500',
             }
           : {})}
         {...rest}
@@ -111,7 +111,7 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
           <MenuButton
             as={IconButton}
             icon={<BsThreeDotsVertical />}
-            variant="@primary"
+            variant="@link"
             size="xs"
           />
           <Portal>

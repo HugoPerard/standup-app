@@ -27,19 +27,19 @@ export default {
   variants: {
     // Custom variants
     '@primary': customVariant({
-      bg: 'brand.500',
-      bgHover: 'brand.600',
-      bgActive: 'brand.700',
-      color: 'white',
-      boxShadowFocus: 'outline-brand',
+      bg: 'yellow.500',
+      bgHover: 'yellow.600',
+      bgActive: 'yellow.700',
+      color: 'gray.700',
+      boxShadowFocus: 'outline-yellow',
     }),
     '@secondary': customVariant({
-      bg: 'brand.50',
-      bgHover: 'brand.100',
-      bgActive: 'brand.200',
-      color: 'brand.600',
-      colorHover: 'brand.700',
-      boxShadowFocus: 'outline-brand',
+      bg: 'yellow.50',
+      bgHover: 'yellow.100',
+      bgActive: 'yellow.200',
+      color: 'yellow.600',
+      colorHover: 'yellow.700',
+      boxShadowFocus: 'outline-yellow',
     }),
     '@danger': customVariant({
       bg: 'error.50',

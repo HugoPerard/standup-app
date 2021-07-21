@@ -171,7 +171,7 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
             submitLabel="Ajouter une personne"
             placeholder="Saisir le nom d'une personne"
           >
-            <Button variant="link" colorScheme="brand" size="xs">
+            <Button variant="link" colorScheme="yellow" size="xs">
               <Icon icon={FiPlus} mr={1} /> Ajouter une personne
             </Button>
           </PopoverInput>

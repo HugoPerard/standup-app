@@ -37,8 +37,10 @@ export const ThankGroup: React.FC<ThankGroupProps> = ({
           onSuccess: () => {
             toastSuccess({
               title: `${
-                type === 'THANK' ? 'Remerciement' : 'Chose à ajouter'
-              } ajouté avec succès`,
+                type === 'THANK'
+                  ? 'Remerciement ajouté'
+                  : 'Chose à ajouter ajoutée'
+              } avec succès`,
             });
           },
         }
@@ -47,20 +49,13 @@ export const ThankGroup: React.FC<ThankGroupProps> = ({
 
   return (
     <Stack bg="gray.700" p={3} borderRadius="md" {...rest}>
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        mb="1"
-      >
-        <Text fontWeight="bold" mb={1} flex="1">
-          {name}
-        </Text>
+      <Stack direction="row" spacing={3} mb="1">
+        <Text fontWeight="bold">{name}</Text>
         <IconButton
           aria-label="Ajouter un objectif"
           icon={<FiPlus />}
           variant="@primary"
-          size="sm"
+          size="xs"
           isDisabled={!username}
           onClick={() => {
             handleAddThank();
@@ -74,7 +69,7 @@ export const ThankGroup: React.FC<ThankGroupProps> = ({
               aria-label="Supprimer l'objectif"
               icon={<FiTrash2 />}
               variant="@primary"
-              size="sm"
+              size="xs"
               onClick={() => {
                 deleteThank(thank?.id);
               }}

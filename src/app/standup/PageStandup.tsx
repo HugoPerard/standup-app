@@ -121,7 +121,6 @@ export const PageStandup = () => {
                     >
                       <Button
                         variant="@primary"
-                        colorScheme="brand"
                         size="sm"
                         isDisabled={isLoadingAddProject}
                       >

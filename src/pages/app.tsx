@@ -12,7 +12,7 @@ const Loading = () => (
         w="full"
         h="0.4rem"
         bg="gray.100"
-        colorScheme="brand"
+        colorScheme="yellow"
         isIndeterminate
       />
     </Flex>

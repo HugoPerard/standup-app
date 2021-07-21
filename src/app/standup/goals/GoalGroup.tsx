@@ -60,25 +60,20 @@ export const GoalGroup: React.FC<GoalGroupProps> = ({
         p={3}
         borderRadius="md"
         border={isToday && '2px solid'}
-        borderColor="brand.500"
+        borderColor="yellow.500"
         {...rest}
       >
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-          mb="1"
-        >
-          <Text fontWeight="bold" mb={1} textTransform="capitalize" flex="1">
+        <Stack direction="row" spacing={3}>
+          <Text fontWeight="bold" textTransform="capitalize">
             {name}
           </Text>
           {date && (
             <IconButton
               aria-label="Ajouter un objectif"
               icon={<FiPlus />}
-              variant="@primary"
-              size="sm"
               onClick={onOpenGoalModal}
+              variant="@primary"
+              size="xs"
             />
           )}
         </Stack>

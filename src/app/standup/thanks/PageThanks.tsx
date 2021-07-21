@@ -40,14 +40,14 @@ export const PageThanks = () => {
         {isLoading ? (
           <Loader />
         ) : (
-          <Stack spacing={6}>
+          <Stack spacing={4}>
             <Stack direction={{ base: 'column', sm: 'row' }}>
-              <ButtonGroup>
+              <ButtonGroup size="sm">
                 <Button
                   variant="@primary"
                   onClick={() => refetchThanks()}
                   flex="1"
-                  p={5}
+                  px={4}
                   isDisabled={isLoadingClearAllThanks}
                 >
                   <Icon icon={FiRefreshCcw} mr={2} />
