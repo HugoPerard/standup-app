@@ -20,7 +20,7 @@ import {
   useSpeakers,
 } from '@/app/standup/standup.firebase';
 import { Project } from '@/app/standup/standup.types';
-import { PopoverInput, useToastSuccess } from '@/components';
+import { Icon, PopoverInput, useToastSuccess } from '@/components';
 import { sortByIndex } from '@/utils/sortByIndex';
 
 import { EmptySpeakerCard, SpeakerCard } from './SpeakerCard';
@@ -142,19 +142,6 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
           <EditableInput />
         </Editable>
             <Stack direction="row" spacing={1}>
-              <PopoverInput
-                onSubmit={(value) => handleAddSpeaker(value)}
-                label="Nom"
-                submitLabel="Ajouter une personne"
-                placeholder="Saisir le nom d'une personne"
-              >
-                <IconButton
-                  aria-label="Ajouter une personne"
-                  icon={<FiPlus />}
-                  variant="@primary"
-                  size="xs"
-                />
-              </PopoverInput>
               <IconButton
                 aria-label="Supprimer"
                 onClick={() => handleDeleteProject()}
@@ -209,6 +196,16 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
           )}
           {/* {isReplacingSpeaker && <Loader />} */}
           {provided.placeholder}
+          <PopoverInput
+            onSubmit={(value) => handleAddSpeaker(value)}
+            label="Nom"
+            submitLabel="Ajouter une personne"
+            placeholder="Saisir le nom d'une personne"
+          >
+            <Button variant="link" colorScheme="brand" size="sm">
+              <Icon icon={FiPlus} mr={1} /> Ajouter une personne
+            </Button>
+          </PopoverInput>
         </Stack>
       )}
     </Droppable>
