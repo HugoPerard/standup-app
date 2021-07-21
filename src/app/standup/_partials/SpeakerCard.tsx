@@ -148,7 +148,8 @@ export const EmptySpeakerCard = ({ children, ...props }) => {
       py={2}
       px={4}
       borderRadius="md"
-      fontSize="sm"
+      fontSize="xs"
+      fontWeight="medium"
       {...props}
     >
       <Text>{children}</Text>

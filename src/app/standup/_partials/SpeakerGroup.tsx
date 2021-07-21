@@ -7,6 +7,7 @@ import {
   StackProps,
   Wrap,
   Button,
+  chakra,
 } from '@chakra-ui/react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { FiPlus, FiTrash2 } from 'react-icons/fi';
@@ -65,6 +66,9 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
   };
 
   const handleUpdateProject = (name: string) => {
+    if (name === project?.name) {
+      return;
+    }
     updateProject(
       { id: project?.id, name },
       {
@@ -90,6 +94,7 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
           borderColor="yellow.500"
           shadow="md"
           spacing={3}
+          minW="14rem"
           {...rest}
         >
           <Stack
@@ -98,7 +103,10 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
             alignItems="center"
           >
             <Editable
+              as={chakra.button} // Fix Editable not working in dragHandle component
+              textAlign="left"
               fontWeight="bold"
+              fontSize="sm"
               defaultValue={project?.name}
               onSubmit={(value) => handleUpdateProject(value)}
             >
@@ -163,7 +171,7 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
             submitLabel="Ajouter une personne"
             placeholder="Saisir le nom d'une personne"
           >
-            <Button variant="link" colorScheme="brand" size="sm">
+            <Button variant="link" colorScheme="brand" size="xs">
               <Icon icon={FiPlus} mr={1} /> Ajouter une personne
             </Button>
           </PopoverInput>
