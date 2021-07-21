@@ -66,10 +66,19 @@ export const useProjectUpdate = (
 };
 
 const deleteProject = async (id: string): Promise<any> => {
-  const snapshot = await speakersCollectionRef
+  const snapshotSpeakers = await speakersCollectionRef
     .where('projectId', '==', id)
     .get();
-  snapshot.docs.map((doc) => updateSpeaker(doc?.id, { projectId: '0' }));
+  snapshotSpeakers.docs.map((doc) =>
+    speakersCollectionRef.doc(doc.id).delete()
+  );
+  const snapshotProject = await projectsCollectionRef?.doc(id).get();
+  const projectWithHigherIndex = await projectsCollectionRef
+    .where('index', '>', snapshotProject?.get('index'))
+    .get();
+  projectWithHigherIndex?.docs.map((doc) =>
+    updateProject(doc?.id, { index: doc?.data().index - 1 })
+  );
   return projectsCollectionRef?.doc(id).delete();
 };
 
