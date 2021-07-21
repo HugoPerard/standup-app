@@ -46,22 +46,16 @@ export const useProjectAdd = (
   });
 };
 
-const updateProject = (id: string, name: string): any => {
-  return projectsCollectionRef?.doc(id).update({
-    name,
-  });
+const updateProject = (id, payload) => {
+  return projectsCollectionRef?.doc(id)?.update({ ...payload });
 };
 
 export const useProjectUpdate = (
-  config: UseMutationOptions<
-    Project,
-    unknown,
-    Pick<Project, 'id' | 'name'>
-  > = {}
+  config: UseMutationOptions<any, unknown, any> = {}
 ) => {
   const queryCache = useQueryClient();
   return useMutation(
-    (project: Project) => updateProject(project.id, project.name),
+    (project: Project) => updateProject(project.id, { name: project?.name }),
     {
       ...config,
       onSuccess: () => {
@@ -89,10 +83,6 @@ export const useProjectDelete = (
       queryCache.invalidateQueries('projects');
     },
   });
-};
-
-const updateProject = (id, payload) => {
-  return projectsCollectionRef?.doc(id)?.update({ ...payload });
 };
 
 const replaceProject = async (project, newIndex) => {
@@ -199,7 +189,6 @@ const updateSpeaker = async (id, payload) => {
 
   if (
     !payload?.projectId ||
-    !payload.index ||
     (speaker?.projectId === payload?.projectId &&
       speaker?.index === payload?.index)
   ) {

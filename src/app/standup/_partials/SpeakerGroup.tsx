@@ -1,13 +1,12 @@
 import {
-  Text,
   Editable,
   EditableInput,
   EditablePreview,
-  Box,
   IconButton,
   Stack,
   StackProps,
   Wrap,
+  Button,
 } from '@chakra-ui/react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { FiPlus, FiTrash2 } from 'react-icons/fi';
@@ -77,41 +76,6 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
     );
   };
 
-  const { mutate: updateSpeaker } = useSpeakerUpdate();
-
-  const [isReplacingSpeaker, setIsReplacingSpeaker] = useState(false);
-
-  const onDrop = (speaker: Speaker) => {
-    if (speaker?.projectId === project?.id) {
-      return;
-    }
-    setIsReplacingSpeaker(true);
-    updateSpeaker(
-      { id: speaker?.id, payload: { projectId: project?.id } },
-      {
-        onSuccess: () => {
-          setIsReplacingSpeaker(false);
-          toastSuccess({ title: 'La personne a été déplacée avec succès' });
-        },
-        onError: () => {
-          setIsReplacingSpeaker(false);
-        },
-      }
-    );
-  };
-
-  const [{ isOver, isDroppable }, drop] = useDrop(
-    () => ({
-      accept: 'SPEAKER',
-      drop: ({ speaker }) => onDrop(speaker),
-      collect: (monitor: DropTargetMonitor) => ({
-        isOver: !!monitor.isOver(),
-        isDroppable: monitor.canDrop(),
-      }),
-    }),
-    [project]
-  );
-
   return (
     <Droppable droppableId={project?.id} type="SPEAKER" direction="vertical">
       {(provided, droppableSnapshot) => (
@@ -133,26 +97,21 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
             justifyContent="space-between"
             alignItems="center"
           >
-            <Stack direction="row" justifyContent="space-between" mb="1">
-        <Editable
-          fontWeight="bold"
-          fontSize="sm"
-          mb={1}
-          defaultValue={project?.name}
-          onSubmit={(value) => handleUpdateProject(value)}
-        >
-          <EditablePreview />
-          <EditableInput />
-        </Editable>
-            <Stack direction="row" spacing={1}>
-              <IconButton
-                aria-label="Supprimer"
-                onClick={() => handleDeleteProject()}
-                icon={<FiTrash2 />}
-                variant="@primary"
-                size="xs"
-              />
-            </Stack>
+            <Editable
+              fontWeight="bold"
+              defaultValue={project?.name}
+              onSubmit={(value) => handleUpdateProject(value)}
+            >
+              <EditablePreview />
+              <EditableInput />
+            </Editable>
+            <IconButton
+              aria-label="Supprimer"
+              onClick={() => handleDeleteProject()}
+              icon={<FiTrash2 />}
+              variant="@primary"
+              size="xs"
+            />
           </Stack>
 
           {isLoadingSpeakers && <Loader />}
@@ -197,7 +156,6 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
           {!isLoadingSpeakers && !isErrorSpeakers && speakers?.length <= 0 && (
             <EmptySpeakerCard>Personne n'est sur ce projet</EmptySpeakerCard>
           )}
-          {/* {isReplacingSpeaker && <Loader />} */}
           {provided.placeholder}
           <PopoverInput
             onSubmit={(value) => handleAddSpeaker(value)}
