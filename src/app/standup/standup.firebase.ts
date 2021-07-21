@@ -26,8 +26,12 @@ export const useProjects = (config: UseQueryOptions<Project[]> = {}) => {
   });
 };
 
-const addProject = (projectName: string): any => {
-  return projectsCollectionRef?.add({ name: projectName });
+const addProject = async (projectName: string): Promise<any> => {
+  const snapshot = await projectsCollectionRef?.get();
+  snapshot?.docs.map((doc) =>
+    updateProject(doc?.id, { index: doc?.get('index') + 1 })
+  );
+  return projectsCollectionRef?.add({ name: projectName, index: 0 });
 };
 
 export const useProjectAdd = (
@@ -42,22 +46,16 @@ export const useProjectAdd = (
   });
 };
 
-const updateProject = (id: string, name: string): any => {
-  return projectsCollectionRef?.doc(id).update({
-    name,
-  });
+const updateProject = (id, payload) => {
+  return projectsCollectionRef?.doc(id)?.update({ ...payload });
 };
 
 export const useProjectUpdate = (
-  config: UseMutationOptions<
-    Project,
-    unknown,
-    Pick<Project, 'id' | 'name'>
-  > = {}
+  config: UseMutationOptions<any, unknown, any> = {}
 ) => {
   const queryCache = useQueryClient();
   return useMutation(
-    (project: Project) => updateProject(project.id, project.name),
+    (project: Project) => updateProject(project.id, { name: project?.name }),
     {
       ...config,
       onSuccess: () => {
@@ -68,10 +66,19 @@ export const useProjectUpdate = (
 };
 
 const deleteProject = async (id: string): Promise<any> => {
-  const snapshot = await speakersCollectionRef
+  const snapshotSpeakers = await speakersCollectionRef
     .where('projectId', '==', id)
     .get();
-  snapshot.docs.map((doc) => updateSpeaker(doc?.id, { projectId: '0' }));
+  snapshotSpeakers.docs.map((doc) =>
+    speakersCollectionRef.doc(doc.id).delete()
+  );
+  const snapshotProject = await projectsCollectionRef?.doc(id).get();
+  const projectWithHigherIndex = await projectsCollectionRef
+    .where('index', '>', snapshotProject?.get('index'))
+    .get();
+  projectWithHigherIndex?.docs.map((doc) =>
+    updateProject(doc?.id, { index: doc?.data().index - 1 })
+  );
   return projectsCollectionRef?.doc(id).delete();
 };
 
@@ -82,9 +89,50 @@ export const useProjectDelete = (
   return useMutation((id) => deleteProject(id), {
     ...config,
     onSuccess: () => {
-      queryCache.invalidateQueries(['projects', 'speakers']);
+      queryCache.invalidateQueries('projects');
     },
   });
+};
+
+const replaceProject = async (project, newIndex) => {
+  if (project?.index === newIndex) {
+    return;
+  }
+  const isReplaceToRight = project?.index < newIndex;
+
+  if (isReplaceToRight) {
+    const snapshot = await projectsCollectionRef
+      ?.where('index', '>', project?.index)
+      ?.where('index', '<=', newIndex)
+      .get();
+    snapshot.docs.map((doc) =>
+      updateProject(doc?.id, { index: doc?.get('index') - 1 })
+    );
+  } else {
+    const snapshot = await projectsCollectionRef
+      ?.where('index', '<', project?.index)
+      ?.where('index', '>=', newIndex)
+      .get();
+    snapshot.docs.map((doc) =>
+      updateProject(doc?.id, { index: doc?.get('index') + 1 })
+    );
+  }
+  await updateProject(project?.id, { index: newIndex });
+};
+
+export const useProjectReplace = (
+  config: UseMutationOptions<any, unknown, any> = {}
+) => {
+  const queryCache = useQueryClient();
+  return useMutation(
+    ({ project, newIndex }) => replaceProject(project, newIndex),
+    {
+      ...config,
+      onSuccess: () => {
+        queryCache.invalidateQueries('projects');
+      },
+    }
+  );
 };
 
 const speakersCollectionRef = firebase?.firestore?.()?.collection('speakers');
@@ -113,7 +161,7 @@ export const useSpeakers = (
 };
 
 const addSpeaker = (payload: Speaker): any => {
-  return speakersCollectionRef?.add({ ...payload, index: 0 });
+  return speakersCollectionRef?.add({ ...payload });
 };
 
 export const useSpeakerAdd = (
@@ -144,7 +192,65 @@ export const useSpeakerDelete = (
   });
 };
 
-const updateSpeaker = (id, payload) => {
+const updateSpeaker = async (id, payload) => {
+  const snapshot = await speakersCollectionRef?.doc(id).get();
+  const speaker = snapshot?.data();
+
+  if (
+    !payload?.projectId ||
+    (speaker?.projectId === payload?.projectId &&
+      speaker?.index === payload?.index)
+  ) {
+    return speakersCollectionRef?.doc(id)?.update({ ...payload });
+  }
+
+  if (speaker?.projectId !== payload?.projectId) {
+    const snapshotSpeakersOldProject = await speakersCollectionRef
+      .where('projectId', '==', speaker?.projectId)
+      .where('index', '>', speaker?.index)
+      .get();
+    snapshotSpeakersOldProject?.docs?.map((doc) =>
+      speakersCollectionRef
+        ?.doc(doc.id)
+        ?.update({ index: doc?.data().index - 1 })
+    );
+    const snapshotSpeakersNewProject = await speakersCollectionRef
+      .where('projectId', '==', payload?.projectId)
+      .where('index', '>=', payload?.index)
+      .get();
+    snapshotSpeakersNewProject?.docs?.map((doc) =>
+      speakersCollectionRef
+        ?.doc(doc.id)
+        ?.update({ index: doc?.data().index + 1 })
+    );
+  } else {
+    const isReplaceToBottom = speaker?.index < payload?.index;
+
+    if (isReplaceToBottom) {
+      const snapshot = await speakersCollectionRef
+        .where('projectId', '==', speaker?.projectId)
+        .where('index', '>', speaker?.index)
+        .where('index', '<=', payload?.index)
+        .get();
+      snapshot.docs.map((doc) =>
+        speakersCollectionRef
+          ?.doc(doc.id)
+          ?.update({ index: doc?.data().index - 1 })
+      );
+    } else {
+      const snapshot = await speakersCollectionRef
+        .where('projectId', '==', speaker?.projectId)
+        .where('index', '<', speaker?.index)
+        .where('index', '>=', payload?.index)
+        .get();
+      snapshot.docs.map((doc) =>
+        speakersCollectionRef
+          ?.doc(doc.id)
+          ?.update({ index: doc?.data().index + 1 })
+      );
+    }
+  }
+
   return speakersCollectionRef?.doc(id)?.update({ ...payload });
 };
 

@@ -22,7 +22,7 @@ const NavItem = ({ to, ...rest }) => {
       fontSize="sm"
       fontWeight="medium"
       px="3"
-      color={isActive ? 'yellow.600' : undefined}
+      color={isActive ? 'yellow.500' : undefined}
       transition="0.2s"
       _before={{
         content: '""',
@@ -31,7 +31,7 @@ const NavItem = ({ to, ...rest }) => {
         left: 0,
         bottom: 0,
         transition: '0.2s',
-        bg: isActive ? 'yellow.600' : undefined,
+        bg: isActive ? 'yellow.500' : undefined,
         h: '3px',
       }}
       {...rest}
@@ -41,14 +41,7 @@ const NavItem = ({ to, ...rest }) => {
 
 export const StandupNav = ({ ...rest }) => {
   return (
-    <InternalBar justifyContent="space-between" {...rest}>
-      <Flex>
-        <NavItem to={Routes.STANDUP_GOALS}>Objectifs</NavItem>
-        <NavItem to={Routes.STANDUP_SPEAKING}>Standup</NavItem>
-        <NavItem to={Routes.STANDUP_THANKS}>
-          Choses à ajouter / Remerciement
-        </NavItem>
-      </Flex>
+    <InternalBar {...rest}>
       <Link
         href={formatExternalUrl(STANDUP_MEET_URL)}
         isExternal
@@ -61,6 +54,11 @@ export const StandupNav = ({ ...rest }) => {
           </chakra.span>
         </Button>
       </Link>
+      <Flex>
+        <NavItem to={Routes.STANDUP_GOALS}>Objectifs</NavItem>
+        <NavItem to={Routes.STANDUP_SPEAKING}>Standup</NavItem>
+        <NavItem to={Routes.STANDUP_THANKS}>Remerciements</NavItem>
+      </Flex>
     </InternalBar>
   );
 };

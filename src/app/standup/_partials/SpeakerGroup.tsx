@@ -1,7 +1,4 @@
-import { useState } from 'react';
-
 import {
-  ButtonGroup,
   Editable,
   EditableInput,
   EditablePreview,
@@ -9,8 +6,10 @@ import {
   Stack,
   StackProps,
   Wrap,
+  Button,
+  chakra,
 } from '@chakra-ui/react';
-import { DropTargetMonitor, useDrop } from 'react-dnd';
+import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { FiPlus, FiTrash2 } from 'react-icons/fi';
 
 import { Loader } from '@/app/layout';
@@ -19,10 +18,9 @@ import {
   useProjectUpdate,
   useSpeakerAdd,
   useSpeakers,
-  useSpeakerUpdate,
 } from '@/app/standup/standup.firebase';
-import { Project, Speaker } from '@/app/standup/standup.types';
-import { PopoverInput, useToastSuccess } from '@/components';
+import { Project } from '@/app/standup/standup.types';
+import { Icon, PopoverInput, useToastSuccess } from '@/components';
 import { sortByIndex } from '@/utils/sortByIndex';
 
 import { EmptySpeakerCard, SpeakerCard } from './SpeakerCard';
@@ -49,7 +47,7 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
 
   const handleAddSpeaker = (value) => {
     addSpeaker(
-      { name: value, projectId: project?.id },
+      { name: value, projectId: project?.id, index: speakers?.length },
       {
         onSuccess: async () =>
           toastSuccess({ title: 'La personne a été crée avec succès' }),
@@ -60,11 +58,17 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
   const handleDeleteProject = () => {
     deleteProject(project?.id, {
       onSuccess: async () =>
-        toastSuccess({ title: 'Le projet a été supprimé avec succès' }),
+        toastSuccess({
+          title:
+            'Le projet et les personnes sur ce projet ont été supprimé avec succès',
+        }),
     });
   };
 
   const handleUpdateProject = (name: string) => {
+    if (name === project?.name) {
+      return;
+    }
     updateProject(
       { id: project?.id, name },
       {
@@ -76,107 +80,103 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
     );
   };
 
-  const { mutate: updateSpeaker } = useSpeakerUpdate();
-
-  const [isReplacingSpeaker, setIsReplacingSpeaker] = useState(false);
-
-  const onDrop = (speaker: Speaker) => {
-    if (speaker?.projectId === project?.id) {
-      return;
-    }
-    setIsReplacingSpeaker(true);
-    updateSpeaker(
-      { id: speaker?.id, payload: { projectId: project?.id } },
-      {
-        onSuccess: () => {
-          setIsReplacingSpeaker(false);
-          toastSuccess({ title: 'La personne a été déplacée avec succès' });
-        },
-        onError: () => {
-          setIsReplacingSpeaker(false);
-        },
-      }
-    );
-  };
-
-  const [{ isOver, isDroppable }, drop] = useDrop(
-    () => ({
-      accept: 'SPEAKER',
-      drop: ({ speaker }) => onDrop(speaker),
-      collect: (monitor: DropTargetMonitor) => ({
-        isOver: !!monitor.isOver(),
-        isDroppable: monitor.canDrop(),
-      }),
-    }),
-    [project]
-  );
-
   return (
-    <Stack
-      id={project?.id}
-      ref={drop}
-      bg="gray.700"
-      p={3}
-      borderRadius="md"
-      {...(isDroppable && { border: '1px dashed', borderColor: 'gray.500' })}
-      {...(isOver ? { border: '1px solid', borderColor: 'brand.500' } : {})}
-      {...rest}
-    >
-      <Stack direction="row" justifyContent="space-between" mb="1">
-        <Editable
-          fontWeight="bold"
-          mb={1}
-          defaultValue={project?.name}
-          onSubmit={(value) => handleUpdateProject(value)}
+    <Droppable droppableId={project?.id} type="SPEAKER" direction="vertical">
+      {(provided, droppableSnapshot) => (
+        <Stack
+          ref={provided.innerRef}
+          id={project?.id}
+          bg="gray.700"
+          h="fit-content"
+          p={3}
+          borderRadius="md"
+          border={droppableSnapshot?.isDraggingOver ? '1px solid' : undefined}
+          borderColor="yellow.500"
+          shadow="md"
+          spacing={3}
+          minW="14rem"
+          {...rest}
         >
-          <EditablePreview />
-          <EditableInput />
-        </Editable>
-        <ButtonGroup spacing={1}>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <Editable
+              as={chakra.button} // Fix Editable not working in dragHandle component
+              textAlign="left"
+              fontWeight="bold"
+              fontSize="sm"
+              defaultValue={project?.name}
+              onSubmit={(value) => handleUpdateProject(value)}
+            >
+              <EditablePreview />
+              <EditableInput />
+            </Editable>
+            <IconButton
+              aria-label="Supprimer"
+              onClick={() => handleDeleteProject()}
+              icon={<FiTrash2 />}
+              variant="@primary"
+              size="xs"
+            />
+          </Stack>
+
+          {isLoadingSpeakers && <Loader />}
+          {isErrorSpeakers && (
+            <EmptySpeakerCard>
+              Erreur lors de la récupération des personnes sur ce projet
+            </EmptySpeakerCard>
+          )}
+          {!isLoadingSpeakers && !isErrorSpeakers && speakers?.length > 0 && (
+            <Wrap>
+              {sortByIndex(speakers)?.map((speaker, index) => (
+                <Draggable
+                  key={speaker?.id}
+                  draggableId={speaker?.id}
+                  index={index}
+                >
+                  {({
+                    innerRef,
+                    draggableProps,
+                    dragHandleProps,
+                    placeholder,
+                  }) => (
+                    <>
+                      <SpeakerCard
+                        ref={innerRef}
+                        {...draggableProps}
+                        {...dragHandleProps}
+                        data-react-beautiful-dnd-draggable="0"
+                        data-react-beautiful-dnd-drag-handle="0"
+                        key={speaker?.id}
+                        speaker={speaker}
+                        index={index}
+                        flex="1"
+                      />
+                      {placeholder}
+                    </>
+                  )}
+                </Draggable>
+              ))}
+            </Wrap>
+          )}
+          {!isLoadingSpeakers && !isErrorSpeakers && speakers?.length <= 0 && (
+            <EmptySpeakerCard>Personne n'est sur ce projet</EmptySpeakerCard>
+          )}
+          {provided.placeholder}
           <PopoverInput
             onSubmit={(value) => handleAddSpeaker(value)}
             label="Nom"
             submitLabel="Ajouter une personne"
             placeholder="Saisir le nom d'une personne"
           >
-            <IconButton
-              aria-label="Ajouter une personne"
-              icon={<FiPlus />}
-              variant="@primary"
-              size="sm"
-            />
+            <Button variant="link" colorScheme="brand" size="xs">
+              <Icon icon={FiPlus} mr={1} /> Ajouter une personne
+            </Button>
           </PopoverInput>
-          <IconButton
-            aria-label="Supprimer"
-            onClick={() => handleDeleteProject()}
-            icon={<FiTrash2 />}
-            variant="@primary"
-            size="sm"
-          />
-        </ButtonGroup>
-      </Stack>
-      {isLoadingSpeakers && <Loader />}
-      {isErrorSpeakers && (
-        <EmptySpeakerCard>
-          Erreur lors de la récupération des personnes sur ce projet
-        </EmptySpeakerCard>
+        </Stack>
       )}
-      {!isLoadingSpeakers && !isErrorSpeakers && speakers?.length > 0 && (
-        <Wrap>
-          {sortByIndex(speakers)?.map((speaker, index) => (
-            <SpeakerCard
-              key={speaker?.id}
-              speaker={speaker}
-              index={index}
-              flex="1"
-            />
-          ))}
-        </Wrap>
-      )}
-      {!isLoadingSpeakers && !isErrorSpeakers && speakers?.length <= 0 && (
-        <EmptySpeakerCard>Personne n'est sur ce projet</EmptySpeakerCard>
-      )}
-      {isReplacingSpeaker && <Loader />}
-    </Stack>
+    </Droppable>
   );
 };

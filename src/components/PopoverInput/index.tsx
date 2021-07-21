@@ -1,7 +1,6 @@
 import React from 'react';
 
 import {
-  Box,
   Button,
   Popover,
   PopoverArrow,
@@ -11,7 +10,7 @@ import {
   PopoverContentProps,
   PopoverFooter,
   PopoverTrigger,
-  useDisclosure,
+  Portal,
 } from '@chakra-ui/react';
 import { Formiz, useForm } from '@formiz/core';
 
@@ -32,44 +31,34 @@ export const PopoverInput: React.FC<PopoverInputProps> = ({
   placeholder = 'Saisir...',
   ...rest
 }) => {
-  const internalForm = useForm({ subscribe: { fields: ['input'] } });
+  const internalForm = useForm();
 
   const handleSubmit = (values) => {
     onSubmit(values?.input);
-    onClose();
   };
-
-  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const initialFocusRef = React.useRef();
 
   return (
-    <Popover
-      colorScheme="gray"
-      isOpen={isOpen}
-      onClose={onClose}
-      initialFocusRef={initialFocusRef}
-    >
-      <PopoverTrigger>
-        <Box onClick={() => onOpen()}>{children}</Box>
-      </PopoverTrigger>
-      <Formiz connect={internalForm} autoForm onValidSubmit={handleSubmit}>
-        <PopoverContent
-          color="gray.100"
-          bg="gray.600"
-          borderColor="gray.700"
-          {...rest}
-        >
-          <PopoverArrow bg="gray.600" />
-          <PopoverCloseButton zIndex="10" />
-          {isOpen && (
+    <Popover colorScheme="gray" initialFocusRef={initialFocusRef}>
+      <PopoverTrigger>{children}</PopoverTrigger>
+      <Portal>
+        <Formiz connect={internalForm} autoForm onValidSubmit={handleSubmit}>
+          <PopoverContent
+            color="gray.100"
+            bg="gray.600"
+            borderColor="gray.700"
+            {...rest}
+          >
+            <PopoverArrow bg="gray.600" />
+            <PopoverCloseButton zIndex="10" />
             <>
               <PopoverBody>
                 <FieldInput
+                  ref={initialFocusRef}
                   name="input"
                   label={label}
                   placeholder={placeholder}
-                  ref={initialFocusRef}
                 />
               </PopoverBody>
               <PopoverFooter
@@ -77,14 +66,19 @@ export const PopoverInput: React.FC<PopoverInputProps> = ({
                 d="flex"
                 justifyContent="flex-end"
               >
-                <Button type="submit" variant="@primary" size="sm">
+                <Button
+                  type="submit"
+                  variant="@primary"
+                  size="sm"
+                  onClick={(e) => e.currentTarget?.blur()}
+                >
                   {submitLabel}
                 </Button>
               </PopoverFooter>
             </>
-          )}
-        </PopoverContent>
-      </Formiz>
+          </PopoverContent>
+        </Formiz>
+      </Portal>
     </Popover>
   );
 };
