@@ -56,7 +56,7 @@ export const StandupNav = ({ ...rest }) => {
       </Link>
       <Flex>
         <NavItem to={Routes.STANDUP_GOALS}>Objectifs</NavItem>
-        <NavItem to={Routes.STANDUP_SPEAKING}>Standup</NavItem>
+        <NavItem to={Routes.STANDUP_SPEAKING}>Stand-up</NavItem>
         <NavItem to={Routes.STANDUP_THANKS}>Remerciements</NavItem>
       </Flex>
     </InternalBar>

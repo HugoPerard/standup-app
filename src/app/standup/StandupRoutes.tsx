@@ -1,5 +1,6 @@
 import React from 'react';
 
+import Head from 'next/head';
 import { Switch, Redirect, useRouteMatch } from 'react-router-dom';
 
 import { Route } from '@/app/router';
@@ -15,6 +16,9 @@ const StandupRoutes = () => {
   const { path } = useRouteMatch();
   return (
     <>
+      <Head>
+        <title>BS | Stand-up</title>
+      </Head>
       <StandupNav />
       <Switch>
         <Route

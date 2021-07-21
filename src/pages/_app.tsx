@@ -55,7 +55,7 @@ const AppHead = () => {
 
   return (
     <Head>
-      <title>StandUp</title>
+      <title>BearStudio</title>
       <meta
         name="viewport"
         content="initial-scale=1, viewport-fit=cover, user-scalable=no"
@@ -64,7 +64,7 @@ const AppHead = () => {
         name="apple-mobile-web-app-status-bar-style"
         content="black-translucent"
       />
-      <meta name="apple-mobile-web-app-capable" content="yes"></meta>
+      <meta name="apple-mobile-web-app-capable" content="yes" />
       <link
         rel="apple-touch-icon"
         sizes="180x180"

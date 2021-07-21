@@ -60,7 +60,7 @@ const MainMenuItem = ({ to, ...rest }: any) => {
 export const MainMenu = ({ ...rest }) => {
   return (
     <Stack direction="row" spacing="1" {...rest}>
-      <MainMenuItem to={Routes.STANDUP}>StandUp</MainMenuItem>
+      <MainMenuItem to={Routes.STANDUP}>Stand-up</MainMenuItem>
       <MainMenuItem to="/cra">CRA</MainMenuItem>
     </Stack>
   );

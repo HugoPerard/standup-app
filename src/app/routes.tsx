@@ -1,4 +1,4 @@
-// StandUp
+// Stand-up
 
 export const STANDUP = '/standup';
 

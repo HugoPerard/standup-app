@@ -6,7 +6,7 @@ import logo from './logo.svg';
 
 const theme = create({
   base: 'light',
-  brandTitle: 'StandUp',
+  brandTitle: 'Stand Up',
   brandImage: logo,
 });
 
