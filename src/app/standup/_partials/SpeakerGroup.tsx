@@ -2,10 +2,12 @@ import { useState } from 'react';
 
 import {
   ButtonGroup,
+  Editable,
+  EditableInput,
+  EditablePreview,
   IconButton,
   Stack,
   StackProps,
-  Text,
   Wrap,
 } from '@chakra-ui/react';
 import { DropTargetMonitor, useDrop } from 'react-dnd';
@@ -14,6 +16,7 @@ import { FiPlus, FiTrash2 } from 'react-icons/fi';
 import { Loader } from '@/app/layout';
 import {
   useProjectDelete,
+  useProjectUpdate,
   useSpeakerAdd,
   useSpeakers,
   useSpeakerUpdate,
@@ -36,6 +39,7 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
 
   const { mutate: deleteProject } = useProjectDelete();
   const { mutate: addSpeaker } = useSpeakerAdd();
+  const { mutate: updateProject } = useProjectUpdate();
 
   const {
     data: speakers,
@@ -58,6 +62,18 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
       onSuccess: async () =>
         toastSuccess({ title: 'Le projet a été supprimé avec succès' }),
     });
+  };
+
+  const handleUpdateProject = (name: string) => {
+    updateProject(
+      { id: project?.id, name },
+      {
+        onSuccess: async () =>
+          toastSuccess({
+            title: `Le projet ${project?.name} a été renommé avec succès en ${name}`,
+          }),
+      }
+    );
   };
 
   const { mutate: updateSpeaker } = useSpeakerUpdate();
@@ -107,9 +123,15 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
       {...rest}
     >
       <Stack direction="row" justifyContent="space-between" mb="1">
-        <Text fontWeight="bold" mb={1}>
-          {project?.name}
-        </Text>
+        <Editable
+          fontWeight="bold"
+          mb={1}
+          defaultValue={project?.name}
+          onSubmit={(value) => handleUpdateProject(value)}
+        >
+          <EditablePreview />
+          <EditableInput />
+        </Editable>
         <ButtonGroup spacing={1}>
           <PopoverInput
             onSubmit={(value) => handleAddSpeaker(value)}
