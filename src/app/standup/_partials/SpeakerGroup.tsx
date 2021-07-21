@@ -47,7 +47,7 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
 
   const handleAddSpeaker = (value) => {
     addSpeaker(
-      { name: value, projectId: project?.id },
+      { name: value, projectId: project?.id, index: speakers?.length },
       {
         onSuccess: async () =>
           toastSuccess({ title: 'La personne a été crée avec succès' }),

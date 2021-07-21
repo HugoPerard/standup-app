@@ -162,7 +162,7 @@ export const useSpeakers = (
 };
 
 const addSpeaker = (payload: Speaker): any => {
-  return speakersCollectionRef?.add({ ...payload, index: 0 });
+  return speakersCollectionRef?.add({ ...payload });
 };
 
 export const useSpeakerAdd = (
@@ -193,7 +193,66 @@ export const useSpeakerDelete = (
   });
 };
 
-const updateSpeaker = (id, payload) => {
+const updateSpeaker = async (id, payload) => {
+  const snapshot = await speakersCollectionRef?.doc(id).get();
+  const speaker = snapshot?.data();
+
+  if (
+    !payload?.projectId ||
+    !payload.index ||
+    (speaker?.projectId === payload?.projectId &&
+      speaker?.index === payload?.index)
+  ) {
+    return speakersCollectionRef?.doc(id)?.update({ ...payload });
+  }
+
+  if (speaker?.projectId !== payload?.projectId) {
+    const snapshotSpeakersOldProject = await speakersCollectionRef
+      .where('projectId', '==', speaker?.projectId)
+      .where('index', '>', speaker?.index)
+      .get();
+    snapshotSpeakersOldProject?.docs?.map((doc) =>
+      speakersCollectionRef
+        ?.doc(doc.id)
+        ?.update({ index: doc?.data().index - 1 })
+    );
+    const snapshotSpeakersNewProject = await speakersCollectionRef
+      .where('projectId', '==', payload?.projectId)
+      .where('index', '>=', payload?.index)
+      .get();
+    snapshotSpeakersNewProject?.docs?.map((doc) =>
+      speakersCollectionRef
+        ?.doc(doc.id)
+        ?.update({ index: doc?.data().index + 1 })
+    );
+  } else {
+    const isReplaceToBottom = speaker?.index < payload?.index;
+
+    if (isReplaceToBottom) {
+      const snapshot = await speakersCollectionRef
+        .where('projectId', '==', speaker?.projectId)
+        .where('index', '>', speaker?.index)
+        .where('index', '<=', payload?.index)
+        .get();
+      snapshot.docs.map((doc) =>
+        speakersCollectionRef
+          ?.doc(doc.id)
+          ?.update({ index: doc?.data().index - 1 })
+      );
+    } else {
+      const snapshot = await speakersCollectionRef
+        .where('projectId', '==', speaker?.projectId)
+        .where('index', '<', speaker?.index)
+        .where('index', '>=', payload?.index)
+        .get();
+      snapshot.docs.map((doc) =>
+        speakersCollectionRef
+          ?.doc(doc.id)
+          ?.update({ index: doc?.data().index + 1 })
+      );
+    }
+  }
+
   return speakersCollectionRef?.doc(id)?.update({ ...payload });
 };
 
