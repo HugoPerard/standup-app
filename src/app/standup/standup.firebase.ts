@@ -26,8 +26,8 @@ export const useProjects = (config: UseQueryOptions<Project[]> = {}) => {
   });
 };
 
-const addProject = (projectName: string): any => {
-  return projectsCollectionRef?.add({ name: projectName });
+const addProject = (projectName: string, rest: any = {}): any => {
+  return projectsCollectionRef?.add({ name: projectName, ...rest });
 };
 
 export const useProjectAdd = (
@@ -85,6 +85,42 @@ export const useProjectDelete = (
       queryCache.invalidateQueries(['projects', 'speakers']);
     },
   });
+};
+
+const updateProject = (id, payload) => {
+  return projectsCollectionRef?.doc(id)?.update({ ...payload });
+};
+
+const replaceProject = async (project, newIndex) => {
+  projectsCollectionRef.doc(project?.id).delete();
+  const snapshot = await projectsCollectionRef
+    ?.where('index', '>', project?.index)
+    .get();
+  snapshot.docs.map((doc) =>
+    updateProject(doc?.id, { index: doc?.get('index') - 1 })
+  );
+  const snapshot2 = await projectsCollectionRef
+    ?.where('index', '>=', newIndex)
+    .get();
+  snapshot2.docs.map((doc) =>
+    updateProject(doc?.id, { index: doc?.get('index') + 1 })
+  );
+  addProject(null, { ...project, index: newIndex });
+};
+
+export const useProjectReplace = (
+  config: UseMutationOptions<any, unknown, any> = {}
+) => {
+  const queryCache = useQueryClient();
+  return useMutation(
+    ({ project, newIndex }) => replaceProject(project, newIndex),
+    {
+      ...config,
+      onSuccess: () => {
+        queryCache.invalidateQueries(['projects']);
+      },
+    }
+  );
 };
 
 const speakersCollectionRef = firebase?.firestore?.()?.collection('speakers');

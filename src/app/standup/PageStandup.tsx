@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { Button } from '@chakra-ui/button';
 import { Stack } from '@chakra-ui/layout';
@@ -23,14 +23,11 @@ import {
   useProjectAdd,
   useSpeakerAdd,
   useSpeakerUpdate,
+  useProjectReplace,
 } from './standup.firebase';
-import { Project } from './standup.types';
 
 export const PageStandup = () => {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const { isLoading: isLoadingProjects } = useProjects({
-    onSuccess: (data) => setProjects(data),
-  });
+  const { data: projects, isLoading: isLoadingProjects } = useProjects();
   const toastSuccess = useToastSuccess();
 
   const isLoading = isLoadingProjects;
@@ -77,6 +74,8 @@ export const PageStandup = () => {
 
   const { mutate: updateSpeaker } = useSpeakerUpdate();
 
+  const { mutate: replaceProject } = useProjectReplace();
+
   const handleDragEnd = ({ draggableId, source, destination, type }) => {
     if (!destination) {
       return;
@@ -94,20 +93,14 @@ export const PageStandup = () => {
         (project) => project?.id === draggableId
       );
 
-      const newProjects = [
-        ...projects?.slice(0, destination?.index),
-        movedProject,
-        ...projects?.slice(destination?.index),
-      ].filter(
-        (project, index) =>
-          project?.id !== draggableId || index === destination?.index
+      replaceProject(
+        { project: movedProject, newIndex: destination.index },
+        {
+          onSuccess: () => {
+            toastSuccess({ title: 'Le projet a été déplacé avec succès' });
+          },
+        }
       );
-
-      if (newProjects?.length !== projects?.length) {
-        return;
-      }
-
-      setProjects(newProjects);
       return;
     }
     if (type === 'SPEAKER') {
