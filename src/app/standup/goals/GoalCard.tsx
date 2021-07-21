@@ -103,9 +103,10 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, ...rest }) => {
         <Checkbox
           alignSelf="start"
           isChecked={goal?.isComplete}
+          onChange={handleCheckbox}
           isIndeterminate={isLoadingUpdate}
           isDisabled={isLoadingUpdate}
-          onChange={handleCheckbox}
+          colorScheme="yellow"
           pt={1}
         />
         <Stack flex="1">

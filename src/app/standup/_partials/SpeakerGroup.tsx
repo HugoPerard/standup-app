@@ -5,7 +5,6 @@ import {
   IconButton,
   Stack,
   StackProps,
-  Wrap,
   Button,
   chakra,
 } from '@chakra-ui/react';
@@ -129,7 +128,7 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
             </EmptySpeakerCard>
           )}
           {!isLoadingSpeakers && !isErrorSpeakers && speakers?.length > 0 && (
-            <Wrap>
+            <Stack spacing={1}>
               {sortByIndex(speakers)?.map((speaker, index) => (
                 <Draggable
                   key={speaker?.id}
@@ -159,7 +158,7 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
                   )}
                 </Draggable>
               ))}
-            </Wrap>
+            </Stack>
           )}
           {!isLoadingSpeakers && !isErrorSpeakers && speakers?.length <= 0 && (
             <EmptySpeakerCard>Personne n'est sur ce projet</EmptySpeakerCard>

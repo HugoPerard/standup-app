@@ -85,7 +85,7 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
           }}
         >
           <Checkbox
-            colorScheme="blackAlpha"
+            colorScheme="yellow"
             isIndeterminate={isRunning}
             isChecked={isSpeaked}
           />
