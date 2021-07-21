@@ -58,7 +58,10 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
   const handleDeleteProject = () => {
     deleteProject(project?.id, {
       onSuccess: async () =>
-        toastSuccess({ title: 'Le projet a été supprimé avec succès' }),
+        toastSuccess({
+          title:
+            'Le projet et les personnes sur ce projet ont été supprimé avec succès',
+        }),
     });
   };
 

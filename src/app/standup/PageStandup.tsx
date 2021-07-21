@@ -1,27 +1,17 @@
 import React from 'react';
 
-import { Button } from '@chakra-ui/button';
-import { Stack } from '@chakra-ui/layout';
-import {
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
-  Box,
-} from '@chakra-ui/react';
-import { Formiz, useForm } from '@formiz/core';
+import { Box, Button, Stack } from '@chakra-ui/react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { FiPlus } from 'react-icons/fi';
 
 import { Loader, Page, PageContent } from '@/app/layout';
-import { FieldInput, useToastSuccess } from '@/components';
+import { Icon, PopoverInput, useToastSuccess } from '@/components';
 import { sortByIndex } from '@/utils/sortByIndex';
 
 import { SpeakerGroup } from './_partials/SpeakerGroup';
 import {
   useProjects,
   useProjectAdd,
-  useSpeakerAdd,
   useSpeakerUpdate,
   useProjectReplace,
 } from './standup.firebase';
@@ -33,19 +23,11 @@ export const PageStandup = () => {
   const isLoading = isLoadingProjects;
 
   const {
-    mutate: addSpeaker,
-    isLoading: isLoadingAddSpeaker,
-  } = useSpeakerAdd();
-
-  const {
     mutate: addProject,
     isLoading: isLoadingAddProject,
   } = useProjectAdd();
 
-  const projectForm = useForm();
-  const speakerForm = useForm();
-
-  const handleAddProject = (projectName) => {
+  const handleAddProject = (projectName: string) => {
     if (!projectName) {
       return;
     }
@@ -54,22 +36,6 @@ export const PageStandup = () => {
         toastSuccess({ title: 'Le projet a été créé avec succès' });
       },
     });
-    projectForm?.setFieldsValues({ projectName: '' });
-  };
-
-  const handleAddSpeaker = (speakerName) => {
-    if (!speakerName) {
-      return;
-    }
-    addSpeaker(
-      { name: speakerName, projectId: '0' },
-      {
-        onSuccess: () => {
-          toastSuccess({ title: 'Une personne a été créé avec succès' });
-        },
-      }
-    );
-    speakerForm?.setFieldsValues({ speakerName: '' });
   };
 
   const { mutate: updateSpeaker } = useSpeakerUpdate();
@@ -129,164 +95,66 @@ export const PageStandup = () => {
         {isLoading ? (
           <Loader />
         ) : (
-          <Stack spacing={6} flex="1" overflowX="hidden">
-            <Accordion allowToggle>
-              <AccordionItem>
-                <AccordionButton>
-                  <Box flex="1" textAlign="left" fontSize="sm">
-                    Ajouter un projet et/ou une personne
+          <DragDropContext onDragEnd={handleDragEnd}>
+            <Droppable
+              droppableId="board"
+              type="PROJECT"
+              direction="horizontal"
+            >
+              {(droppableProvided) => (
+                <Stack
+                  ref={droppableProvided.innerRef}
+                  direction="row"
+                  spacing={1}
+                  overflow="scroll"
+                  position="fixed"
+                  left={5}
+                  right={5}
+                  h="full"
+                >
+                  <Box minW="10rem">
+                    <PopoverInput
+                      onSubmit={(value) => handleAddProject(value)}
+                      label="Nom"
+                      submitLabel="Ajouter un projet"
+                      placeholder="Saisir le nom du projet"
+                    >
+                      <Button
+                        variant="@primary"
+                        colorScheme="brand"
+                        size="sm"
+                        isDisabled={isLoadingAddProject}
+                      >
+                        <Icon icon={FiPlus} mr={1} /> Ajouter un projet
+                      </Button>
+                    </PopoverInput>
                   </Box>
-                  <AccordionIcon />
-                </AccordionButton>
-                <AccordionPanel>
-                  <Stack direction={{ base: 'column', md: 'row' }}>
-                    <Formiz
-                      connect={projectForm}
-                      onSubmit={(values: { projectName: string }) =>
-                        handleAddProject(values?.projectName)
-                      }
+                  {sortByIndex(projects)?.map((project, index) => (
+                    <Draggable
+                      key={project.id}
+                      draggableId={project.id}
+                      index={index}
                     >
-                      <form
-                        noValidate
-                        onSubmit={projectForm?.submit}
-                        style={{
-                          flex: 1,
-                        }}
-                      >
-                        <Stack
-                          direction={{
-                            base: 'column',
-                            sm: 'row',
-                            md: 'column',
-                            lg: 'row',
-                          }}
+                      {(provided) => (
+                        <Box
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          data-react-beautiful-dnd-draggable="0"
+                          data-react-beautiful-dnd-drag-handle="0"
+                          h="fit-content"
                         >
-                          <FieldInput
-                            name="projectName"
-                            placeholder="Saisir le nom d'un projet"
-                            color="gray.800"
-                            size="sm"
-                            flex={{
-                              base: 1,
-                              sm: 2,
-                              md: 1,
-                              lg: 2,
-                            }}
-                          />
-                          <Button
-                            type="submit"
-                            variant="@primary"
-                            isDisabled={isLoadingAddProject}
-                            size="sm"
-                            flex={1}
-                            minH={8}
-                          >
-                            {isLoadingAddProject ? (
-                              <Loader />
-                            ) : (
-                              'Ajouter un projet'
-                            )}
-                          </Button>
-                        </Stack>
-                      </form>
-                    </Formiz>
-                    <Formiz
-                      connect={speakerForm}
-                      onSubmit={(values: { speakerName: string }) =>
-                        handleAddSpeaker(values?.speakerName)
-                      }
-                    >
-                      <form
-                        noValidate
-                        onSubmit={speakerForm?.submit}
-                        style={{
-                          flex: 1,
-                        }}
-                      >
-                        <Stack
-                          direction={{
-                            base: 'column',
-                            sm: 'row',
-                            md: 'column',
-                            lg: 'row',
-                          }}
-                        >
-                          <FieldInput
-                            name="speakerName"
-                            placeholder="Saisir le nom d'une personne"
-                            color="gray.800"
-                            size="sm"
-                            flex={{
-                              base: 1,
-                              sm: 2,
-                              md: 1,
-                              lg: 2,
-                            }}
-                          />
-                          <Button
-                            type="submit"
-                            variant="@primary"
-                            isDisabled={isLoadingAddSpeaker}
-                            size="sm"
-                            flex={1}
-                            minH={8}
-                          >
-                            {isLoadingAddSpeaker ? (
-                              <Loader />
-                            ) : (
-                              'Ajouter une personne'
-                            )}
-                          </Button>
-                        </Stack>
-                      </form>
-                    </Formiz>
-                  </Stack>
-                </AccordionPanel>
-              </AccordionItem>
-            </Accordion>
-            <DragDropContext onDragEnd={handleDragEnd}>
-              <Droppable
-                droppableId="board"
-                type="PROJECT"
-                direction="horizontal"
-              >
-                {(droppableProvided) => (
-                  <Stack
-                    ref={droppableProvided.innerRef}
-                    direction="row"
-                    spacing={1}
-                    overflowX="scroll"
-                    whiteSpace="nowrap"
-                    flex="1"
-                    maxWidth={{ base: '96vw', xl: '97vw' }}
-                  >
-                    {sortByIndex(projects)?.map((project, index) => (
-                      <Draggable
-                        key={project.id}
-                        draggableId={project.id}
-                        index={index}
-                      >
-                        {(provided) => (
-                          <Box
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            data-react-beautiful-dnd-draggable="0"
-                            data-react-beautiful-dnd-drag-handle="0"
-                            h="fit-content"
-                          >
-                            <SpeakerGroup project={project} />
-                            {provided.placeholder}
-                          </Box>
-                        )}
-                      </Draggable>
-                    ))}
-                    {droppableProvided.placeholder}
-                  </Stack>
-                )}
-              </Droppable>
-            </DragDropContext>
-          </Stack>
+                          <SpeakerGroup project={project} />
+                          {provided.placeholder}
+                        </Box>
+                      )}
+                    </Draggable>
+                  ))}
+                  {droppableProvided.placeholder}
+                </Stack>
+              )}
+            </Droppable>
+          </DragDropContext>
         )}
       </PageContent>
     </Page>

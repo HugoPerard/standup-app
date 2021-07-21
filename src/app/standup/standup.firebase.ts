@@ -26,8 +26,12 @@ export const useProjects = (config: UseQueryOptions<Project[]> = {}) => {
   });
 };
 
-const addProject = (projectName: string, rest: any = {}): any => {
-  return projectsCollectionRef?.add({ name: projectName, ...rest });
+const addProject = async (projectName: string): Promise<any> => {
+  const snapshot = await projectsCollectionRef?.get();
+  snapshot?.docs.map((doc) =>
+    updateProject(doc?.id, { index: doc?.get('index') + 1 })
+  );
+  return projectsCollectionRef?.add({ name: projectName, index: 0 });
 };
 
 export const useProjectAdd = (
@@ -82,7 +86,7 @@ export const useProjectDelete = (
   return useMutation((id) => deleteProject(id), {
     ...config,
     onSuccess: () => {
-      queryCache.invalidateQueries(['projects', 'speakers']);
+      queryCache.invalidateQueries('projects');
     },
   });
 };
@@ -92,20 +96,29 @@ const updateProject = (id, payload) => {
 };
 
 const replaceProject = async (project, newIndex) => {
-  projectsCollectionRef.doc(project?.id).delete();
-  const snapshot = await projectsCollectionRef
-    ?.where('index', '>', project?.index)
-    .get();
-  snapshot.docs.map((doc) =>
-    updateProject(doc?.id, { index: doc?.get('index') - 1 })
-  );
-  const snapshot2 = await projectsCollectionRef
-    ?.where('index', '>=', newIndex)
-    .get();
-  snapshot2.docs.map((doc) =>
-    updateProject(doc?.id, { index: doc?.get('index') + 1 })
-  );
-  addProject(null, { ...project, index: newIndex });
+  if (project?.index === newIndex) {
+    return;
+  }
+  const isReplaceToRight = project?.index < newIndex;
+
+  if (isReplaceToRight) {
+    const snapshot = await projectsCollectionRef
+      ?.where('index', '>', project?.index)
+      ?.where('index', '<=', newIndex)
+      .get();
+    snapshot.docs.map((doc) =>
+      updateProject(doc?.id, { index: doc?.get('index') - 1 })
+    );
+  } else {
+    const snapshot = await projectsCollectionRef
+      ?.where('index', '<', project?.index)
+      ?.where('index', '>=', newIndex)
+      .get();
+    snapshot.docs.map((doc) =>
+      updateProject(doc?.id, { index: doc?.get('index') + 1 })
+    );
+  }
+  await updateProject(project?.id, { index: newIndex });
 };
 
 export const useProjectReplace = (
@@ -117,7 +130,7 @@ export const useProjectReplace = (
     {
       ...config,
       onSuccess: () => {
-        queryCache.invalidateQueries(['projects']);
+        queryCache.invalidateQueries('projects');
       },
     }
   );
