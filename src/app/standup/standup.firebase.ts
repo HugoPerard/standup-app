@@ -42,6 +42,31 @@ export const useProjectAdd = (
   });
 };
 
+const updateProject = (id: string, name: string): any => {
+  return projectsCollectionRef?.doc(id).update({
+    name,
+  });
+};
+
+export const useProjectUpdate = (
+  config: UseMutationOptions<
+    Project,
+    unknown,
+    Pick<Project, 'id' | 'name'>
+  > = {}
+) => {
+  const queryCache = useQueryClient();
+  return useMutation(
+    (project: Project) => updateProject(project.id, project.name),
+    {
+      ...config,
+      onSuccess: () => {
+        queryCache.invalidateQueries('projects');
+      },
+    }
+  );
+};
+
 const deleteProject = async (id: string): Promise<any> => {
   const snapshot = await speakersCollectionRef
     .where('projectId', '==', id)
