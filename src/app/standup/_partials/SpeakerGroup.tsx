@@ -44,12 +44,12 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
     isError: isErrorSpeakers,
   } = useSpeakers(project?.id);
 
-  const handleAddSpeaker = (value) => {
+  const handleAddSpeaker = (name) => {
     addSpeaker(
-      { name: value, projectId: project?.id, index: speakers?.length },
+      { name, projectId: project?.id, index: speakers?.length },
       {
         onSuccess: async () =>
-          toastSuccess({ title: 'La personne a été crée avec succès' }),
+          toastSuccess({ title: `${name} a été ajouté avec succès` }),
       }
     );
   };
@@ -58,8 +58,11 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
     deleteProject(project?.id, {
       onSuccess: async () =>
         toastSuccess({
-          title:
-            'Le projet et les personnes sur ce projet ont été supprimé avec succès',
+          title: `Le projet ${project?.name} a été supprimé avec succès`,
+          description:
+            speakers?.length > 0
+              ? `Les personnes sur ce projet ont aussi été supprimé`
+              : undefined,
         }),
     });
   };

@@ -41,7 +41,7 @@ export const GoalGroup: React.FC<GoalGroupProps> = ({
       {
         onSuccess: async () =>
           toastSuccess({
-            title: "L'objectif a été ajouté avec succès",
+            title: `L'objectif ${values?.description} a été ajouté avec succès`,
           }),
       }
     );

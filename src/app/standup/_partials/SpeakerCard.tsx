@@ -55,7 +55,9 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
     const handleDeleteSpeaker = () => {
       deleteSpeaker(speaker?.id, {
         onSuccess: async () =>
-          toastSuccess({ title: 'La personne a été supprimé avec succès' }),
+          toastSuccess({
+            title: `${speaker?.name} a été supprimé avec succès`,
+          }),
       });
     };
 

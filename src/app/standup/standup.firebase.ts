@@ -201,7 +201,8 @@ const updateSpeaker = async (id, payload) => {
     (speaker?.projectId === payload?.projectId &&
       speaker?.index === payload?.index)
   ) {
-    return speakersCollectionRef?.doc(id)?.update({ ...payload });
+    await speakersCollectionRef?.doc(id)?.update({ ...payload });
+    return (await speakersCollectionRef?.doc(id)?.get()).data();
   }
 
   if (speaker?.projectId !== payload?.projectId) {
@@ -251,7 +252,8 @@ const updateSpeaker = async (id, payload) => {
     }
   }
 
-  return speakersCollectionRef?.doc(id)?.update({ ...payload });
+  await speakersCollectionRef?.doc(id)?.update({ ...payload });
+  return (await speakersCollectionRef?.doc(id)?.get()).data();
 };
 
 export const useSpeakerUpdate = (

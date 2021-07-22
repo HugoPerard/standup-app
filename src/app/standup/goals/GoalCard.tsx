@@ -64,7 +64,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, ...rest }) => {
       {
         onSuccess: async () =>
           toastSuccess({
-            title: "L'objectif a été modifié avec succès",
+            title: `L'objectif ${goal.description} a été modifié avec succès en ${values?.description}`,
           }),
       }
     );
@@ -141,7 +141,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, ...rest }) => {
                   deleteGoal(goal?.id, {
                     onSuccess: async () =>
                       toastSuccess({
-                        title: "L'objectif a été supprimé avec succès",
+                        title: `L'objectif ${goal.description} a été supprimé avec succès`,
                       }),
                   })
                 }

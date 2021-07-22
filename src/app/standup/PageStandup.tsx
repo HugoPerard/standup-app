@@ -33,7 +33,9 @@ export const PageStandup = () => {
     }
     addProject(projectName, {
       onSuccess: () => {
-        toastSuccess({ title: 'Le projet a été créé avec succès' });
+        toastSuccess({
+          title: `Le projet ${projectName} a été créé avec succès`,
+        });
       },
     });
   };
@@ -63,7 +65,9 @@ export const PageStandup = () => {
         { project: movedProject, newIndex: destination.index },
         {
           onSuccess: () => {
-            toastSuccess({ title: 'Le projet a été déplacé avec succès' });
+            toastSuccess({
+              title: `Le projet ${movedProject?.name} a été déplacé avec succès`,
+            });
           },
         }
       );
@@ -79,8 +83,10 @@ export const PageStandup = () => {
           },
         },
         {
-          onSuccess: () => {
-            toastSuccess({ title: 'La personne a été déplacée avec succès' });
+          onSuccess: (value) => {
+            toastSuccess({
+              title: `${value?.name} a été déplacée avec succès`,
+            });
           },
         }
       );
