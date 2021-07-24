@@ -20,8 +20,6 @@ export const PageStandup = () => {
   const { data: projects, isLoading: isLoadingProjects } = useProjects();
   const toastSuccess = useToastSuccess();
 
-  const isLoading = isLoadingProjects;
-
   const {
     mutate: addProject,
     isLoading: isLoadingAddProject,
@@ -98,7 +96,7 @@ export const PageStandup = () => {
   return (
     <Page containerSize="full" bg="gray.800">
       <PageContent color="gray.200">
-        {isLoading ? (
+        {isLoadingProjects ? (
           <Loader />
         ) : (
           <DragDropContext onDragEnd={handleDragEnd}>
@@ -128,7 +126,7 @@ export const PageStandup = () => {
                       <Button
                         variant="@primary"
                         size="sm"
-                        isDisabled={isLoadingAddProject}
+                        isLoading={isLoadingAddProject}
                       >
                         <Icon icon={FiPlus} mr={1} /> Ajouter un projet
                       </Button>

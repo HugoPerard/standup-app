@@ -34,8 +34,14 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
 }) => {
   const toastSuccess = useToastSuccess();
 
-  const { mutate: deleteProject } = useProjectDelete();
-  const { mutate: addSpeaker } = useSpeakerAdd();
+  const {
+    mutate: deleteProject,
+    isLoading: isLoadingDeleteProject,
+  } = useProjectDelete();
+  const {
+    mutate: addSpeaker,
+    isLoading: isLoadingAddSpeaker,
+  } = useSpeakerAdd();
   const { mutate: updateProject } = useProjectUpdate();
 
   const {
@@ -121,6 +127,7 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
               icon={<FiTrash2 />}
               variant="@primary"
               size="xs"
+              isLoading={isLoadingDeleteProject}
             />
           </Stack>
 
@@ -173,7 +180,12 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
             submitLabel="Ajouter une personne"
             placeholder="Saisir le nom d'une personne"
           >
-            <Button variant="link" colorScheme="yellow" size="xs">
+            <Button
+              variant="link"
+              colorScheme="yellow"
+              size="xs"
+              isLoading={isLoadingAddSpeaker}
+            >
               <Icon icon={FiPlus} mr={1} /> Ajouter une personne
             </Button>
           </PopoverInput>

@@ -15,6 +15,7 @@ export const PageThanks = () => {
   const {
     data: thanks,
     isLoading: isLoadingThanks,
+    isFetching: isFetchingThanks,
     refetch: refetchThanks,
   } = useThanks({ refetchInterval: 2000 });
   const sortedThanks = thanks?.sort((a, b) => {
@@ -27,8 +28,6 @@ export const PageThanks = () => {
     return 0;
   });
 
-  const isLoading = isLoadingThanks;
-
   const {
     mutate: clearAllThanks,
     isLoading: isLoadingClearAllThanks,
@@ -37,7 +36,7 @@ export const PageThanks = () => {
   return (
     <Page containerSize="full" bg="gray.800">
       <PageContent color="gray.200">
-        {isLoading ? (
+        {isLoadingThanks ? (
           <Loader />
         ) : (
           <Stack spacing={4}>
@@ -48,7 +47,7 @@ export const PageThanks = () => {
                   onClick={() => refetchThanks()}
                   flex="1"
                   px={4}
-                  isDisabled={isLoadingClearAllThanks}
+                  isLoading={isFetchingThanks}
                 >
                   <Icon icon={FiRefreshCcw} mr={2} />
                   Refresh
@@ -57,7 +56,7 @@ export const PageThanks = () => {
                   variant="@primary"
                   onClick={() => clearAllThanks()}
                   flex="1"
-                  isDisabled={isLoadingClearAllThanks}
+                  isLoading={isLoadingClearAllThanks}
                 >
                   <Icon icon={FiTrash2} mr={2} />
                   Clear

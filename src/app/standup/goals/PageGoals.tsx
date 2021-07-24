@@ -43,34 +43,35 @@ export const PageGoals = () => {
 
   const groupedGoals = groupByDay(goals);
 
-  if (isLoadingGoals) {
-    return <Loader />;
-  }
   return (
     <Page containerSize="full" bg="gray.800">
       <PageContent color="gray.200">
-        <Stack spacing={6}>
-          <Heading size="lg">
-            On répond par oui ou par non, on ne raconte pas sa vie !
-            Cordialement !
-          </Heading>
-          <GoalGroup
-            name="Semaine dernière"
-            goals={pastGoals}
-            areCompletesClearable
-          />
-          {weekdays.map((date) => (
+        {isLoadingGoals ? (
+          <Loader />
+        ) : (
+          <Stack spacing={6}>
+            <Heading size="lg">
+              On répond par oui ou par non, on ne raconte pas sa vie !
+              Cordialement !
+            </Heading>
             <GoalGroup
-              key={date}
-              name={dayjs(date, DATE_FORMAT).format('dddd D MMMM')}
-              date={date}
-              goals={
-                groupedGoals?.find((goalsGroup) => goalsGroup?.date === date)
-                  ?.goals
-              }
+              name="Semaine dernière"
+              goals={pastGoals}
+              areCompletesClearable
             />
-          ))}
-        </Stack>
+            {weekdays.map((date) => (
+              <GoalGroup
+                key={date}
+                name={dayjs(date, DATE_FORMAT).format('dddd D MMMM')}
+                date={date}
+                goals={
+                  groupedGoals?.find((goalsGroup) => goalsGroup?.date === date)
+                    ?.goals
+                }
+              />
+            ))}
+          </Stack>
+        )}
       </PageContent>
     </Page>
   );
