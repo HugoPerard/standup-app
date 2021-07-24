@@ -1,6 +1,5 @@
 import {
   GridItem,
-  IconButton,
   SimpleGrid,
   Stack,
   StackProps,
@@ -8,32 +7,39 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import dayjs from 'dayjs';
-import { FiPlus } from 'react-icons/fi';
+import { FiPlus, FiTrash2 } from 'react-icons/fi';
 
 import { DATE_FORMAT } from '@/app/shared/constants';
-import { useToastSuccess } from '@/components';
+import {
+  ResponsiveIconButton,
+  useToastError,
+  useToastSuccess,
+} from '@/components';
 
 import { EmptyGoalCard, GoalCard } from './GoalCard';
 import { GoalModal } from './GoalModal';
 import { Goal } from './goal.types';
-import { useGoalAdd } from './goals.firebase';
+import { useGoalAdd, useGoalDeleteList } from './goals.firebase';
 
 interface GoalGroupProps extends StackProps {
   name: string;
   date?: string;
   goals: Goal[];
+  areCompletesClearable?: boolean;
 }
 
 export const GoalGroup: React.FC<GoalGroupProps> = ({
   name,
   date,
   goals,
+  areCompletesClearable = false,
   ...rest
 }) => {
   const toastSuccess = useToastSuccess();
+  const toastError = useToastError();
+  const isToday = dayjs()?.format(DATE_FORMAT) === date;
 
   const { mutate: addGoal } = useGoalAdd();
-  const isToday = dayjs()?.format(DATE_FORMAT) === date;
 
   const handleAddGoal = (values) => {
     addGoal(
@@ -45,6 +51,28 @@ export const GoalGroup: React.FC<GoalGroupProps> = ({
           }),
       }
     );
+  };
+
+  const {
+    mutate: deleteGoalList,
+    isLoading: isLoadingDeleteGoalList,
+  } = useGoalDeleteList();
+
+  const handleDeleteDoneGoals = () => {
+    const doneGoalsIds = goals
+      ?.filter((goal) => goal?.isComplete)
+      ?.map((goal) => goal?.id);
+    if (doneGoalsIds?.length === 0) {
+      toastError({ title: 'Aucun objectif accompli à supprimer' });
+      return;
+    }
+
+    deleteGoalList(doneGoalsIds, {
+      onSuccess: async () =>
+        toastSuccess({
+          title: 'Les objectifs accomplis ont été suprimés avec succès',
+        }),
+    });
   };
 
   const {
@@ -63,18 +91,32 @@ export const GoalGroup: React.FC<GoalGroupProps> = ({
         borderColor="yellow.500"
         {...rest}
       >
-        <Stack direction="row" spacing={3}>
-          <Text fontWeight="bold" textTransform="capitalize">
-            {name}
-          </Text>
-          {date && (
-            <IconButton
-              aria-label="Ajouter un objectif"
-              icon={<FiPlus />}
-              onClick={onOpenGoalModal}
+        <Stack direction="row" spacing={3} justifyContent="space-between">
+          <Stack direction="row" spacing={3}>
+            <Text fontWeight="bold" textTransform="capitalize">
+              {name}
+            </Text>
+            {date && (
+              <ResponsiveIconButton
+                icon={<FiPlus />}
+                onClick={onOpenGoalModal}
+                variant="@primary"
+                size="xs"
+              >
+                Ajouter un objectif
+              </ResponsiveIconButton>
+            )}
+          </Stack>
+          {areCompletesClearable && (
+            <ResponsiveIconButton
+              icon={<FiTrash2 />}
+              onClick={handleDeleteDoneGoals}
               variant="@primary"
               size="xs"
-            />
+              isLoading={isLoadingDeleteGoalList}
+            >
+              Supprimer les objectifs accomplis
+            </ResponsiveIconButton>
           )}
         </Stack>
         <SimpleGrid columns={{ base: 1, sm: 2, lg: 3 }} spacing={2}>

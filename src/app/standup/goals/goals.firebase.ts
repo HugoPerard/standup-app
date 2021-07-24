@@ -73,3 +73,19 @@ export const useGoalUpdate = (
     },
   });
 };
+
+const deleteGoalList = async (ids: string[]): Promise<void> => {
+  await ids?.map((id) => goalsCollectionRef?.doc(id).delete());
+};
+
+export const useGoalDeleteList = (
+  config: UseMutationOptions<void, unknown, string[]> = {}
+) => {
+  const queryCache = useQueryClient();
+  return useMutation(async (ids) => await deleteGoalList(ids), {
+    ...config,
+    onSuccess: () => {
+      setTimeout(() => queryCache.invalidateQueries('goals'), 100);
+    },
+  });
+};

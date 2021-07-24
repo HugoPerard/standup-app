@@ -54,7 +54,11 @@ export const PageGoals = () => {
             On répond par oui ou par non, on ne raconte pas sa vie !
             Cordialement !
           </Heading>
-          <GoalGroup name="Semaine dernière" goals={pastGoals} />
+          <GoalGroup
+            name="Semaine dernière"
+            goals={pastGoals}
+            areCompletesClearable
+          />
           {weekdays.map((date) => (
             <GoalGroup
               key={date}
