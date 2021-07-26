@@ -94,8 +94,8 @@ export const PageStandup = () => {
   };
 
   return (
-    <Page containerSize="full" bg="gray.800">
-      <PageContent color="gray.200">
+    <Page containerSize="full">
+      <PageContent>
         {isLoadingProjects ? (
           <Loader />
         ) : (
