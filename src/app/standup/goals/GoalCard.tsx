@@ -1,7 +1,6 @@
 import { CSSProperties, useRef, useState } from 'react';
 
 import {
-  Center,
   Checkbox,
   IconButton,
   Menu,
@@ -18,7 +17,7 @@ import { Fireworks, FireworksOptions } from 'fireworks-js/dist/react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 
-import { ConfirmMenuItem, useToastSuccess } from '@/components';
+import { ConfirmMenuItem, EmptyItem, useToastSuccess } from '@/components';
 
 import { GoalFormValues } from './GoalForm';
 import { GoalModal } from './GoalModal';
@@ -166,10 +165,6 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, ...rest }) => {
   );
 };
 
-export const EmptyGoalCard = ({ children, ...props }) => {
-  return (
-    <Center bg="gray.600" py={2} px={4} borderRadius="md" {...props}>
-      <Text>{children}</Text>
-    </Center>
-  );
+export const EmptyGoalCard = (props) => {
+  return <EmptyItem {...props} />;
 };

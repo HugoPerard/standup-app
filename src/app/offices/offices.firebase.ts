@@ -1,8 +1,14 @@
-import { useQuery, UseQueryOptions } from 'react-query';
+import {
+  useMutation,
+  UseMutationOptions,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from 'react-query';
 
 import firebase from '@/firebase';
 
-import { Office } from './offices.types';
+import { Office, OfficeWorker } from './offices.types';
 
 const officesCollectionRef = firebase?.firestore?.()?.collection('offices');
 
@@ -18,4 +24,27 @@ export const useOffices = (config: UseQueryOptions<Office[]> = {}) => {
   return useQuery(['offices'], (): Promise<Office[]> => getOffices(), {
     ...config,
   });
+};
+
+const addPersonOnOffice = (person: OfficeWorker, day, officeId: string) => {
+  return officesCollectionRef.doc(officeId).update({
+    presence: {
+      [day]: firebase.firestore.FieldValue.arrayUnion(person),
+    },
+  });
+};
+
+export const useAddPersonOnOffice = (
+  config: UseMutationOptions<any, unknown, any> = {}
+) => {
+  const queryCache = useQueryClient();
+  return useMutation(
+    ({ person, day, officeId }) => addPersonOnOffice(person, day, officeId),
+    {
+      ...config,
+      onSuccess: () => {
+        queryCache.invalidateQueries('offices');
+      },
+    }
+  );
 };
