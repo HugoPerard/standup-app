@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Heading, Stack } from '@chakra-ui/react';
+import { Alert, AlertIcon, Stack } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 
 import { Loader, Page, PageContent } from '@/app/layout';
@@ -50,10 +50,11 @@ export const PageGoals = () => {
           <Loader />
         ) : (
           <Stack spacing={6}>
-            <Heading size="lg">
+            <Alert status="info" color="gray.800">
+              <AlertIcon />
               On répond par oui ou par non, on ne raconte pas sa vie !
               Cordialement !
-            </Heading>
+            </Alert>
             <GoalGroup
               name="Semaine dernière"
               goals={pastGoals}
