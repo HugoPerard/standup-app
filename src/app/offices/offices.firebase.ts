@@ -26,10 +26,21 @@ export const useOffices = (config: UseQueryOptions<Office[]> = {}) => {
   });
 };
 
-const addPersonOnOffice = (person: OfficeWorker, day, officeId: string) => {
-  return officesCollectionRef.doc(officeId).update({
+const addPersonOnOffice = async (
+  person: OfficeWorker,
+  day,
+  officeId: string
+) => {
+  const officeRef = officesCollectionRef.doc(officeId);
+  const office = await officeRef?.get();
+  const presence: any = office?.data().presence;
+  return officeRef.update({
     presence: {
-      [day]: firebase.firestore.FieldValue.arrayUnion(person),
+      ...presence,
+      [day]: [
+        ...(presence[day] || []).filter((p) => p?.name !== person.name),
+        person,
+      ],
     },
   });
 };
@@ -40,6 +51,37 @@ export const useAddPersonOnOffice = (
   const queryCache = useQueryClient();
   return useMutation(
     ({ person, day, officeId }) => addPersonOnOffice(person, day, officeId),
+    {
+      ...config,
+      onSuccess: () => {
+        queryCache.invalidateQueries('offices');
+      },
+    }
+  );
+};
+
+const removePersonOnOffice = async (
+  person: OfficeWorker,
+  day,
+  officeId: string
+) => {
+  const officeRef = officesCollectionRef.doc(officeId);
+  const office = await officeRef?.get();
+  const presence: any = office?.data().presence;
+  return officeRef.update({
+    presence: {
+      ...presence,
+      [day]: [...(presence[day] || []).filter((p) => p?.name !== person.name)],
+    },
+  });
+};
+
+export const useRemovePersonOnOffice = (
+  config: UseMutationOptions<any, unknown, any> = {}
+) => {
+  const queryCache = useQueryClient();
+  return useMutation(
+    ({ person, day, officeId }) => removePersonOnOffice(person, day, officeId),
     {
       ...config,
       onSuccess: () => {

@@ -4,7 +4,12 @@ import { Page, PageContent } from '@/app/layout';
 
 import { useCurrentUser } from '../auth/useAuth';
 import { OfficeSection } from './_partials/OfficeSection';
-import { useAddPersonOnOffice, useOffices } from './offices.firebase';
+import {
+  useAddPersonOnOffice,
+  useOffices,
+  useRemovePersonOnOffice,
+} from './offices.firebase';
+import { Office, OfficeWorker } from './offices.types';
 
 export const PageOffices = () => {
   const weekdays = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
@@ -15,18 +20,34 @@ export const PageOffices = () => {
 
   const { mutate: addPersonOnOffice } = useAddPersonOnOffice();
 
-  const handleAddPresence = (
+  const { mutate: removePersonOnOffice } = useRemovePersonOnOffice();
+
+  const handleChangePresence = (
+    office: Office,
     day: string,
-    officeId: string,
-    params?: { onMorning: boolean; onAfternoon: boolean }
-  ) => {
-    const personToAdd = {
-      name: currentUser?.username,
+    params: { onMorning: boolean; onAfternoon: boolean } = {
       onMorning: true,
       onAfternoon: true,
+    }
+  ) => {
+    const person = {
+      name: currentUser?.username,
       ...(params || {}),
     };
-    addPersonOnOffice({ person: personToAdd, day, officeId });
+    if (
+      office?.presence[day]?.find(
+        (officeWorker: OfficeWorker) =>
+          officeWorker?.name === currentUser.username &&
+          params &&
+          officeWorker?.onMorning === params?.onMorning &&
+          officeWorker?.onAfternoon === params?.onAfternoon
+      )
+    ) {
+      removePersonOnOffice({ person, day, officeId: office?.id });
+      return;
+    }
+
+    addPersonOnOffice({ person, day, officeId: office?.id });
   };
   return (
     <Page containerSize="full">
@@ -50,7 +71,7 @@ export const PageOffices = () => {
                       <Text fontSize="lg" fontWeight="bold">
                         {office?.name}
                       </Text>
-                      <Badge colorScheme="yellow" px={2}>
+                      <Badge variant="solid" px={2}>
                         {office?.presence[weekday.toUpperCase()]?.length}
                       </Badge>
                     </HStack>
@@ -63,7 +84,7 @@ export const PageOffices = () => {
                           (person) => person?.onMorning && person?.onAfternoon
                         )}
                         onClick={() =>
-                          handleAddPresence(weekday.toUpperCase(), office.id)
+                          handleChangePresence(office, weekday.toUpperCase())
                         }
                         flex={1}
                       />
@@ -78,9 +99,9 @@ export const PageOffices = () => {
                               person?.onMorning && !person?.onAfternoon
                           )}
                           onClick={() =>
-                            handleAddPresence(
+                            handleChangePresence(
+                              office,
                               weekday.toUpperCase(),
-                              office.id,
                               { onMorning: true, onAfternoon: false }
                             )
                           }
@@ -96,9 +117,9 @@ export const PageOffices = () => {
                               !person?.onMorning && person?.onAfternoon
                           )}
                           onClick={() =>
-                            handleAddPresence(
+                            handleChangePresence(
+                              office,
                               weekday.toUpperCase(),
-                              office.id,
                               { onMorning: false, onAfternoon: true }
                             )
                           }
