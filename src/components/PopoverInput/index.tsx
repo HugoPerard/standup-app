@@ -7,16 +7,16 @@ import {
   PopoverBody,
   PopoverCloseButton,
   PopoverContent,
-  PopoverContentProps,
   PopoverFooter,
+  PopoverProps,
   PopoverTrigger,
   Portal,
 } from '@chakra-ui/react';
 import { Formiz, useForm } from '@formiz/core';
 
-import { FieldInput } from '../FieldInput';
+import { FieldInput } from '@/components/FieldInput';
 
-interface PopoverInputProps extends Omit<PopoverContentProps, 'onSubmit'> {
+interface PopoverInputProps extends Omit<PopoverProps, 'onSubmit'> {
   onSubmit(value: string): void;
   label: string;
   submitLabel?: string;
@@ -40,16 +40,11 @@ export const PopoverInput: React.FC<PopoverInputProps> = ({
   const initialFocusRef = React.useRef();
 
   return (
-    <Popover colorScheme="gray" initialFocusRef={initialFocusRef}>
+    <Popover colorScheme="gray" initialFocusRef={initialFocusRef} {...rest}>
       <PopoverTrigger>{children}</PopoverTrigger>
       <Portal>
         <Formiz connect={internalForm} autoForm onValidSubmit={handleSubmit}>
-          <PopoverContent
-            color="gray.100"
-            bg="gray.600"
-            borderColor="gray.700"
-            {...rest}
-          >
+          <PopoverContent color="gray.100" bg="gray.600" borderColor="gray.700">
             <PopoverArrow bg="gray.600" />
             <PopoverCloseButton zIndex="10" />
             <>

@@ -122,6 +122,7 @@ export const PageStandup = () => {
                       label="Nom"
                       submitLabel="Ajouter un projet"
                       placeholder="Saisir le nom du projet"
+                      placement="bottom-start"
                     >
                       <Button
                         variant="@primary"

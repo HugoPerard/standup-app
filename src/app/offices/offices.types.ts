@@ -5,14 +5,14 @@ export interface OfficeWorker {
 }
 
 export interface Presence {
-  LUNDI: OfficeWorker[];
-  MARDI: OfficeWorker[];
-  MERCREDI: OfficeWorker[];
-  JEUDI: OfficeWorker[];
-  VENDREDI: OfficeWorker[];
+  LUNDI?: OfficeWorker[];
+  MARDI?: OfficeWorker[];
+  MERCREDI?: OfficeWorker[];
+  JEUDI?: OfficeWorker[];
+  VENDREDI?: OfficeWorker[];
 }
 export interface Office {
-  id: string;
+  id?: string;
   name: string;
-  presence: Presence;
+  presence?: Presence;
 }

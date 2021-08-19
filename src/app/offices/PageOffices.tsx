@@ -1,25 +1,45 @@
-import { Badge, Divider, HStack, Stack, Text } from '@chakra-ui/react';
+import {
+  Badge,
+  Box,
+  Button,
+  Center,
+  Divider,
+  HStack,
+  SimpleGrid,
+  Stack,
+  Text,
+  Wrap,
+} from '@chakra-ui/react';
+import { FiPlus } from 'react-icons/fi';
 
-import { Page, PageContent } from '@/app/layout';
+import { useCurrentUser } from '@/app/auth/useAuth';
+import { Loader, Page, PageContent } from '@/app/layout';
+import { Icon, PersonTag, PopoverInput } from '@/components';
 
-import { useCurrentUser } from '../auth/useAuth';
 import { OfficeSection } from './_partials/OfficeSection';
 import {
   useAddPersonOnOffice,
+  useOfficeAdd,
+  useOfficeDelete,
   useOffices,
   useRemovePersonOnOffice,
 } from './offices.firebase';
 import { Office, OfficeWorker } from './offices.types';
 
 export const PageOffices = () => {
-  const weekdays = ['LUNDI', 'MARDI', 'MERCREDI', 'JEUDI', 'VENDREDI'];
-
-  const { data: offices } = useOffices();
-
   const currentUser = useCurrentUser();
 
-  const { mutate: addPersonOnOffice } = useAddPersonOnOffice();
+  const weekdays = ['LUNDI', 'MARDI', 'MERCREDI', 'JEUDI', 'VENDREDI'];
 
+  const { mutate: addOffice } = useOfficeAdd();
+  const {
+    mutate: deleteOffice,
+    isLoading: isLoadingDeleteOffice,
+  } = useOfficeDelete();
+
+  const { data: offices, isLoading: isLoadingOffices } = useOffices();
+
+  const { mutate: addPersonOnOffice } = useAddPersonOnOffice();
   const { mutate: removePersonOnOffice } = useRemovePersonOnOffice();
 
   const handleChangePresence = (
@@ -35,7 +55,7 @@ export const PageOffices = () => {
       ...(params || {}),
     };
     if (
-      office?.presence[day]?.find(
+      office?.presence?.[day]?.find(
         (officeWorker: OfficeWorker) =>
           officeWorker?.name === currentUser.username &&
           params &&
@@ -49,85 +69,139 @@ export const PageOffices = () => {
 
     addPersonOnOffice({ person, day, officeId: office?.id });
   };
+
   return (
     <Page containerSize="full">
       <PageContent>
-        <Stack spacing={6}>
-          {weekdays?.map((weekday) => (
-            <Stack key={weekday}>
-              <Text
-                fontSize="lg"
-                fontWeight="bold"
-                color="yellow.500"
-                alignSelf="center"
+        {isLoadingOffices && <Loader />}
+        {!isLoadingOffices && offices?.length === 0 && (
+          <Center flex="1">
+            <Stack spacing={4}>
+              <Text fontWeight="medium">Aucun bureau n'est créé</Text>
+              <PopoverInput
+                onSubmit={(value) => addOffice({ name: value, presence: {} })}
+                label="Nom"
+                submitLabel="Ajouter un bureau"
+                placeholder="Saisir le nom du bureau"
+                placement="right-end"
               >
-                {weekday}
-              </Text>
-              <Stack direction={{ base: 'column', md: 'row' }}>
-                {offices?.map((office) => (
-                  <Stack
-                    key={office?.id}
-                    bg="gray.700"
-                    p={3}
-                    borderRadius="md"
-                    flex="1"
-                  >
-                    <HStack spacing={2}>
-                      <Text fontSize="lg" fontWeight="bold">
-                        {office?.name}
-                      </Text>
-                      <Badge variant="solid" px={2}>
-                        {office?.presence[weekday]?.length}
-                      </Badge>
-                    </HStack>
-                    <Stack direction="row" flex={1}>
-                      <OfficeSection
-                        title="Journée"
-                        presence={office?.presence[weekday]?.filter(
-                          (person) => person?.onMorning && person?.onAfternoon
-                        )}
-                        onClick={() => handleChangePresence(office, weekday)}
-                        flex={1}
-                      />
-                      <Divider orientation="vertical" />
-                      <Stack flex={1}>
-                        <OfficeSection
-                          title="Matin"
-                          presence={office?.presence[weekday]?.filter(
-                            (person) =>
-                              person?.onMorning && !person?.onAfternoon
-                          )}
-                          onClick={() =>
-                            handleChangePresence(office, weekday, {
-                              onMorning: true,
-                              onAfternoon: false,
-                            })
-                          }
-                          flex={1}
-                        />
-                        <Divider />
-                        <OfficeSection
-                          title="Après-midi"
-                          presence={office?.presence[weekday]?.filter(
-                            (person) =>
-                              !person?.onMorning && person?.onAfternoon
-                          )}
-                          onClick={() =>
-                            handleChangePresence(office, weekday, {
-                              onMorning: false,
-                              onAfternoon: true,
-                            })
-                          }
-                          flex={1}
-                        />
-                      </Stack>
-                    </Stack>
-                  </Stack>
-                ))}
-              </Stack>
+                <Button variant="@secondary" size="sm">
+                  <Icon icon={FiPlus} mr={1} /> Ajouter un bureau
+                </Button>
+              </PopoverInput>
             </Stack>
-          ))}
-        </Stack>
+          </Center>
+        )}
+
+        {!isLoadingOffices && offices?.length !== 0 && (
+          <Stack spacing={4}>
+            <Wrap>
+              <Text fontWeight="medium">Liste des bureaux :</Text>
+              {offices?.map((office) => (
+                <PersonTag
+                  size="sm"
+                  onRemove={() => deleteOffice(office?.id)}
+                  isLoadingRemove={isLoadingDeleteOffice}
+                >
+                  {office.name}
+                </PersonTag>
+              ))}
+              <Box minW="10rem">
+                <PopoverInput
+                  onSubmit={(value) => addOffice({ name: value, presence: {} })}
+                  label="Nom"
+                  submitLabel="Ajouter un bureau"
+                  placeholder="Saisir le nom du bureau"
+                  placement="right-end"
+                >
+                  <Button variant="@secondary" size="xs">
+                    <Icon icon={FiPlus} mr={1} /> Ajouter un bureau
+                  </Button>
+                </PopoverInput>
+              </Box>
+            </Wrap>
+            <Stack spacing={6}>
+              {weekdays?.map((weekday) => (
+                <Stack key={weekday}>
+                  <Text
+                    fontSize="lg"
+                    fontWeight="bold"
+                    color="yellow.500"
+                    alignSelf="center"
+                  >
+                    {weekday}
+                  </Text>
+
+                  <SimpleGrid columns={{ base: 1, md: 2 }} gap={2}>
+                    {offices?.map((office) => (
+                      <Stack
+                        key={office?.id}
+                        bg="gray.700"
+                        p={3}
+                        borderRadius="md"
+                        flex="1"
+                      >
+                        <HStack spacing={2}>
+                          <Text fontSize="lg" fontWeight="bold">
+                            {office?.name}
+                          </Text>
+                          <Badge variant="solid" px={2}>
+                            {office?.presence?.[weekday]?.length}
+                          </Badge>
+                        </HStack>
+                        <Stack direction="row" flex={1}>
+                          <OfficeSection
+                            title="Journée"
+                            presence={office?.presence?.[weekday]?.filter(
+                              (person) =>
+                                person?.onMorning && person?.onAfternoon
+                            )}
+                            onClick={() =>
+                              handleChangePresence(office, weekday)
+                            }
+                            flex={1}
+                          />
+                          <Divider orientation="vertical" />
+                          <Stack flex={1}>
+                            <OfficeSection
+                              title="Matin"
+                              presence={office?.presence?.[weekday]?.filter(
+                                (person) =>
+                                  person?.onMorning && !person?.onAfternoon
+                              )}
+                              onClick={() =>
+                                handleChangePresence(office, weekday, {
+                                  onMorning: true,
+                                  onAfternoon: false,
+                                })
+                              }
+                              flex={1}
+                            />
+                            <Divider />
+                            <OfficeSection
+                              title="Après-midi"
+                              presence={office?.presence?.[weekday]?.filter(
+                                (person) =>
+                                  !person?.onMorning && person?.onAfternoon
+                              )}
+                              onClick={() =>
+                                handleChangePresence(office, weekday, {
+                                  onMorning: false,
+                                  onAfternoon: true,
+                                })
+                              }
+                              flex={1}
+                            />
+                          </Stack>
+                        </Stack>
+                      </Stack>
+                    ))}
+                  </SimpleGrid>
+                </Stack>
+              ))}
+            </Stack>
+          </Stack>
+        )}
       </PageContent>
     </Page>
   );

@@ -26,6 +26,38 @@ export const useOffices = (config: UseQueryOptions<Office[]> = {}) => {
   });
 };
 
+const addOffice = (payload: Office): any => {
+  return officesCollectionRef?.add(payload);
+};
+
+export const useOfficeAdd = (
+  config: UseMutationOptions<Office, unknown, Office> = {}
+) => {
+  const queryCache = useQueryClient();
+  return useMutation((payload) => addOffice(payload), {
+    ...config,
+    onSuccess: () => {
+      queryCache.invalidateQueries('offices');
+    },
+  });
+};
+
+const deleteOffice = (id: string): any => {
+  return officesCollectionRef?.doc(id).delete();
+};
+
+export const useOfficeDelete = (
+  config: UseMutationOptions<string, unknown, string> = {}
+) => {
+  const queryCache = useQueryClient();
+  return useMutation((id) => deleteOffice(id), {
+    ...config,
+    onSuccess: () => {
+      queryCache.invalidateQueries('offices');
+    },
+  });
+};
+
 const addPersonOnOffice = async (
   person: OfficeWorker,
   day,
