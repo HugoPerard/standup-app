@@ -1,7 +1,7 @@
 import { Stack, StackProps, Text } from '@chakra-ui/react';
 
 import { useCurrentUser } from '@/app/auth/useAuth';
-import { EmptyItem } from '@/components';
+import { EmptyItem, PersonTag } from '@/components';
 
 interface OfficeSectionProps extends StackProps {
   title: string;
@@ -39,12 +39,15 @@ export const OfficeSection: React.FC<OfficeSectionProps> = ({
       </Stack>
       {presence?.length > 0 ? (
         presence?.map((person) => (
-          <Text
-            fontWeight={username === person?.name ? 'bold' : 'medium'}
-            color={username === person?.name ? 'yellow.500' : undefined}
-          >
+          <PersonTag bg={username === person?.name ? 'yellow.500' : 'gray.300'}>
             {person?.name}
-          </Text>
+          </PersonTag>
+          // <Text
+          //   fontWeight={username === person?.name ? 'bold' : 'medium'}
+          //   color={username === person?.name ? 'yellow.500' : undefined}
+          // >
+          //   {person?.name}
+          // </Text>
         ))
       ) : (
         <EmptyItem bg="gray.700">Personne n'est présent</EmptyItem>
