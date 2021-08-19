@@ -17,8 +17,7 @@ import {
   useThankDelete,
 } from '@/app/standup/thanks/thanks.firebase';
 import { Thank } from '@/app/standup/thanks/thanks.types';
-import { useToastSuccess } from '@/components';
-import { PersonTag } from '@/components/PersonTag';
+import { PersonTag, useToastSuccess } from '@/components';
 
 interface ThankGroupProps extends StackProps {
   name: string;

@@ -69,6 +69,10 @@ export const PageThanks = () => {
             >
               <Textarea
                 placeholder="Notes..."
+                defaultValue={localStorage.getItem('thanks-notes')}
+                onChange={(e) =>
+                  localStorage.setItem('thanks-notes', e.target.value)
+                }
                 bg="gray.600"
                 color="gray.100"
                 borderColor="gray.800"
