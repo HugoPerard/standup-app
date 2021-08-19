@@ -6,9 +6,9 @@ import { PageLogin } from './PageLogin';
 import { useAuth } from './useAuth';
 
 export const AuthProvider = ({ children }) => {
-  const { currentUser } = useAuth();
+  const { isLogged: isLoggedAuth } = useAuth();
 
-  const [isLogged, setIsLogged] = useState(!!currentUser);
+  const [isLogged, setIsLogged] = useState(isLoggedAuth);
 
   firebase.auth().onIdTokenChanged((user) => {
     if (!user || !user.email.endsWith('@bearstudio.fr')) {

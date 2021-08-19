@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 
 import {
   Avatar,
@@ -11,10 +11,8 @@ import {
   Flex,
   Text,
   useClipboard,
-  Button,
   Portal,
 } from '@chakra-ui/react';
-import { FaGoogle } from 'react-icons/fa';
 import { FiCheck, FiCopy, FiLogOut } from 'react-icons/fi';
 
 import appBuild from '@/../app-build.json';
@@ -78,40 +76,22 @@ const AppVersion = ({ ...rest }) => {
 };
 
 export const AccountMenu = ({ ...rest }) => {
-  const { signInWithGoogle, signOut, onAuthStateChanged } = useAuth();
-
-  const [user, setUser] = useState(null);
-
-  const onAuthStateChangedRef = useRef<any>();
-  onAuthStateChangedRef.current = onAuthStateChanged;
-
-  useEffect(() => {
-    onAuthStateChangedRef.current(setUser);
-  }, []);
-
-  if (!user) {
-    return (
-      <Button
-        variant="@primary"
-        leftIcon={<FaGoogle />}
-        onClick={() => signInWithGoogle()}
-        size="sm"
-      >
-        Se connecter
-      </Button>
-    );
-  }
+  const { currentUser, signOut } = useAuth();
 
   return (
     <Menu placement="bottom-end" {...rest}>
       <MenuButton borderRadius="full" _focus={{ shadow: 'outline' }}>
-        {user && (
-          <Avatar size="sm" name={user?.username} src={user?.photoURL} />
+        {currentUser && (
+          <Avatar
+            size="sm"
+            name={currentUser?.displayName}
+            src={currentUser?.photoURL}
+          />
         )}
       </MenuButton>
       <Portal>
         <MenuList color="gray.800" maxW="12rem" overflow="hidden" zIndex="10">
-          <MenuGroup title={user?.username} pb={1} />
+          <MenuGroup title={currentUser?.displayName} pb={1} />
           <MenuDivider />
           <MenuItem
             icon={<Icon icon={FiLogOut} fontSize="lg" color="gray.400" />}
