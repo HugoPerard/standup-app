@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Stack } from '@chakra-ui/layout';
-import { Button, ButtonGroup, SimpleGrid } from '@chakra-ui/react';
+import { Button, ButtonGroup, Textarea } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import { FiRefreshCcw, FiTrash2 } from 'react-icons/fi';
 
@@ -19,10 +19,10 @@ export const PageThanks = () => {
     refetch: refetchThanks,
   } = useThanks({ refetchInterval: 2000 });
   const sortedThanks = thanks?.sort((a, b) => {
-    if (dayjs(a?.date)?.isBefore(dayjs(b?.date))) {
+    if (dayjs(a?.timestamp)?.isBefore(dayjs(b?.timestamp))) {
       return -1;
     }
-    if (dayjs(a?.date)?.isAfter(dayjs(b?.date))) {
+    if (dayjs(a?.timestamp)?.isAfter(dayjs(b?.timestamp))) {
       return 1;
     }
     return 0;
@@ -45,40 +45,58 @@ export const PageThanks = () => {
                 <Button
                   variant="@primary"
                   onClick={() => refetchThanks()}
-                  flex="1"
                   px={4}
                   isLoading={isFetchingThanks}
                 >
                   <Icon icon={FiRefreshCcw} mr={2} />
-                  Refresh
+                  Rafraichir
                 </Button>
                 <Button
                   variant="@primary"
                   onClick={() => clearAllThanks()}
-                  flex="1"
+                  flex={1}
                   isLoading={isLoadingClearAllThanks}
                 >
                   <Icon icon={FiTrash2} mr={2} />
-                  Clear
+                  Tout supprimer
                 </Button>
               </ButtonGroup>
             </Stack>
-            <SimpleGrid columns={{ base: 1, sm: 2 }} spacing="2">
-              <ThankGroup
-                name="Choses à ajouter"
-                thanks={sortedThanks?.filter(
-                  (thank) => thank?.type === 'TO_ADD'
-                )}
-                type="TO_ADD"
+            <Stack
+              direction={{ base: 'column', md: 'row' }}
+              spacing={2}
+              flex={1}
+            >
+              <Textarea
+                placeholder="Notes..."
+                bg="gray.600"
+                color="gray.100"
+                borderColor="gray.800"
+                flex={1}
               />
-              <ThankGroup
-                name="Remerciements"
-                thanks={sortedThanks?.filter(
-                  (thank) => thank?.type === 'THANK'
-                )}
-                type="THANK"
-              />
-            </SimpleGrid>
+              <Stack
+                direction={{ base: 'column', sm: 'row' }}
+                spacing={2}
+                flex={2}
+              >
+                <ThankGroup
+                  name="Choses à ajouter"
+                  thanks={sortedThanks?.filter(
+                    (thank) => thank?.type === 'TO_ADD'
+                  )}
+                  type="TO_ADD"
+                  flex={2}
+                />
+                <ThankGroup
+                  name="Remerciements"
+                  thanks={sortedThanks?.filter(
+                    (thank) => thank?.type === 'THANK'
+                  )}
+                  type="THANK"
+                  flex={2}
+                />
+              </Stack>
+            </Stack>
           </Stack>
         )}
       </PageContent>

@@ -30,7 +30,7 @@ export const useThanks = (config: UseQueryOptions<Thank[]> = {}) => {
 const addThank = (author: string, type: string): any => {
   return thanksCollectionRef?.add({
     author,
-    date: dayjs()?.unix(),
+    timestamp: dayjs()?.unix(),
     type,
   });
 };
