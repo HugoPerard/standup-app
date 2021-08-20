@@ -24,9 +24,10 @@ export const PersonTag: React.FC<PersonTagProps> = ({
       bg="yellow.500"
       color="gray.800"
       width="fit-content"
+      overflow="hidden"
       {...rest}
     >
-      <TagLabel>{children}</TagLabel>
+      <TagLabel maxW="30rem">{children}</TagLabel>
       {onRemove && isLoadingRemove && <Spinner ml={2} size="xs" />}
       {onRemove && !isLoadingRemove && <TagCloseButton onClick={onRemove} />}
     </Tag>

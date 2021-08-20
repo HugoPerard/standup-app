@@ -142,7 +142,11 @@ export const PageOffices = () => {
                         flex="1"
                       >
                         <HStack spacing={2}>
-                          <Text fontSize="lg" fontWeight="bold">
+                          <Text
+                            fontSize="lg"
+                            fontWeight="bold"
+                            wordBreak="break-word"
+                          >
                             {office?.name}
                           </Text>
                           <Badge variant="solid" px={2}>

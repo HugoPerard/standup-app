@@ -108,7 +108,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, ...rest }) => {
           colorScheme="yellow"
           pt={1}
         />
-        <Stack flex="1">
+        <Stack flex="1" overflow="hidden">
           <Text>{goal?.description}</Text>
           <Text as="span" fontWeight="bold" textAlign="end">
             {goal?.people?.join(' - ')}
