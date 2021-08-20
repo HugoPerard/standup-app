@@ -39,13 +39,23 @@ export const OfficeSection: React.FC<OfficeSectionProps> = ({
       </Stack>
       {presence?.length > 0 ? (
         <Wrap>
-          {presence?.map((person) => (
-            <PersonTag
-              bg={username === person?.name ? 'yellow.500' : 'gray.300'}
-            >
-              {person?.name}
-            </PersonTag>
-          ))}
+          {presence
+            ?.sort((a, b) => {
+              if (a.name < b.name) {
+                return -1;
+              }
+              if (a.name > b.name) {
+                return 1;
+              }
+              return 0;
+            })
+            .map((person) => (
+              <PersonTag
+                bg={username === person?.name ? 'yellow.500' : 'gray.300'}
+              >
+                {person?.name}
+              </PersonTag>
+            ))}
         </Wrap>
       ) : (
         <EmptyItem bg="gray.700">Personne n'est présent</EmptyItem>
