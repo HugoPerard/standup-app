@@ -8,7 +8,8 @@ import { Route, RoutePublic } from '@/app/router';
 import { Error404, ErrorBoundary } from '@/errors';
 
 import { PageCRA } from './cra/PageCRA';
-import { Routes, STANDUP } from './routes';
+import OfficesRoutes from './offices/OfficesRoutes';
+import { Routes } from './routes';
 import StandupRoutes from './standup/StandupRoutes';
 
 export const App = () => {
@@ -21,12 +22,14 @@ export const App = () => {
               <RoutePublic
                 exact
                 path="/"
-                render={() => <Redirect to={STANDUP} />}
+                render={() => <Redirect to={Routes.STANDUP} />}
               />
 
               <Route path={Routes.STANDUP} render={() => <StandupRoutes />} />
 
-              <Route path="/cra" render={() => <PageCRA />} />
+              <Route path={Routes.CRA} render={() => <PageCRA />} />
+
+              <Route path={Routes.OFFICES} render={() => <OfficesRoutes />} />
 
               <RoutePublic path="*" render={() => <Error404 />} />
             </Switch>

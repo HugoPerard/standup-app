@@ -168,7 +168,14 @@ export const Page = ({
         containerSize,
       }}
     >
-      <Flex direction="column" flex="1" position="relative" {...rest} />
+      <Flex
+        direction="column"
+        flex="1"
+        position="relative"
+        bg="gray.800"
+        color="gray.200"
+        {...rest}
+      />
     </PageContext.Provider>
   );
 };

@@ -7,8 +7,8 @@ import { Page, PageContent } from '@/app/layout';
 
 export const PageCRA = () => {
   return (
-    <Page containerSize="full" bg="gray.800">
-      <PageContent color="gray.200">
+    <Page containerSize="full">
+      <PageContent>
         <Heading>Soon...</Heading>
         <Image
           src="/CRA-soon.jpg"

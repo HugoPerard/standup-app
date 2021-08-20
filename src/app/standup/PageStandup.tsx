@@ -94,8 +94,8 @@ export const PageStandup = () => {
   };
 
   return (
-    <Page containerSize="full" bg="gray.800">
-      <PageContent color="gray.200">
+    <Page containerSize="full">
+      <PageContent>
         {isLoadingProjects ? (
           <Loader />
         ) : (
@@ -122,6 +122,7 @@ export const PageStandup = () => {
                       label="Nom"
                       submitLabel="Ajouter un projet"
                       placeholder="Saisir le nom du projet"
+                      placement="bottom-start"
                     >
                       <Button
                         variant="@primary"

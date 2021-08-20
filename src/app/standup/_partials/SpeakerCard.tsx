@@ -2,7 +2,6 @@ import { forwardRef, useState } from 'react';
 
 import {
   Flex,
-  Center,
   Checkbox,
   IconButton,
   Menu,
@@ -19,7 +18,12 @@ import { useStopwatch } from 'react-timer-hook';
 
 import { useSpeakerDelete } from '@/app/standup/standup.firebase';
 import { Speaker } from '@/app/standup/standup.types';
-import { ConfirmMenuItem, MenuItem, useToastSuccess } from '@/components';
+import {
+  ConfirmMenuItem,
+  EmptyItem,
+  MenuItem,
+  useToastSuccess,
+} from '@/components';
 
 interface SpeakerCardProps extends StackProps {
   speaker: Speaker;
@@ -143,18 +147,6 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
   }
 );
 
-export const EmptySpeakerCard = ({ children, ...props }) => {
-  return (
-    <Center
-      bg="gray.600"
-      py={2}
-      px={4}
-      borderRadius="md"
-      fontSize="xs"
-      fontWeight="medium"
-      {...props}
-    >
-      <Text>{children}</Text>
-    </Center>
-  );
+export const EmptySpeakerCard = (props) => {
+  return <EmptyItem fontSize="xs" fontWeight="medium" {...props} />;
 };

@@ -61,7 +61,8 @@ export const MainMenu = ({ ...rest }) => {
   return (
     <Stack direction="row" spacing="1" {...rest}>
       <MainMenuItem to={Routes.STANDUP}>Stand-up</MainMenuItem>
-      <MainMenuItem to="/cra">CRA</MainMenuItem>
+      <MainMenuItem to={Routes.OFFICES}>Bureaux</MainMenuItem>
+      <MainMenuItem to={Routes.CRA}>CRA</MainMenuItem>
     </Stack>
   );
 };
