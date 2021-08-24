@@ -1,9 +1,22 @@
 import React from 'react';
 
 import { Stack } from '@chakra-ui/layout';
-import { Button, ButtonGroup, Textarea } from '@chakra-ui/react';
-import dayjs from 'dayjs';
-import { FiRefreshCcw, FiTrash2 } from 'react-icons/fi';
+import {
+  Button,
+  Flex,
+  Spacer,
+  Textarea,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,
+  useDisclosure,
+} from '@chakra-ui/react';
+import { FiTrash2 } from 'react-icons/fi';
 
 import { Loader, Page, PageContent } from '@/app/layout';
 import { ThankGroup } from '@/app/standup/thanks/_partials/ThankGroup';
@@ -12,26 +25,24 @@ import { Icon } from '@/components';
 import { useThanks, useThanksDelete } from './thanks.firebase';
 
 export const PageThanks = () => {
-  const {
-    data: thanks,
-    isLoading: isLoadingThanks,
-    isFetching: isFetchingThanks,
-    refetch: refetchThanks,
-  } = useThanks({ refetchInterval: 2000 });
-  const sortedThanks = thanks?.sort((a, b) => {
-    if (dayjs(a?.timestamp)?.isBefore(dayjs(b?.timestamp))) {
-      return -1;
-    }
-    if (dayjs(a?.timestamp)?.isAfter(dayjs(b?.timestamp))) {
-      return 1;
-    }
-    return 0;
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const { data: thanks, isLoading: isLoadingThanks } = useThanks({
+    refetchInterval: 2000,
+  });
+  const sortedThanks = [...(thanks || [])]?.sort((a, b) => {
+    return a?.timestamp - b?.timestamp;
   });
 
   const {
     mutate: clearAllThanks,
     isLoading: isLoadingClearAllThanks,
   } = useThanksDelete();
+
+  const handleClearAllThanks = () => {
+    clearAllThanks();
+    onClose();
+  };
 
   return (
     <Page containerSize="full">
@@ -40,28 +51,34 @@ export const PageThanks = () => {
           <Loader />
         ) : (
           <Stack spacing={4}>
-            <Stack direction={{ base: 'column', sm: 'row' }}>
-              <ButtonGroup size="sm">
-                <Button
-                  variant="@primary"
-                  onClick={() => refetchThanks()}
-                  px={4}
-                  isLoading={isFetchingThanks}
-                >
-                  <Icon icon={FiRefreshCcw} mr={2} />
-                  Rafraichir
-                </Button>
-                <Button
-                  variant="@primary"
-                  onClick={() => clearAllThanks()}
-                  flex={1}
-                  isLoading={isLoadingClearAllThanks}
-                >
-                  <Icon icon={FiTrash2} mr={2} />
-                  Tout supprimer
-                </Button>
-              </ButtonGroup>
-            </Stack>
+            <Flex>
+              <Spacer />
+
+              <Popover isOpen={isOpen}>
+                <PopoverTrigger>
+                  <Button variant="@primary" onClick={onOpen} size="sm">
+                    <Icon icon={FiTrash2} mr={2} />
+                    Tout supprimer
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent bg="gray.600" color="gray.100">
+                  <PopoverArrow bg="gray.600" />
+                  <PopoverCloseButton onClick={onClose} />
+                  <PopoverBody>
+                    Êtes vous sûr de vouloir tout supprimer ?
+                  </PopoverBody>
+                  <PopoverFooter>
+                    <Button
+                      onClick={handleClearAllThanks}
+                      isLoading={isLoadingClearAllThanks}
+                      colorScheme="red"
+                    >
+                      Supprimer
+                    </Button>
+                  </PopoverFooter>
+                </PopoverContent>
+              </Popover>
+            </Flex>
             <Stack
               direction={{ base: 'column', md: 'row' }}
               spacing={2}
