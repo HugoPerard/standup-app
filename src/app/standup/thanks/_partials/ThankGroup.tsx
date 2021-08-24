@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Badge,
   Center,
   IconButton,
@@ -35,6 +36,7 @@ export const ThankGroup: React.FC<ThankGroupProps> = ({
 
   const { currentUser } = useAuth();
   const username = currentUser.displayName;
+  const photoURL = currentUser.photoURL;
 
   const { mutate: addThank, isLoading: isLoadingAddThank } = useThankAdd();
   const {
@@ -45,7 +47,7 @@ export const ThankGroup: React.FC<ThankGroupProps> = ({
   const handleAddThank = () => {
     if (username)
       addThank(
-        { author: username, type },
+        { author: username, photoURL, type },
         {
           onSuccess: () => {
             toastSuccess({
@@ -84,7 +86,13 @@ export const ThankGroup: React.FC<ThankGroupProps> = ({
               isLoadingRemove={isLoadingDeleteThank}
             >
               <Stack direction="row">
-                <Text>{thank?.author}</Text>
+                <Avatar
+                  src={thank.photoURL}
+                  size="2xs"
+                  name={thank.author}
+                  mr={2}
+                />
+                <Text>{thank.author}</Text>
                 {Date.now() / 1000 - thank?.timestamp < NEW_BADGE_DURATION && (
                   <Badge bg="gray.700" color="white">
                     NEW

@@ -27,9 +27,10 @@ export const useThanks = (config: UseQueryOptions<Thank[]> = {}) => {
   });
 };
 
-const addThank = (author: string, type: string): any => {
+const addThank = (author: string, type: string, photoURL: string): any => {
   return thanksCollectionRef?.add({
     author,
+    photoURL,
     timestamp: dayjs()?.unix(),
     type,
   });
@@ -39,12 +40,15 @@ export const useThankAdd = (
   config: UseMutationOptions<Partial<Thank>, unknown, Partial<Thank>> = {}
 ) => {
   const queryCache = useQueryClient();
-  return useMutation(({ author, type }) => addThank(author, type), {
-    ...config,
-    onSuccess: () => {
-      queryCache.invalidateQueries('thanks');
-    },
-  });
+  return useMutation(
+    ({ author, type, photoURL }) => addThank(author, type, photoURL),
+    {
+      ...config,
+      onSuccess: () => {
+        queryCache.invalidateQueries('thanks');
+      },
+    }
+  );
 };
 
 const deleteThank = (id: string): any => {
