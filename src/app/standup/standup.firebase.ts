@@ -69,7 +69,7 @@ const deleteProject = async (id: string): Promise<any> => {
   const snapshotSpeakers = await speakersCollectionRef
     .where('projectId', '==', id)
     .get();
-  snapshotSpeakers.docs.map((doc) =>
+  snapshotSpeakers.docs.forEach((doc) =>
     speakersCollectionRef.doc(doc.id).delete()
   );
   const snapshotProject = await projectsCollectionRef?.doc(id).get();
@@ -105,7 +105,7 @@ const replaceProject = async (project, newIndex) => {
       ?.where('index', '>', project?.index)
       ?.where('index', '<=', newIndex)
       .get();
-    snapshot.docs.map((doc) =>
+    snapshot.docs.forEach((doc) =>
       updateProject(doc?.id, { index: doc?.get('index') - 1 })
     );
   } else {
@@ -113,7 +113,7 @@ const replaceProject = async (project, newIndex) => {
       ?.where('index', '<', project?.index)
       ?.where('index', '>=', newIndex)
       .get();
-    snapshot.docs.map((doc) =>
+    snapshot.docs.forEach((doc) =>
       updateProject(doc?.id, { index: doc?.get('index') + 1 })
     );
   }
@@ -233,7 +233,7 @@ const updateSpeaker = async (id, payload) => {
         .where('index', '>', speaker?.index)
         .where('index', '<=', payload?.index)
         .get();
-      snapshot.docs.map((doc) =>
+      snapshot.docs.forEach((doc) =>
         speakersCollectionRef
           ?.doc(doc.id)
           ?.update({ index: doc?.data().index - 1 })
@@ -244,7 +244,7 @@ const updateSpeaker = async (id, payload) => {
         .where('index', '<', speaker?.index)
         .where('index', '>=', payload?.index)
         .get();
-      snapshot.docs.map((doc) =>
+      snapshot.docs.forEach((doc) =>
         speakersCollectionRef
           ?.doc(doc.id)
           ?.update({ index: doc?.data().index + 1 })

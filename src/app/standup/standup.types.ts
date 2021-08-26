@@ -3,6 +3,7 @@ export interface Speaker {
   name: string;
   projectId: string;
   index: number;
+  isAbsent: boolean;
 }
 
 export interface Project {
