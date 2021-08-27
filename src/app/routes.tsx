@@ -14,6 +14,9 @@ export const OFFICES = '/offices';
 
 export const CRA = '/cra';
 
+// Expense-report
+export const EXPENSES_REPORT = '/note-de-frais';
+
 // Administrative
 
 export const ADMINISTRATIVE = '/administrative';
@@ -27,6 +30,7 @@ export const Routes = {
   STANDUP_THANKS,
   OFFICES,
   CRA,
+  EXPENSES_REPORT,
   ADMINISTRATIVE,
   ADMINISTRATIVE_LEAVE,
 };
