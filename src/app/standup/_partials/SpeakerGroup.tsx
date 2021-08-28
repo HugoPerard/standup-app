@@ -20,6 +20,7 @@ import {
 } from '@/app/standup/standup.firebase';
 import { Project } from '@/app/standup/standup.types';
 import { Icon, PopoverInput, useToastSuccess } from '@/components';
+import { useDarkMode } from '@/hooks/useDarkMode';
 import { sortByIndex } from '@/utils/sortByIndex';
 
 import { EmptySpeakerCard, SpeakerCard } from './SpeakerCard';
@@ -32,6 +33,7 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
   project,
   ...rest
 }) => {
+  const { colorModeValue } = useDarkMode();
   const toastSuccess = useToastSuccess();
 
   const {
@@ -99,7 +101,7 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
         <Stack
           ref={provided.innerRef}
           id={project?.id}
-          bg="gray.700"
+          bg={colorModeValue('gray.300', 'gray.700')}
           h="fit-content"
           p={3}
           borderRadius="md"
@@ -185,12 +187,7 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
             submitLabel="Ajouter une personne"
             placeholder="Saisir le nom d'une personne"
           >
-            <Button
-              variant="link"
-              colorScheme="yellow"
-              size="xs"
-              isLoading={isLoadingAddSpeaker}
-            >
+            <Button variant="link" size="xs" isLoading={isLoadingAddSpeaker}>
               <Icon icon={FiPlus} mr={1} /> Ajouter une personne
             </Button>
           </PopoverInput>

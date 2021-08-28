@@ -19,6 +19,7 @@ import {
 } from '@/app/standup/thanks/thanks.firebase';
 import { Thank } from '@/app/standup/thanks/thanks.types';
 import { PersonTag, useToastSuccess } from '@/components';
+import { useDarkMode } from '@/hooks/useDarkMode';
 
 interface ThankGroupProps extends StackProps {
   name: string;
@@ -32,6 +33,7 @@ export const ThankGroup: React.FC<ThankGroupProps> = ({
   type,
   ...rest
 }) => {
+  const { colorModeValue } = useDarkMode();
   const toastSuccess = useToastSuccess();
 
   const { currentUser } = useAuth();
@@ -63,7 +65,12 @@ export const ThankGroup: React.FC<ThankGroupProps> = ({
   };
 
   return (
-    <Stack bg="gray.700" p={3} borderRadius="md" {...rest}>
+    <Stack
+      bg={colorModeValue('gray.300', 'gray.700')}
+      p={3}
+      borderRadius="md"
+      {...rest}
+    >
       <Stack direction="row" spacing={3} mb={2}>
         <Text fontWeight="bold">{name}</Text>
         <IconButton
@@ -94,7 +101,10 @@ export const ThankGroup: React.FC<ThankGroupProps> = ({
                 />
                 <Text>{thank.author}</Text>
                 {Date.now() / 1000 - thank?.timestamp < NEW_BADGE_DURATION && (
-                  <Badge bg="gray.700" color="white">
+                  <Badge
+                    bg={colorModeValue('gray.500', 'gray.700')}
+                    color="white"
+                  >
                     NEW
                   </Badge>
                 )}
@@ -106,7 +116,7 @@ export const ThankGroup: React.FC<ThankGroupProps> = ({
 
       {!isLoadingAddThank && thanks?.length === 0 && (
         <Center
-          bg="gray.600"
+          bg={colorModeValue('gray.200', 'gray.600')}
           p={2}
           borderRadius="md"
           fontSize="xs"
