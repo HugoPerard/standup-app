@@ -41,6 +41,8 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
     });
     const [isSpeaked, setIsSpeaked] = useState(false);
 
+    const [isAbsent, setIsAbsent] = useState(false);
+
     const controlStopWatch = () => {
       if (isRunning) {
         pause();
@@ -67,6 +69,10 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
       });
     };
 
+    const setAbsent = () => {
+      setIsAbsent(true);
+    };
+
     return (
       <Stack
         ref={ref}
@@ -77,7 +83,7 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
         bg={colorModeValue('gray.200', 'gray.600')}
         p={2}
         borderRadius="md"
-        opacity={isSpeaked && '0.5'}
+        opacity={(isSpeaked && '0.5') || (isAbsent && '0.5')}
         {...(isRunning
           ? {
               border: '1px solid',
@@ -88,8 +94,10 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
       >
         <Flex
           onClick={() => {
-            pause();
-            setIsSpeaked(true);
+            if (!isAbsent) {
+              pause();
+              setIsSpeaked(true);
+            }
           }}
         >
           <Checkbox
@@ -99,7 +107,7 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
           />
         </Flex>
         <Stack
-          onClick={controlStopWatch}
+          onClick={!isAbsent ? controlStopWatch : () => {}}
           direction="row"
           spacing={3}
           cursor="pointer"
@@ -126,6 +134,14 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
             <MenuList>
               <MenuItem icon={<FiWatch />} onClick={() => resetStopwatch()}>
                 Réinitialiser
+              </MenuItem>
+              <MenuItem
+                _hover={{ bg: 'gray.300' }}
+                _focus={{ bg: 'gray.400' }}
+                icon={<FiWatch />}
+                onClick={() => setAbsent()}
+              >
+                Absent
               </MenuItem>
               <ConfirmMenuItem
                 icon={<FiTrash />}
