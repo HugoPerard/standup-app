@@ -92,7 +92,11 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
             setIsSpeaked(true);
           }}
         >
-          <Checkbox isIndeterminate={isRunning} isChecked={isSpeaked} />
+          <Checkbox
+            isIndeterminate={isRunning}
+            isChecked={isSpeaked}
+            borderColor={colorModeValue('gray.400', undefined)}
+          />
         </Flex>
         <Stack
           onClick={controlStopWatch}

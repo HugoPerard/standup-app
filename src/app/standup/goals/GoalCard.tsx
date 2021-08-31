@@ -108,6 +108,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, ...rest }) => {
           isIndeterminate={isLoadingUpdate}
           isDisabled={isLoadingUpdate}
           pt={1}
+          borderColor={colorModeValue('gray.400', undefined)}
         />
         <Stack flex="1" overflow="hidden">
           <Text>{goal?.description}</Text>
