@@ -16,9 +16,8 @@ import {
   useProjectDelete,
   useProjectUpdate,
   useSpeakerAdd,
-  useSpeakers,
 } from '@/app/standup/standup.firebase';
-import { Project } from '@/app/standup/standup.types';
+import { Project, Speaker } from '@/app/standup/standup.types';
 import { Icon, PopoverInput, useToastSuccess } from '@/components';
 import { useDarkMode } from '@/hooks/useDarkMode';
 import { sortByIndex } from '@/utils/sortByIndex';
@@ -27,10 +26,16 @@ import { EmptySpeakerCard, SpeakerCard } from './SpeakerCard';
 
 interface SpeakerGroupProps extends StackProps {
   project: Project;
+  speakers: Speaker[];
+  isLoading: boolean;
+  isError: boolean;
 }
 
 export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
   project,
+  speakers = [],
+  isLoading: isLoadingSpeakers,
+  isError: isErrorSpeakers,
   ...rest
 }) => {
   const { colorModeValue } = useDarkMode();
@@ -40,17 +45,13 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
     mutate: deleteProject,
     isLoading: isLoadingDeleteProject,
   } = useProjectDelete();
+
   const {
     mutate: addSpeaker,
     isLoading: isLoadingAddSpeaker,
   } = useSpeakerAdd();
-  const { mutate: updateProject } = useProjectUpdate();
 
-  const {
-    data: speakers,
-    isLoading: isLoadingSpeakers,
-    isError: isErrorSpeakers,
-  } = useSpeakers(project?.id);
+  const { mutate: updateProject } = useProjectUpdate();
 
   const handleAddSpeaker = (name) => {
     addSpeaker(
