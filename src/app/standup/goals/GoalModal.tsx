@@ -50,14 +50,14 @@ export const GoalModal: React.FC<GoalModalProps> = ({
           people: initialsValues?.people || [currentUser.username],
         }}
       >
-        <ModalContent color="gray.100" bg="gray.600">
+        <ModalContent>
           <ModalHeader>{title}</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <GoalForm ref={initialRef} />
           </ModalBody>
           <ModalFooter justifyContent="space-between">
-            <Button color="gray.600" onClick={onClose}>
+            <Button variant="@secondary" onClick={onClose}>
               Annuler
             </Button>
             <Button variant="@primary" type="submit">

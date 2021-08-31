@@ -15,6 +15,7 @@ import { FiPlus } from 'react-icons/fi';
 import { useCurrentUser } from '@/app/auth/useAuth';
 import { Loader, Page, PageContent } from '@/app/layout';
 import { Icon, PersonTag, PopoverInput } from '@/components';
+import { useDarkMode } from '@/hooks/useDarkMode';
 
 import { OfficeSection } from './_partials/OfficeSection';
 import {
@@ -27,6 +28,7 @@ import {
 import { Office, OfficeWorker } from './offices.types';
 
 export const PageOffices = () => {
+  const { colorModeValue } = useDarkMode();
   const currentUser = useCurrentUser();
 
   const weekdays = ['LUNDI', 'MARDI', 'MERCREDI', 'JEUDI', 'VENDREDI'];
@@ -85,7 +87,7 @@ export const PageOffices = () => {
                 placeholder="Saisir le nom du bureau"
                 placement="right-end"
               >
-                <Button variant="@secondary" size="sm">
+                <Button variant="@primary" size="sm">
                   <Icon icon={FiPlus} mr={1} /> Ajouter un bureau
                 </Button>
               </PopoverInput>
@@ -114,7 +116,7 @@ export const PageOffices = () => {
                   placeholder="Saisir le nom du bureau"
                   placement="right-end"
                 >
-                  <Button variant="@secondary" size="xs">
+                  <Button variant="link" size="xs">
                     <Icon icon={FiPlus} mr={1} /> Ajouter un bureau
                   </Button>
                 </PopoverInput>
@@ -136,7 +138,7 @@ export const PageOffices = () => {
                     {offices?.map((office) => (
                       <Stack
                         key={office?.id}
-                        bg="gray.700"
+                        bg={colorModeValue('gray.300', 'gray.700')}
                         p={3}
                         borderRadius="md"
                         flex="1"

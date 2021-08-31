@@ -24,6 +24,7 @@ import {
   MenuItem,
   useToastSuccess,
 } from '@/components';
+import { useDarkMode } from '@/hooks/useDarkMode';
 
 interface SpeakerCardProps extends StackProps {
   speaker: Speaker;
@@ -32,6 +33,7 @@ interface SpeakerCardProps extends StackProps {
 
 export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
   ({ speaker, index, ...rest }, ref) => {
+    const { colorModeValue } = useDarkMode();
     const toastSuccess = useToastSuccess();
 
     const { seconds, minutes, isRunning, start, pause, reset } = useStopwatch({
@@ -72,7 +74,7 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
         direction="row"
         spacing={3}
         alignItems="center"
-        bg="gray.600"
+        bg={colorModeValue('gray.200', 'gray.600')}
         p={2}
         borderRadius="md"
         opacity={isSpeaked && '0.5'}
@@ -90,11 +92,7 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
             setIsSpeaked(true);
           }}
         >
-          <Checkbox
-            colorScheme="yellow"
-            isIndeterminate={isRunning}
-            isChecked={isSpeaked}
-          />
+          <Checkbox isIndeterminate={isRunning} isChecked={isSpeaked} />
         </Flex>
         <Stack
           onClick={controlStopWatch}
@@ -121,18 +119,11 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
             size="xs"
           />
           <Portal>
-            <MenuList color="gray.700" bg="gray.200">
-              <MenuItem
-                _hover={{ bg: 'gray.300' }}
-                _focus={{ bg: 'gray.400' }}
-                icon={<FiWatch />}
-                onClick={() => resetStopwatch()}
-              >
+            <MenuList>
+              <MenuItem icon={<FiWatch />} onClick={() => resetStopwatch()}>
                 Réinitialiser
               </MenuItem>
               <ConfirmMenuItem
-                _hover={{ bg: 'gray.300' }}
-                _focus={{ bg: 'gray.400' }}
                 icon={<FiTrash />}
                 confirmContent="Confirmer la suppression"
                 onClick={() => handleDeleteSpeaker()}
