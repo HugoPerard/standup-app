@@ -16,7 +16,10 @@ import { BsThreeDotsVertical } from 'react-icons/bs';
 import { FiTrash, FiWatch } from 'react-icons/fi';
 import { useStopwatch } from 'react-timer-hook';
 
-import { useSpeakerDelete } from '@/app/standup/standup.firebase';
+import {
+  useSpeakerDelete,
+  useSpeakerUpdate,
+} from '@/app/standup/standup.firebase';
 import { Speaker } from '@/app/standup/standup.types';
 import {
   ConfirmMenuItem,
@@ -40,8 +43,7 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
       autoStart: false,
     });
     const [isSpeaked, setIsSpeaked] = useState(false);
-
-    const [isAbsent, setIsAbsent] = useState(false);
+    const { mutate: updateSpeaker } = useSpeakerUpdate();
 
     const controlStopWatch = () => {
       if (isRunning) {
@@ -69,8 +71,11 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
       });
     };
 
-    const setAbsent = () => {
-      setIsAbsent(true);
+    const handleAbsent = () => {
+      updateSpeaker({
+        id: speaker.id,
+        payload: { isAbsent: !speaker.isAbsent },
+      });
     };
 
     return (
@@ -83,7 +88,7 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
         bg={colorModeValue('gray.200', 'gray.600')}
         p={2}
         borderRadius="md"
-        opacity={(isSpeaked && '0.5') || (isAbsent && '0.5')}
+        opacity={(isSpeaked && '0.5') || (speaker.isAbsent && '0.5')}
         {...(isRunning
           ? {
               border: '1px solid',
@@ -94,7 +99,7 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
       >
         <Flex
           onClick={() => {
-            if (!isAbsent) {
+            if (!speaker.isAbsent) {
               pause();
               setIsSpeaked(true);
             }
@@ -139,7 +144,7 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
                 _hover={{ bg: 'gray.300' }}
                 _focus={{ bg: 'gray.400' }}
                 icon={<FiWatch />}
-                onClick={() => setAbsent()}
+                onClick={() => handleAbsent()}
               >
                 Absent
               </MenuItem>
