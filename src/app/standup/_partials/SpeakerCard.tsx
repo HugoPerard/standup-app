@@ -13,7 +13,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
-import { FiTrash, FiWatch } from 'react-icons/fi';
+import { FiTrash, FiUserCheck, FiUserX, FiWatch } from 'react-icons/fi';
 import { useStopwatch } from 'react-timer-hook';
 
 import {
@@ -112,7 +112,7 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
           />
         </Flex>
         <Stack
-          onClick={!isAbsent ? controlStopWatch : () => {}}
+          onClick={!speaker.isAbsent ? controlStopWatch : () => {}}
           direction="row"
           spacing={3}
           cursor="pointer"
@@ -143,10 +143,10 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
               <MenuItem
                 _hover={{ bg: 'gray.300' }}
                 _focus={{ bg: 'gray.400' }}
-                icon={<FiWatch />}
+                icon={speaker.isAbsent ? <FiUserCheck /> : <FiUserX />}
                 onClick={() => handleAbsent()}
               >
-                Absent
+                {speaker.isAbsent ? 'Présent' : 'Absent'}
               </MenuItem>
               <ConfirmMenuItem
                 icon={<FiTrash />}
