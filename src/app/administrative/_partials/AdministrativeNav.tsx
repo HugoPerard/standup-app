@@ -12,6 +12,9 @@ export const AdministrativeNav = ({ ...rest }) => {
         <InternalBarItem to={Routes.ADMINISTRATIVE_LEAVE}>
           Congés
         </InternalBarItem>
+        <InternalBarItem to={Routes.EXPENSES_REPORT}>
+          Notes de Frais
+        </InternalBarItem>
       </Flex>
     </InternalBar>
   );

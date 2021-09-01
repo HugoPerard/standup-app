@@ -8,6 +8,7 @@ import { Routes } from '@/app/routes';
 import { Error404 } from '@/errors';
 
 import { AdministrativeNav } from './_partials/AdministrativeNav';
+import { PageExpensesReport } from './expenseReports/PageExpensesReport';
 import { PageLeave } from './leave/PageLeave';
 
 const AdministrativeRoutes = () => {
@@ -27,6 +28,10 @@ const AdministrativeRoutes = () => {
         <Route
           path={Routes.ADMINISTRATIVE_LEAVE}
           render={() => <PageLeave />}
+        />
+        <Route
+          path={Routes.EXPENSES_REPORT}
+          render={() => <PageExpensesReport />}
         />
 
         <Route path="*" render={() => <Error404 />} />

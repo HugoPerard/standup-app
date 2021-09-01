@@ -9,7 +9,6 @@ import { Error404, ErrorBoundary } from '@/errors';
 
 import AdministrativeRoutes from './administrative/AdministrativeRoutes';
 import { PageCRA } from './cra/PageCRA';
-import ExpenseReportsRoutes from './expenseReports/ExpenseReportsRoutes';
 import OfficesRoutes from './offices/OfficesRoutes';
 import { Routes } from './routes';
 import StandupRoutes from './standup/StandupRoutes';
@@ -34,11 +33,6 @@ export const App = () => {
               <Route path={Routes.OFFICES} render={() => <OfficesRoutes />} />
 
               <Route
-                path={Routes.EXPENSES_REPORT}
-                render={() => <ExpenseReportsRoutes />}
-              />
-
-			  <Route
                 path={Routes.ADMINISTRATIVE}
                 render={() => <AdministrativeRoutes />}
               />

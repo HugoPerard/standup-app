@@ -14,14 +14,12 @@ export const OFFICES = '/offices';
 
 export const CRA = '/cra';
 
-// Expense-report
-export const EXPENSES_REPORT = '/note-de-frais';
-
 // Administrative
 
 export const ADMINISTRATIVE = '/administrative';
 
 export const ADMINISTRATIVE_LEAVE = `${ADMINISTRATIVE}/leave`;
+export const EXPENSES_REPORT = `${ADMINISTRATIVE}/expense-report`;
 
 export const Routes = {
   STANDUP,
