@@ -20,7 +20,6 @@ import { FiCalendar } from 'react-icons/fi';
 import { usePopper } from 'react-popper';
 
 import { MonthPicker } from '@/components/MonthPicker';
-import { useDarkMode } from '@/hooks/useDarkMode';
 import { getDayPickerTranslationsOptions } from '@/utils/dayPickerLocaleUtils';
 import { parseInputToDate } from '@/utils/parseInputToDate';
 
@@ -85,7 +84,6 @@ const CustomDayPickerOverlay = forwardRef<CustomDayPickerOverlayProps, 'div'>(
   ) => {
     // Remove the props that should not be spread to the HTML element.
     const { selectedDay, ...rest } = props;
-    const { colorModeValue } = useDarkMode();
 
     const [popperElement, setPopperElement] = useState(null);
 

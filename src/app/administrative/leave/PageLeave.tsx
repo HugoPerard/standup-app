@@ -6,84 +6,98 @@ import { Dayjs } from 'dayjs';
 
 import { Page, PageContent } from '@/app/layout';
 import { FieldDayPicker, FieldInput, FieldRadios } from '@/components';
+import { getDaysBetweenTwoDays } from '@/utils/getDaysBetweenTwoDays';
 
-const FORM_NOM_ENTRY = '468366344';
-const FORM_PRENOM_ENTRY = '1650320565';
-const FORM_DATE_BEGIN = '998597328';
-const FORM_DATE_BEGIN_DAY = '998597328_day';
-const FORM_DATE_BEGIN_MONTH = '998597328_month';
-const FORM_DATE_BEGIN_YEAR = '998597328_year';
-const FORM_DATE_END = '1229261647';
-const FORM_DATE_END_DAY = '1229261647_day';
-const FORM_DATE_END_MONTH = '1229261647_month';
-const FORM_DATE_END_YEAR = '1229261647_year';
-const FORM_TYPE = '790184327_sentinel';
+import {
+  buildCraUrl,
+  buildGoogleAgendaUrl,
+  buildGoogleFormUrl,
+  CRA_FORM_ENTRIES_DATE_DAY,
+  CRA_FORM_ENTRIES_DATE_MONTH,
+  CRA_FORM_ENTRIES_DATE_YEAR,
+  CRA_FORM_ENTRIES_PROJECT_1_CODE,
+  CRA_FORM_ENTRIES_PROJECT_1_TIME,
+  CRA_FORM_ENTRIES_REMARK,
+  LEAVE_FORM_ENTRIES_DATE_BEGIN,
+  LEAVE_FORM_ENTRIES_DATE_BEGIN_DAY,
+  LEAVE_FORM_ENTRIES_DATE_BEGIN_MONTH,
+  LEAVE_FORM_ENTRIES_DATE_BEGIN_YEAR,
+  LEAVE_FORM_ENTRIES_DATE_END,
+  LEAVE_FORM_ENTRIES_DATE_END_DAY,
+  LEAVE_FORM_ENTRIES_DATE_END_MONTH,
+  LEAVE_FORM_ENTRIES_DATE_END_YEAR,
+  LEAVE_FORM_ENTRIES_FIRST_NAME,
+  LEAVE_FORM_ENTRIES_LAST_NAME,
+  LEAVE_FORM_ENTRIES_TYPE,
+  LEAVE_FORM_ENTRIES_TYPE_OPTIONS,
+} from './leave.functions';
 
-const FORM_TYPE_OPTIONS = [
-  { value: 'Matinée seulement' },
-  { value: 'Après-midi seulement' },
-  { value: 'Toute la journée' },
-];
-
-const GOOGLE_FORM_URL =
-  'https://docs.google.com/forms/d/e/1FAIpQLSfVEFq1HJ6cKphUeDquxk3x3BW9UiE4oGkeF8Kp0yVn0PjgLA/viewform';
-
-interface LeaveAppFormValues {
-  [FORM_NOM_ENTRY]: string;
-  [FORM_PRENOM_ENTRY]: string;
-  [FORM_DATE_BEGIN]: Dayjs;
-  [FORM_DATE_END]: Dayjs;
-  [FORM_TYPE]: string;
+export interface LeaveAppFormValues {
+  [LEAVE_FORM_ENTRIES_LAST_NAME]: string;
+  [LEAVE_FORM_ENTRIES_FIRST_NAME]: string;
+  [LEAVE_FORM_ENTRIES_DATE_BEGIN]: Dayjs;
+  [LEAVE_FORM_ENTRIES_DATE_END]: Dayjs;
+  [LEAVE_FORM_ENTRIES_TYPE]: string;
 }
 
-interface LeaveGoogleFormValues {
-  [FORM_NOM_ENTRY]: string;
-  [FORM_PRENOM_ENTRY]: string;
-  [FORM_DATE_BEGIN_DAY]: number;
-  [FORM_DATE_BEGIN_MONTH]: number;
-  [FORM_DATE_BEGIN_YEAR]: number;
-  [FORM_DATE_END_DAY]: number;
-  [FORM_DATE_END_MONTH]: number;
-  [FORM_DATE_END_YEAR]: number;
-  [FORM_TYPE]: string;
+export interface LeaveGoogleFormValues {
+  [LEAVE_FORM_ENTRIES_LAST_NAME]: string;
+  [LEAVE_FORM_ENTRIES_FIRST_NAME]: string;
+  [LEAVE_FORM_ENTRIES_DATE_BEGIN_DAY]: number;
+  [LEAVE_FORM_ENTRIES_DATE_BEGIN_MONTH]: number;
+  [LEAVE_FORM_ENTRIES_DATE_BEGIN_YEAR]: number;
+  [LEAVE_FORM_ENTRIES_DATE_END_DAY]: number;
+  [LEAVE_FORM_ENTRIES_DATE_END_MONTH]: number;
+  [LEAVE_FORM_ENTRIES_DATE_END_YEAR]: number;
+  [LEAVE_FORM_ENTRIES_TYPE]: string;
 }
 
-const GOOGLE_AGENDA_URL =
-  'https://www.google.com/calendar/render?action=TEMPLATE';
+export interface CraFormValues {
+  [CRA_FORM_ENTRIES_DATE_DAY]: number;
+  [CRA_FORM_ENTRIES_DATE_MONTH]: number;
+  [CRA_FORM_ENTRIES_DATE_YEAR]: number;
+  [CRA_FORM_ENTRIES_REMARK]?: string;
+  [CRA_FORM_ENTRIES_PROJECT_1_CODE]: string;
+  [CRA_FORM_ENTRIES_PROJECT_1_TIME]: string;
+}
 
 export const PageLeave = () => {
   const handleSubmit = (values: LeaveAppFormValues) => {
     const {
-      [FORM_DATE_BEGIN]: beginDate,
-      [FORM_DATE_END]: endDate,
+      [LEAVE_FORM_ENTRIES_DATE_BEGIN]: beginDate,
+      [LEAVE_FORM_ENTRIES_DATE_END]: endDate,
       ...formRest
     } = values;
 
     const formatedValues: LeaveGoogleFormValues = {
       ...formRest,
-      [FORM_DATE_BEGIN_DAY]: beginDate.get('date'),
-      [FORM_DATE_BEGIN_MONTH]: beginDate.get('month') + 1,
-      [FORM_DATE_BEGIN_YEAR]: beginDate.get('year'),
-      [FORM_DATE_END_DAY]: endDate.get('date'),
-      [FORM_DATE_END_MONTH]: endDate.get('month') + 1,
-      [FORM_DATE_END_YEAR]: endDate.get('year'),
+      [LEAVE_FORM_ENTRIES_DATE_BEGIN_DAY]: beginDate.get('date'),
+      [LEAVE_FORM_ENTRIES_DATE_BEGIN_MONTH]: beginDate.get('month') + 1,
+      [LEAVE_FORM_ENTRIES_DATE_BEGIN_YEAR]: beginDate.get('year'),
+      [LEAVE_FORM_ENTRIES_DATE_END_DAY]: endDate.get('date'),
+      [LEAVE_FORM_ENTRIES_DATE_END_MONTH]: endDate.get('month') + 1,
+      [LEAVE_FORM_ENTRIES_DATE_END_YEAR]: endDate.get('year'),
     };
+
+    const formatedCraValues = (day: Dayjs) => ({
+      ...formRest,
+      [CRA_FORM_ENTRIES_DATE_DAY]: day.get('date'),
+      [CRA_FORM_ENTRIES_DATE_MONTH]: day.get('month') + 1,
+      [CRA_FORM_ENTRIES_DATE_YEAR]: day.get('year'),
+      [CRA_FORM_ENTRIES_PROJECT_1_CODE]: 'congés-absent',
+      [CRA_FORM_ENTRIES_PROJECT_1_TIME]:
+        values?.[LEAVE_FORM_ENTRIES_TYPE] === 'Toute la journée' ? '7' : '3',
+    });
+
+    getDaysBetweenTwoDays(beginDate, endDate)
+      .filter((day) => day.day() !== 0 && day.day() !== 6)
+      .forEach((day) => {
+        window.open(buildCraUrl(formatedCraValues(day)), '_blank');
+      });
 
     window.open(buildGoogleFormUrl(formatedValues), '_blank');
     window.open(buildGoogleAgendaUrl(values), '_blank');
   };
-
-  const buildGoogleFormUrl = (values: LeaveGoogleFormValues) =>
-    `${GOOGLE_FORM_URL}?${Object.entries(values)
-      ?.map(([key, value]) => `entry.${key}=${value}`)
-      .join('&')}`;
-
-  const buildGoogleAgendaUrl = (values: LeaveAppFormValues) =>
-    `${GOOGLE_AGENDA_URL}&text=${values[FORM_NOM_ENTRY]} ${
-      values[FORM_PRENOM_ENTRY]
-    } congés&dates=${values[FORM_DATE_BEGIN].format('YYYYMMDD')}%2F${values[
-      FORM_DATE_END
-    ].add(1, 'day').format('YYYYMMDD')}`;
 
   return (
     <Page containerSize="full">
@@ -92,7 +106,7 @@ export const PageLeave = () => {
           <Stack spacing={3}>
             <Stack direction="row">
               <FieldInput
-                name={FORM_NOM_ENTRY}
+                name={LEAVE_FORM_ENTRIES_LAST_NAME}
                 label="Nom"
                 required="Le nom est requis"
                 defaultValue={localStorage.getItem('leave-lastName')}
@@ -101,7 +115,7 @@ export const PageLeave = () => {
                 }
               />
               <FieldInput
-                name={FORM_PRENOM_ENTRY}
+                name={LEAVE_FORM_ENTRIES_FIRST_NAME}
                 label="Prénom"
                 required="Le prénom est requis"
                 defaultValue={localStorage.getItem('leave-firstName')}
@@ -112,19 +126,19 @@ export const PageLeave = () => {
             </Stack>
             <Stack direction="row">
               <FieldDayPicker
-                name={FORM_DATE_BEGIN}
+                name={LEAVE_FORM_ENTRIES_DATE_BEGIN}
                 label="Date de début"
                 required="La date de début est requise"
               />
               <FieldDayPicker
-                name={FORM_DATE_END}
+                name={LEAVE_FORM_ENTRIES_DATE_END}
                 label="Date de fin"
                 required="La date de fin est requise"
               />
             </Stack>
             <FieldRadios
-              name={FORM_TYPE}
-              options={FORM_TYPE_OPTIONS}
+              name={LEAVE_FORM_ENTRIES_TYPE}
+              options={LEAVE_FORM_ENTRIES_TYPE_OPTIONS}
               required="Le type est requis"
             />
             <Button type="submit" variant="@primary">
