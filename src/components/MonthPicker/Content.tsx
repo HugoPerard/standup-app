@@ -10,7 +10,12 @@ interface ContentProps {}
 
 export const Content: React.FC<ContentProps> = () => {
   const { year } = useYearContext();
-  const { onMonthClick, selectedMonths } = useMonthPickerContext();
+  const {
+    onMonthClick,
+    selectedMonths,
+    monthPickerStyle,
+  } = useMonthPickerContext();
+  console.log(monthPickerStyle);
 
   const handleClick = (month: number) => {
     onMonthClick?.(new Date(year, month));
@@ -52,7 +57,7 @@ export const Content: React.FC<ContentProps> = () => {
   };
 
   return (
-    <Grid templateColumns="repeat(3, 1fr)" gap={3}>
+    <Grid templateColumns="repeat(3, 1fr)" gap={3} style={monthPickerStyle}>
       <GridItem colSpan={3}>
         <Navbar />
       </GridItem>

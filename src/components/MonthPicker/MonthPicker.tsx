@@ -8,6 +8,7 @@ interface MonthPickerProps {
   onTodayButtonClick?(): void;
   onYearChange?(year: number): void;
   selectedMonths?: Date[];
+  monthPickerStyle?: Object;
 }
 
 export const MonthPicker: React.FC<MonthPickerProps> = ({
@@ -16,6 +17,7 @@ export const MonthPicker: React.FC<MonthPickerProps> = ({
   onTodayButtonClick,
   onYearChange,
   selectedMonths = [],
+  monthPickerStyle = {},
 }) => {
   return (
     <YearProvider year={year} onYearChange={onYearChange}>
@@ -23,6 +25,7 @@ export const MonthPicker: React.FC<MonthPickerProps> = ({
         onMonthClick={onMonthClick}
         onTodayButtonClick={onTodayButtonClick}
         selectedMonths={selectedMonths}
+        monthPickerStyle={monthPickerStyle}
       >
         <Content />
       </MonthPickerProvider>

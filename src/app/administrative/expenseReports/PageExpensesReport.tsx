@@ -7,6 +7,7 @@ import { useCurrentUser } from '@/app/auth/useAuth';
 import { Page, PageContent } from '@/app/layout';
 import { FieldInput } from '@/components/FieldInput';
 import { FieldTextarea } from '@/components/FieldTextarea';
+import { MonthPicker } from '@/components/MonthPicker';
 
 interface GoalFormProps extends StackProps {}
 
@@ -30,12 +31,6 @@ export const PageExpensesReport = forwardRef<HTMLElement, GoalFormProps>(() => {
               placeholder="Votre nom et prénom"
               required="Votre nom est requis"
               isDisabled
-            />
-            <FieldInput
-              name="month"
-              label="Mois de remboursement"
-              placeholder="Saisir le mois de remboursement de la note de frais"
-              required="Votre nom est requis"
             />
             <FieldTextarea
               name="description"
