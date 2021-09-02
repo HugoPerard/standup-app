@@ -18,7 +18,13 @@ import {
   useSpeakerAdd,
 } from '@/app/standup/standup.firebase';
 import { Project, Speaker } from '@/app/standup/standup.types';
-import { Icon, PopoverInput, useToastSuccess } from '@/components';
+import {
+  Icon,
+  PopoverInput,
+  useToastError,
+  useToastSuccess,
+  useToastWarning,
+} from '@/components';
 import { useDarkMode } from '@/hooks/useDarkMode';
 import { sortByIndex } from '@/utils/sortByIndex';
 
@@ -96,6 +102,8 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
     );
   };
 
+  const toastError = useToastError();
+
   return (
     <Droppable droppableId={project?.id} type="SPEAKER" direction="vertical">
       {(provided, droppableSnapshot) => (
@@ -131,7 +139,13 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
             </Editable>
             <IconButton
               aria-label="Supprimer"
-              onClick={() => handleDeleteProject()}
+              onClick={() =>
+                project?.name === 'Absents'
+                  ? toastError({
+                      title: `Vous ne pouvez pas supprimer le projet "Absents"`,
+                    })
+                  : handleDeleteProject()
+              }
               icon={<FiTrash2 />}
               variant="@primary"
               size="xs"

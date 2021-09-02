@@ -154,12 +154,24 @@ export const PageStandup = () => {
                           data-react-beautiful-dnd-draggable="0"
                           data-react-beautiful-dnd-drag-handle="0"
                           h="fit-content"
+                          position={
+                            project.name === 'Absents' ? 'fixed' : 'relative'
+                          }
+                          zIndex={project.name === 'Absents' ? '1' : 'auto'}
+                          top={project.name === 'Absents' ? '550' : 'auto'}
                         >
                           <SpeakerGroup
                             project={project}
-                            speakers={speakers?.filter(
-                              (speaker) => speaker?.projectId === project?.id
-                            )}
+                            speakers={
+                              project?.name === 'Absents'
+                                ? speakers?.filter(
+                                    (speaker) => speaker?.isAbsent === true
+                                  )
+                                : speakers?.filter(
+                                    (speaker) =>
+                                      speaker?.projectId === project?.id
+                                  )
+                            }
                             isLoading={isLoadingSpeakers}
                             isError={isErrorSpeakers}
                           />
