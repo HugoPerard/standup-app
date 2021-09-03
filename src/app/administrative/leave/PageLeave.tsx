@@ -1,8 +1,8 @@
 import React from 'react';
 
 import { Button, Stack } from '@chakra-ui/react';
-import { Formiz } from '@formiz/core';
-import { Dayjs } from 'dayjs';
+import { Formiz, useForm } from '@formiz/core';
+import dayjs, { Dayjs } from 'dayjs';
 
 import { Page, PageContent } from '@/app/layout';
 import { FieldDayPicker, FieldInput, FieldRadios } from '@/components';
@@ -12,12 +12,15 @@ import {
   buildCraUrl,
   buildGoogleAgendaUrl,
   buildGoogleFormUrl,
+} from './leave.functions';
+import {
   CRA_FORM_ENTRIES_DATE_DAY,
   CRA_FORM_ENTRIES_DATE_MONTH,
   CRA_FORM_ENTRIES_DATE_YEAR,
   CRA_FORM_ENTRIES_PROJECT_1_CODE,
   CRA_FORM_ENTRIES_PROJECT_1_TIME,
-  CRA_FORM_ENTRIES_REMARK,
+  LeaveAppFormValues,
+  LeaveGoogleFormValues,
   LEAVE_FORM_ENTRIES_DATE_BEGIN,
   LEAVE_FORM_ENTRIES_DATE_BEGIN_DAY,
   LEAVE_FORM_ENTRIES_DATE_BEGIN_MONTH,
@@ -30,36 +33,7 @@ import {
   LEAVE_FORM_ENTRIES_LAST_NAME,
   LEAVE_FORM_ENTRIES_TYPE,
   LEAVE_FORM_ENTRIES_TYPE_OPTIONS,
-} from './leave.functions';
-
-export interface LeaveAppFormValues {
-  [LEAVE_FORM_ENTRIES_LAST_NAME]: string;
-  [LEAVE_FORM_ENTRIES_FIRST_NAME]: string;
-  [LEAVE_FORM_ENTRIES_DATE_BEGIN]: Dayjs;
-  [LEAVE_FORM_ENTRIES_DATE_END]: Dayjs;
-  [LEAVE_FORM_ENTRIES_TYPE]: string;
-}
-
-export interface LeaveGoogleFormValues {
-  [LEAVE_FORM_ENTRIES_LAST_NAME]: string;
-  [LEAVE_FORM_ENTRIES_FIRST_NAME]: string;
-  [LEAVE_FORM_ENTRIES_DATE_BEGIN_DAY]: number;
-  [LEAVE_FORM_ENTRIES_DATE_BEGIN_MONTH]: number;
-  [LEAVE_FORM_ENTRIES_DATE_BEGIN_YEAR]: number;
-  [LEAVE_FORM_ENTRIES_DATE_END_DAY]: number;
-  [LEAVE_FORM_ENTRIES_DATE_END_MONTH]: number;
-  [LEAVE_FORM_ENTRIES_DATE_END_YEAR]: number;
-  [LEAVE_FORM_ENTRIES_TYPE]: string;
-}
-
-export interface CraFormValues {
-  [CRA_FORM_ENTRIES_DATE_DAY]: number;
-  [CRA_FORM_ENTRIES_DATE_MONTH]: number;
-  [CRA_FORM_ENTRIES_DATE_YEAR]: number;
-  [CRA_FORM_ENTRIES_REMARK]?: string;
-  [CRA_FORM_ENTRIES_PROJECT_1_CODE]: string;
-  [CRA_FORM_ENTRIES_PROJECT_1_TIME]: string;
-}
+} from './leave.types';
 
 export const PageLeave = () => {
   const handleSubmit = (values: LeaveAppFormValues) => {
@@ -90,8 +64,8 @@ export const PageLeave = () => {
     });
 
     getDaysBetweenTwoDays(beginDate, endDate)
-      .filter((day) => day.day() !== 0 && day.day() !== 6)
-      .forEach((day) => {
+      ?.filter((day) => day.day() !== 0 && day.day() !== 6)
+      ?.forEach((day) => {
         window.open(buildCraUrl(formatedCraValues(day)), '_blank');
       });
 
@@ -99,10 +73,12 @@ export const PageLeave = () => {
     window.open(buildGoogleAgendaUrl(values), '_blank');
   };
 
+  const form = useForm();
+
   return (
     <Page containerSize="full">
       <PageContent>
-        <Formiz autoForm onValidSubmit={handleSubmit}>
+        <Formiz autoForm connect={form} onValidSubmit={handleSubmit}>
           <Stack spacing={3}>
             <Stack direction="row">
               <FieldInput
@@ -134,6 +110,16 @@ export const PageLeave = () => {
                 name={LEAVE_FORM_ENTRIES_DATE_END}
                 label="Date de fin"
                 required="La date de fin est requise"
+                validations={[
+                  {
+                    rule: (value) =>
+                      dayjs(value)?.isSameOrAfter(
+                        form?.values?.[LEAVE_FORM_ENTRIES_DATE_BEGIN]
+                      ),
+                    message: 'La date de fin doit être après la date de début',
+                    deps: [form?.values?.[LEAVE_FORM_ENTRIES_DATE_BEGIN]],
+                  },
+                ]}
               />
             </Stack>
             <FieldRadios
