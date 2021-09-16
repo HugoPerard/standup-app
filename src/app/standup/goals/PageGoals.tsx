@@ -50,7 +50,7 @@ export const PageGoals = () => {
           <Loader />
         ) : (
           <Stack spacing={6}>
-            <Alert status="info" color="gray.800">
+            <Alert status="info">
               <AlertIcon />
               On répond par oui ou par non, on ne raconte pas sa vie !
               Cordialement !

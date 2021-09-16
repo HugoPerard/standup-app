@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { Button, chakra, Flex, Link, Text } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import { SiGooglehangoutsmeet } from 'react-icons/si';
-import { start } from 'repl';
 
 import { InternalBar, InternalBarItem } from '@/app/layout';
 import { Routes } from '@/app/routes';
@@ -44,6 +43,17 @@ export const StandupNav = ({ ...rest }) => {
           {start}
         </Text>
       </Flex>
+
+      <Link
+        href={formatExternalUrl(STANDUP_MEET_URL)}
+        isExternal
+        alignSelf="center"
+      >
+        <Button variant="@primary" size="xs" fontWeight="bold">
+          <Icon icon={SiGooglehangoutsmeet} mr={1} />
+          Meet
+        </Button>
+      </Link>
     </InternalBar>
   );
 };

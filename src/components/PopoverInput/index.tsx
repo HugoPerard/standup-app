@@ -40,12 +40,12 @@ export const PopoverInput: React.FC<PopoverInputProps> = ({
   const initialFocusRef = React.useRef();
 
   return (
-    <Popover colorScheme="gray" initialFocusRef={initialFocusRef} {...rest}>
+    <Popover initialFocusRef={initialFocusRef} {...rest}>
       <PopoverTrigger>{children}</PopoverTrigger>
       <Portal>
         <Formiz connect={internalForm} autoForm onValidSubmit={handleSubmit}>
-          <PopoverContent color="gray.100" bg="gray.600" borderColor="gray.700">
-            <PopoverArrow bg="gray.600" />
+          <PopoverContent>
+            <PopoverArrow />
             <PopoverCloseButton zIndex="10" />
             <>
               <PopoverBody>

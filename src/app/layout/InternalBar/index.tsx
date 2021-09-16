@@ -4,8 +4,10 @@ import { Box, Flex, Stack, useTheme } from '@chakra-ui/react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 
 import { LayoutContext } from '@/app/layout';
+import { useDarkMode } from '@/hooks/useDarkMode';
 
 export const InternalBar = ({ ...rest }) => {
+  const { colorModeValue } = useDarkMode();
   const { isFocusMode, hasSideBar } = useContext(LayoutContext);
   const theme = useTheme();
 
@@ -25,8 +27,8 @@ export const InternalBar = ({ ...rest }) => {
         w="full"
         boxShadow="lg"
         direction="row"
-        bg="gray.800"
-        color="gray.100"
+        bg={colorModeValue('gray.100', 'gray.800')}
+        color={colorModeValue('gray.800', 'gray.100')}
         spacing="4"
         px="5"
         overflowY="hidden"
@@ -39,8 +41,10 @@ export const InternalBar = ({ ...rest }) => {
 };
 
 export const InternalBarItem = ({ to, ...rest }) => {
+  const { colorModeValue } = useDarkMode();
   const { pathname } = useLocation();
   const isActive = pathname.startsWith(to);
+
   return (
     <Flex
       as={RouterLink}
@@ -50,7 +54,7 @@ export const InternalBarItem = ({ to, ...rest }) => {
       fontSize="sm"
       fontWeight="medium"
       px="3"
-      color={isActive ? 'yellow.500' : undefined}
+      color={isActive ? colorModeValue('yellow.600', 'yellow.500') : undefined}
       transition="0.2s"
       _before={{
         content: '""',
@@ -59,7 +63,7 @@ export const InternalBarItem = ({ to, ...rest }) => {
         left: 0,
         bottom: 0,
         transition: '0.2s',
-        bg: isActive ? 'yellow.500' : undefined,
+        bg: isActive ? colorModeValue('yellow.600', 'yellow.500') : undefined,
         h: '3px',
       }}
       {...rest}

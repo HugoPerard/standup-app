@@ -5,16 +5,22 @@ import {
   Button,
   Center,
   Heading,
+  IconButton,
   Stack,
   Text,
+  useColorMode,
 } from '@chakra-ui/react';
 import Head from 'next/head';
+import { FiMoon, FiSun } from 'react-icons/fi';
 
-import { SlideIn, Viewport } from '@/components';
+import { Icon, SlideIn, Viewport } from '@/components';
+import { useDarkMode } from '@/hooks/useDarkMode';
 
 import { useAuth } from './useAuth';
 
 export const PageLogin = () => {
+  const { colorModeValue } = useDarkMode();
+  const { colorMode, toggleColorMode } = useColorMode();
   const { currentUser, signInWithGoogle } = useAuth();
 
   return (
@@ -23,10 +29,11 @@ export const PageLogin = () => {
         <title>BS | Login</title>
       </Head>
       <Viewport>
-        <Center bg="gray.800" color="gray.200" flex={1}>
+        <Center bg={colorModeValue('white', 'gray.800')} flex={1}>
           <SlideIn>
             <Stack
-              bg="gray.700"
+              bg={colorModeValue('gray.300', 'gray.700')}
+              color={colorModeValue('gray.700', 'gray.200')}
               p={6}
               m={6}
               borderRadius="md"
@@ -66,6 +73,17 @@ export const PageLogin = () => {
                 Se connecter avec Google
               </Button>
             </Stack>
+            <IconButton
+              aria-label={`Passer en mode ${
+                colorMode === 'dark' ? 'lumineux' : 'sombre'
+              }`}
+              icon={<Icon icon={colorMode === 'dark' ? FiSun : FiMoon} />}
+              variant="@ghost"
+              color={colorModeValue('gray.700', 'gray.200')}
+              onClick={() => toggleColorMode()}
+              width="fit-content"
+              alignSelf="center"
+            />
           </SlideIn>
         </Center>
       </Viewport>

@@ -18,6 +18,7 @@ import { BsThreeDotsVertical } from 'react-icons/bs';
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 
 import { ConfirmMenuItem, EmptyItem, useToastSuccess } from '@/components';
+import { useDarkMode } from '@/hooks/useDarkMode';
 
 import { GoalFormValues } from './GoalForm';
 import { GoalModal } from './GoalModal';
@@ -29,6 +30,7 @@ interface GoalCardProps extends StackProps {
 }
 
 export const GoalCard: React.FC<GoalCardProps> = ({ goal, ...rest }) => {
+  const { colorModeValue } = useDarkMode();
   const toastSuccess = useToastSuccess();
 
   const { mutate: deleteGoal } = useGoalDelete();
@@ -93,7 +95,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, ...rest }) => {
       <Stack
         direction="row"
         spacing={3}
-        bg="gray.600"
+        bg={colorModeValue('gray.200', 'gray.600')}
         p={3}
         borderRadius="md"
         opacity={goal?.isComplete && '0.5'}
@@ -105,8 +107,8 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, ...rest }) => {
           onChange={handleCheckbox}
           isIndeterminate={isLoadingUpdate}
           isDisabled={isLoadingUpdate}
-          colorScheme="yellow"
           pt={1}
+          borderColor={colorModeValue('gray.400', undefined)}
         />
         <Stack flex="1" overflow="hidden">
           <Text>{goal?.description}</Text>
@@ -122,18 +124,11 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, ...rest }) => {
             size="xs"
           />
           <Portal>
-            <MenuList color="gray.700" bg="gray.200">
-              <MenuItem
-                _hover={{ bg: 'gray.300' }}
-                _focus={{ bg: 'gray.400' }}
-                icon={<FiEdit2 />}
-                onClick={() => onOpenGoalModal()}
-              >
+            <MenuList>
+              <MenuItem icon={<FiEdit2 />} onClick={() => onOpenGoalModal()}>
                 Editer
               </MenuItem>
               <ConfirmMenuItem
-                _hover={{ bg: 'gray.300' }}
-                _focus={{ bg: 'gray.400' }}
                 confirmContent="Confirmer la suppression"
                 icon={<FiTrash2 />}
                 onClick={() =>

@@ -61,7 +61,6 @@ export const FieldTextarea = forwardRef<HTMLElement, FieldTextareaProps>(
           onChange={(e) => setValue(e.target.value)}
           onBlur={() => setIsTouched(true)}
           placeholder={placeholder}
-          color="gray.800"
           {...textareaProps}
         />
       </FormGroup>

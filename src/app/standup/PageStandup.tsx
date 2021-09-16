@@ -15,6 +15,7 @@ import {
   useProjectAdd,
   useSpeakerUpdate,
   useProjectReplace,
+  useSpeakers,
   getSpeakerabsent,
 } from './standup.firebase';
 
@@ -121,6 +122,12 @@ export const PageStandup = () => {
     return;
   };
 
+  const {
+    data: speakers,
+    isLoading: isLoadingSpeakers,
+    isError: isErrorSpeakers,
+  } = useSpeakers(null, { refetchInterval: 15000 });
+
   return (
     <Page containerSize="full">
       <PageContent>
@@ -213,7 +220,14 @@ export const PageStandup = () => {
                             data-react-beautiful-dnd-drag-handle="0"
                             h="fit-content"
                           >
-                            <SpeakerGroup project={project} />
+                            <SpeakerGroup
+                              project={project}
+                              speakers={speakers?.filter(
+                                (speaker) => speaker?.projectId === project?.id
+                              )}
+                              isLoading={isLoadingSpeakers}
+                              isError={isErrorSpeakers}
+                            />
                             {provided.placeholder}
                           </Box>
                         )}
