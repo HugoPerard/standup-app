@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { Button, chakra, Flex, Link } from '@chakra-ui/react';
+import { Button, chakra, Flex, Link, Text } from '@chakra-ui/react';
+import dayjs from 'dayjs';
 import { SiGooglehangoutsmeet } from 'react-icons/si';
+import { start } from 'repl';
 
 import { InternalBar, InternalBarItem } from '@/app/layout';
 import { Routes } from '@/app/routes';
@@ -10,6 +12,8 @@ import { Icon } from '@/components';
 import { formatExternalUrl } from '@/utils/link';
 
 export const StandupNav = ({ ...rest }) => {
+  const start = dayjs().format('LL');
+
   return (
     <InternalBar {...rest}>
       <Link
@@ -24,12 +28,21 @@ export const StandupNav = ({ ...rest }) => {
           </chakra.span>
         </Button>
       </Link>
-      <Flex>
+      <Flex width="full">
         <InternalBarItem to={Routes.STANDUP_GOALS}>Objectifs</InternalBarItem>
         <InternalBarItem to={Routes.STANDUP_SPEAKING}>Stand-up</InternalBarItem>
         <InternalBarItem to={Routes.STANDUP_THANKS}>
           Remerciements
         </InternalBarItem>
+        <Text
+          color="yellow.500"
+          alignSelf="center"
+          ml="auto"
+          fontWeight="bold"
+          fontSize="1.2em"
+        >
+          {start}
+        </Text>
       </Flex>
     </InternalBar>
   );

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
+import { useState } from 'react';
 
-import { Box, Button, Stack } from '@chakra-ui/react';
+import { Box, Button, Stack, Heading, Flex } from '@chakra-ui/react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { FiPlus } from 'react-icons/fi';
 
@@ -14,6 +15,7 @@ import {
   useProjectAdd,
   useSpeakerUpdate,
   useProjectReplace,
+  getSpeakerabsent,
 } from './standup.firebase';
 
 export const PageStandup = () => {
@@ -37,6 +39,31 @@ export const PageStandup = () => {
       },
     });
   };
+  const [isAbsentePeople, setIsAbsentePeople] = useState([]);
+  const [isLoading, setIsloading] = useState(false);
+
+  const isAbsentCallBack = useCallback(async () => {
+    setIsloading(true);
+    console.log('before');
+
+    let usersId = await getSpeakerabsent();
+    console.log('after', usersId);
+
+    setIsloading(false);
+
+    setIsAbsentePeople(usersId);
+  }, []);
+
+  useEffect(() => {
+    const idInterval = setInterval(() => {
+      isAbsentCallBack();
+    }, 10000);
+
+    isAbsentCallBack();
+    return () => {
+      clearInterval(idInterval);
+    };
+  }, [isAbsentCallBack]);
 
   const { mutate: updateSpeaker } = useSpeakerUpdate();
 
@@ -71,6 +98,7 @@ export const PageStandup = () => {
       );
       return;
     }
+
     if (type === 'SPEAKER') {
       updateSpeaker(
         {
@@ -112,49 +140,88 @@ export const PageStandup = () => {
                   spacing={1}
                   overflow="scroll"
                   position="fixed"
-                  left={5}
+                  left="250px"
                   right={5}
                   h="full"
                 >
-                  <Box minW="10rem">
-                    <PopoverInput
-                      onSubmit={(value) => handleAddProject(value)}
-                      label="Nom"
-                      submitLabel="Ajouter un projet"
-                      placeholder="Saisir le nom du projet"
-                      placement="bottom-start"
-                    >
-                      <Button
-                        variant="@primary"
-                        size="sm"
-                        isLoading={isLoadingAddProject}
+                  <Stack direction="row" h="full">
+                    <Flex direction="column">
+                      <Stack
+                        padding="3"
+                        bg="gray.700"
+                        width="250px"
+                        color="yellow.500"
+                        h="full"
+                        position="fixed"
+                        left={1}
+                        borderRadius="md"
                       >
-                        <Icon icon={FiPlus} mr={1} /> Ajouter un projet
-                      </Button>
-                    </PopoverInput>
-                  </Box>
-                  {sortByIndex(projects)?.map((project, index) => (
-                    <Draggable
-                      key={project.id}
-                      draggableId={project.id}
-                      index={index}
-                    >
-                      {(provided) => (
-                        <Box
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          data-react-beautiful-dnd-draggable="0"
-                          data-react-beautiful-dnd-drag-handle="0"
-                          h="fit-content"
-                        >
-                          <SpeakerGroup project={project} />
-                          {provided.placeholder}
+                        <Box>
+                          <Box height="3em">
+                            <PopoverInput
+                              onSubmit={(value) => handleAddProject(value)}
+                              label="Nom"
+                              submitLabel="Ajouter un projet"
+                              placeholder="Saisir le nom du projet"
+                              placement="bottom-start"
+                            >
+                              <Button
+                                variant="@primary"
+                                size="full"
+                                isLoading={isLoadingAddProject}
+                                width="full"
+                                height="full"
+                              >
+                                <Icon icon={FiPlus} mr={1} /> Ajouter un projet
+                              </Button>
+                            </PopoverInput>
+                          </Box>
+                          <Box size="md" mt="2em" fontWeight="bold">
+                            Absent(s)
+                          </Box>
                         </Box>
-                      )}
-                    </Draggable>
-                  ))}
-                  {droppableProvided.placeholder}
+                        <Stack
+                          height="full"
+                          borderRadius="md"
+                          overflow="scroll"
+                          overflowX="auto"
+                          pb="3"
+                        >
+                          {isLoading ? (
+                            <Loader />
+                          ) : (
+                            isAbsentePeople?.map((usersId) => (
+                              <Box key={usersId}>{usersId}</Box>
+                            ))
+                          )}
+                        </Stack>
+                      </Stack>
+                    </Flex>
+
+                    {sortByIndex(projects)?.map((project, index) => (
+                      <Draggable
+                        key={project.id}
+                        draggableId={project.id}
+                        index={index}
+                      >
+                        {(provided) => (
+                          <Box
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            data-react-beautiful-dnd-draggable="0"
+                            data-react-beautiful-dnd-drag-handle="0"
+                            h="fit-content"
+                          >
+                            <SpeakerGroup project={project} />
+                            {provided.placeholder}
+                          </Box>
+                        )}
+                      </Draggable>
+                    ))}
+
+                    {droppableProvided.placeholder}
+                  </Stack>
                 </Stack>
               )}
             </Droppable>

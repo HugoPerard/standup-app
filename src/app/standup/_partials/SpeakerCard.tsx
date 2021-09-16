@@ -13,10 +13,13 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
-import { FiTrash, FiWatch } from 'react-icons/fi';
+import { FiTrash, FiWatch, FiUserX, FiUserCheck } from 'react-icons/fi';
 import { useStopwatch } from 'react-timer-hook';
 
-import { useSpeakerDelete } from '@/app/standup/standup.firebase';
+import {
+  useSpeakerDelete,
+  useSpeakerUpdate,
+} from '@/app/standup/standup.firebase';
 import { Speaker } from '@/app/standup/standup.types';
 import {
   ConfirmMenuItem,
@@ -29,17 +32,18 @@ interface SpeakerCardProps extends StackProps {
   speaker: Speaker;
   index: number;
 }
-
 export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
   ({ speaker, index, ...rest }, ref) => {
     const toastSuccess = useToastSuccess();
-
     const { seconds, minutes, isRunning, start, pause, reset } = useStopwatch({
       autoStart: false,
     });
     const [isSpeaked, setIsSpeaked] = useState(false);
-
+    const [isDisabled, setIsDisabled] = useState(speaker.isAbsent);
     const controlStopWatch = () => {
+      if (isDisabled) {
+        return;
+      }
       if (isRunning) {
         pause();
         setIsSpeaked(true);
@@ -47,15 +51,22 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
         start();
       }
     };
-
     const resetStopwatch = () => {
+      setIsDisabled(false);
       reset();
       setIsSpeaked(false);
       pause();
     };
+    const { mutate: updateSpeaker } = useSpeakerUpdate();
+    const handleAbsent = () => {
+      updateSpeaker({
+        id: speaker.id,
+        payload: { isAbsent: !speaker.isAbsent },
+      });
+      setIsDisabled(!speaker.isAbsent);
+    };
 
     const { mutate: deleteSpeaker } = useSpeakerDelete();
-
     const handleDeleteSpeaker = () => {
       deleteSpeaker(speaker?.id, {
         onSuccess: async () =>
@@ -64,7 +75,6 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
           }),
       });
     };
-
     return (
       <Stack
         ref={ref}
@@ -75,7 +85,7 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
         bg="gray.600"
         p={2}
         borderRadius="md"
-        opacity={isSpeaked && '0.5'}
+        opacity={isDisabled && '0.5'}
         {...(isRunning
           ? {
               border: '1px solid',
@@ -93,7 +103,7 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
           <Checkbox
             colorScheme="yellow"
             isIndeterminate={isRunning}
-            isChecked={isSpeaked}
+            isChecked={isSpeaked && !isDisabled}
           />
         </Flex>
         <Stack
@@ -139,6 +149,20 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
               >
                 Supprimer
               </ConfirmMenuItem>
+              <MenuItem
+                _hover={{ bg: 'gray.300' }}
+                _focus={{ bg: 'gray.400' }}
+                icon={
+                  speaker.isAbsent ? (
+                    <FiUserX color="red" />
+                  ) : (
+                    <FiUserCheck color="green " />
+                  )
+                }
+                onClick={() => handleAbsent()}
+              >
+                absent
+              </MenuItem>
             </MenuList>
           </Portal>
         </Menu>
@@ -146,7 +170,6 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
     );
   }
 );
-
 export const EmptySpeakerCard = (props) => {
   return <EmptyItem fontSize="xs" fontWeight="medium" {...props} />;
 };
