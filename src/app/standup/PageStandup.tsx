@@ -1,7 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
-import { useState } from 'react';
-
-import { Box, Button, Stack, Heading, Flex } from '@chakra-ui/react';
+import { Box, Button, Stack, Flex, Spinner } from '@chakra-ui/react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { FiPlus } from 'react-icons/fi';
 
@@ -16,7 +13,6 @@ import {
   useSpeakerUpdate,
   useProjectReplace,
   useSpeakers,
-  getSpeakerabsent,
 } from './standup.firebase';
 
 export const PageStandup = () => {
@@ -40,31 +36,6 @@ export const PageStandup = () => {
       },
     });
   };
-  const [isAbsentePeople, setIsAbsentePeople] = useState([]);
-  const [isLoading, setIsloading] = useState(false);
-
-  const isAbsentCallBack = useCallback(async () => {
-    setIsloading(true);
-    console.log('before');
-
-    let usersId = await getSpeakerabsent();
-    console.log('after', usersId);
-
-    setIsloading(false);
-
-    setIsAbsentePeople(usersId);
-  }, []);
-
-  useEffect(() => {
-    const idInterval = setInterval(() => {
-      isAbsentCallBack();
-    }, 10000);
-
-    isAbsentCallBack();
-    return () => {
-      clearInterval(idInterval);
-    };
-  }, [isAbsentCallBack]);
 
   const { mutate: updateSpeaker } = useSpeakerUpdate();
 
@@ -124,9 +95,16 @@ export const PageStandup = () => {
 
   const {
     data: speakers,
+    isFetching: isFetchingSpeakers,
     isLoading: isLoadingSpeakers,
     isError: isErrorSpeakers,
   } = useSpeakers(null, { refetchInterval: 15000 });
+  let absentSpeakers = [];
+  if (!isLoadingSpeakers && speakers?.length > 0) {
+    absentSpeakers = speakers.filter((speaker) => {
+      return speaker.isAbsent;
+    });
+  }
 
   return (
     <Page containerSize="full">
@@ -183,22 +161,28 @@ export const PageStandup = () => {
                               </Button>
                             </PopoverInput>
                           </Box>
-                          <Box size="md" mt="2em" fontWeight="bold">
-                            Absent(s)
-                          </Box>
+                          <Flex
+                            mt="2em"
+                            justifyContent="space-between"
+                            alignItems="center"
+                          >
+                            <Box size="md" fontWeight="bold">
+                              Absent(s)
+                            </Box>
+                            {isFetchingSpeakers && <Spinner size="xs" />}
+                          </Flex>
                         </Box>
                         <Stack
                           height="full"
                           borderRadius="md"
-                          overflow="scroll"
-                          overflowX="auto"
+                          overflowY="auto"
                           pb="3"
                         >
-                          {isLoading ? (
+                          {isLoadingSpeakers ? (
                             <Loader />
                           ) : (
-                            isAbsentePeople?.map((usersId) => (
-                              <Box key={usersId}>{usersId}</Box>
+                            absentSpeakers?.map((speaker) => (
+                              <Box key={speaker.id}>{speaker.name}</Box>
                             ))
                           )}
                         </Stack>
