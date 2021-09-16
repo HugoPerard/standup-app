@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { Box, Button, Stack, Flex, Spinner } from '@chakra-ui/react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { FiPlus } from 'react-icons/fi';

@@ -22,9 +22,9 @@ import {
   useDisclosure,
   Spacer,
 } from '@chakra-ui/react';
-import { Formiz, useForm } from '@formiz/core';
+import { Formiz } from '@formiz/core';
 import { BsThreeDotsVertical } from 'react-icons/bs';
-import { FiTrash, FiWatch, FiUserX, FiUserCheck, FiEdit } from 'react-icons/fi';
+import { FiTrash, FiWatch, FiUserX, FiUserCheck } from 'react-icons/fi';
 import { useStopwatch } from 'react-timer-hook';
 
 import {
@@ -49,7 +49,7 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
   ({ speaker, index, ...rest }, ref) => {
     const { colorModeValue } = useDarkMode();
     const toastSuccess = useToastSuccess();
-    const { isOpen, onClose, onOpen } = useDisclosure();
+    const { isOpen, onClose } = useDisclosure();
 
     const { seconds, minutes, isRunning, start, pause, reset } = useStopwatch({
       autoStart: false,
