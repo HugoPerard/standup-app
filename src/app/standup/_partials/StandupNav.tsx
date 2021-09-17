@@ -15,18 +15,6 @@ export const StandupNav = ({ ...rest }) => {
 
   return (
     <InternalBar {...rest}>
-      <Link
-        href={formatExternalUrl(STANDUP_MEET_URL)}
-        isExternal
-        alignSelf="center"
-      >
-        <Button variant="@primary" size="sm">
-          <Icon icon={SiGooglehangoutsmeet} />
-          <chakra.span ml={1} fontWeight="medium">
-            Meet
-          </chakra.span>
-        </Button>
-      </Link>
       <Flex width="full">
         <InternalBarItem to={Routes.STANDUP_GOALS}>Objectifs</InternalBarItem>
         <InternalBarItem to={Routes.STANDUP_SPEAKING}>Stand-up</InternalBarItem>
@@ -37,8 +25,8 @@ export const StandupNav = ({ ...rest }) => {
           color="yellow.500"
           alignSelf="center"
           ml="auto"
-          fontWeight="bold"
-          fontSize="1.2em"
+          fontWeight="700"
+          fontSize="xl"
         >
           {start}
         </Text>

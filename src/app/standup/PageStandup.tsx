@@ -127,7 +127,7 @@ export const PageStandup = () => {
                   spacing={1}
                   overflow="scroll"
                   position="fixed"
-                  left="250px"
+                  left="64"
                   right={5}
                   h="full"
                 >
@@ -136,7 +136,7 @@ export const PageStandup = () => {
                       <Stack
                         padding="3"
                         bg="gray.700"
-                        width="250px"
+                        width="2xs"
                         color="yellow.500"
                         h="full"
                         position="fixed"
@@ -144,9 +144,9 @@ export const PageStandup = () => {
                         borderRadius="md"
                       >
                         <Box>
-                          <Box height="3em">
+                          <Box h={12}>
                             <PopoverInput
-                              onSubmit={(value) => handleAddProject(value)}
+                              onSubmit={handleAddProject}
                               label="Nom"
                               submitLabel="Ajouter un projet"
                               placeholder="Saisir le nom du projet"
@@ -164,11 +164,11 @@ export const PageStandup = () => {
                             </PopoverInput>
                           </Box>
                           <Flex
-                            mt="2em"
+                            mt={7}
                             justifyContent="space-between"
                             alignItems="center"
                           >
-                            <Box size="md" fontWeight="bold">
+                            <Box size="md" fontWeight="700">
                               Absent(s)
                             </Box>
                             {isFetchingSpeakers && <Spinner size="xs" />}
@@ -178,7 +178,7 @@ export const PageStandup = () => {
                           height="full"
                           borderRadius="md"
                           overflowY="auto"
-                          pb="3"
+                          pb={3}
                         >
                           {isLoadingSpeakers ? (
                             <Loader />

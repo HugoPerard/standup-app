@@ -110,10 +110,10 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
           bg={colorModeValue('gray.200', 'gray.600')}
           p={2}
           borderRadius="md"
-          opacity={isSpeaked && '0.5'}
+          opacity={isSpeaked && isDisabled && '0.5'}
           {...(isRunning
             ? {
-                border: '1px solid',
+                border: '1 solid',
                 borderColor: 'yellow.500',
               }
             : {})}

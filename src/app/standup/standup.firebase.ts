@@ -160,29 +160,6 @@ export const useSpeakers = (
   );
 };
 
-export const getSpeakerabsent = async (speakerId = null): Promise<any> => {
-  const users = [];
-  const data = await speakersCollectionRef.get();
-  const docs = data.docs;
-  console.log(docs);
-  docs.forEach((doc) => {
-    // const { id } = doc;
-    const { isAbsent, name } = doc.data();
-    // if (isAbsent) {
-    //   users.push(id);
-    // }
-
-    if (isAbsent) {
-      users.push(name);
-    }
-  });
-
-  // await speakersCollectionRef.onSnapshot((doc) => {
-
-  //   });
-  return users;
-};
-
 const addSpeaker = (payload: Speaker): any => {
   return speakersCollectionRef?.add({ ...payload });
 };
