@@ -3,15 +3,14 @@ import React, { useEffect, useState } from 'react';
 import {
   Box,
   Heading,
-  Stack,
   Button,
   Input,
   Flex,
   Select,
-  FormControl,
   Link,
 } from '@chakra-ui/react';
 import dayjs from 'dayjs';
+import Papa from 'papaparse';
 
 import { Page, PageContent } from '@/app/layout';
 
@@ -30,17 +29,17 @@ export const PageCRA = () => {
     setStartDate(e.target.value);
   };
 
-  const [csvFile, setCsvFile] = useState();
-
-  const submit = () => {
-    const file = csvFile;
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      const text = e.target.result;
-      console.log(text);
-    };
-
-    reader.readAsText(file);
+  const handleFileUpload = (e) => {
+    const files = e.target.files;
+    // console.log(files);
+    if (files) {
+      // console.log(files[0]);
+      Papa.parse(files[0], {
+        complete: function (results) {
+          console.log('Finished:', results.data);
+        },
+      });
+    }
   };
 
   return (
@@ -68,9 +67,7 @@ export const PageCRA = () => {
               accept=".csv"
               id="csvFile"
               pt="4px"
-              onChange={(e) => {
-                // setCsvFile(e.target.files[0]);
-              }}
+              onChange={handleFileUpload}
             ></Input>
           </Box>
         </Flex>
