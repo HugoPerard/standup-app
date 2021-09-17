@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Button, chakra, Flex, Link, Text } from '@chakra-ui/react';
+import { Button, Flex, Link, Text } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import { SiGooglehangoutsmeet } from 'react-icons/si';
 
