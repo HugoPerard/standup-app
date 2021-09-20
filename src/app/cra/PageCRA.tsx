@@ -8,15 +8,24 @@ import {
   Flex,
   Select,
   Link,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
 } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import Papa from 'papaparse';
+import { CSVReader } from 'react-papaparse';
 
 import { Page, PageContent } from '@/app/layout';
 
 export const PageCRA = () => {
   const [starDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [cvsArray, setCvsArray] = useState([]);
+  const [csvFile, setCsvFile] = useState();
 
   useEffect(() => {
     const start = dayjs().format('YYYY-MM-DD');
@@ -28,15 +37,27 @@ export const PageCRA = () => {
   const handleChange = (e) => {
     setStartDate(e.target.value);
   };
+  // const submit = () => {
+  //   const file = csvFile;
+  //   const reader = new FileReader();
+
+  //   reader.onload = function (e) {
+  //     const text = e.target.result;
+  //     console.log(text);
+  //   };
+
+  //   reader.readAsText(file);
+  // };
 
   const handleFileUpload = (e) => {
     const files = e.target.files;
-    // console.log(files);
+
     if (files) {
-      // console.log(files[0]);
       Papa.parse(files[0], {
         complete: function (results) {
-          console.log('Finished:', results.data);
+          console.log(results.data);
+          setCvsArray(results.data);
+          // submit();
         },
       });
     }
@@ -105,7 +126,6 @@ export const PageCRA = () => {
             textAlign="center"
             value={starDate}
             onChange={handleChange}
-            // flex="1"
           />
           <Input
             width="auto"
@@ -113,7 +133,6 @@ export const PageCRA = () => {
             color="black"
             textAlign="center"
             value={endDate}
-            // flex="1"
           />
         </Flex>
 
@@ -123,7 +142,37 @@ export const PageCRA = () => {
           border="4px"
           mt="20px"
           borderColor="yellow.500"
-        ></Box>
+        >
+          <Table
+            onLoad={(e) => {
+              e.preventDefault();
+            }}
+          >
+            <Thead>
+              <Tr>
+                <Th>Adress Email</Th>
+                <Th>Date</Th>
+                <Th>Remarque</Th>
+                <Th>Nom du projet</Th>
+                <Th>Temps en heure</Th>
+                <Th>Taches</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {cvsArray.map((item, i) => {
+                <Tr key={i}>
+                  <Td>{item.EmailAdress}</Td>
+                  <Td>{item.Date}</Td>
+                  <Td>{item.NomDuProjet}</Td>
+                  <Td>{item.TempsEnHeure}</Td>
+                  <Td>{item.Taches}</Td>
+                </Tr>;
+              })}
+              ;
+            </Tbody>
+          </Table>
+          ;
+        </Box>
       </PageContent>
     </Page>
   );
