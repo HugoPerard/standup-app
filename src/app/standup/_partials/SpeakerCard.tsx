@@ -36,6 +36,7 @@ import {
   ConfirmMenuItem,
   EmptyItem,
   FieldInput,
+  Icon,
   MenuItem,
   useToastSuccess,
 } from '@/components';
@@ -55,9 +56,11 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
       autoStart: false,
     });
     const [isSpeaked, setIsSpeaked] = useState(false);
-    const [isDisabled, setIsDisabled] = useState(speaker.isAbsent);
+
+    const isAbsent = speaker?.isAbsent;
+
     const controlStopWatch = () => {
-      if (isDisabled) {
+      if (isAbsent) {
         return;
       }
       if (isRunning) {
@@ -68,7 +71,6 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
       }
     };
     const resetStopwatch = () => {
-      setIsDisabled(false);
       reset();
       setIsSpeaked(false);
       pause();
@@ -76,9 +78,8 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
     const handleAbsent = () => {
       updateSpeaker({
         id: speaker.id,
-        payload: { isAbsent: !speaker.isAbsent },
+        payload: { isAbsent: !isAbsent },
       });
-      setIsDisabled(!speaker.isAbsent);
     };
 
     const { mutate: deleteSpeaker } = useSpeakerDelete();
@@ -110,7 +111,7 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
           bg={colorModeValue('gray.200', 'gray.600')}
           p={2}
           borderRadius="md"
-          opacity={isSpeaked && isDisabled && '0.5'}
+          opacity={(isSpeaked && !isRunning) || isAbsent ? '0.5' : undefined}
           {...(isRunning
             ? {
                 border: '1 solid',
@@ -119,18 +120,25 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
             : {})}
           {...rest}
         >
-          <Flex
-            onClick={() => {
-              pause();
-              setIsSpeaked(true);
-            }}
-          >
-            <Checkbox
-              isIndeterminate={isRunning}
-              isChecked={isSpeaked}
-              borderColor={colorModeValue('gray.400', undefined)}
-            />
-          </Flex>
+          {isAbsent ? (
+            <Flex w={4}>
+              <Icon icon={FiUserX} />
+            </Flex>
+          ) : (
+            <Flex
+              onClick={() => {
+                pause();
+                setIsSpeaked(true);
+              }}
+              w={4}
+            >
+              <Checkbox
+                isIndeterminate={isRunning}
+                isChecked={isSpeaked}
+                borderColor={colorModeValue('gray.400', undefined)}
+              />
+            </Flex>
+          )}
           <Stack
             onClick={controlStopWatch}
             direction="row"
@@ -140,7 +148,13 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
             justifyContent="space-between"
             alignItems="center"
           >
-            <Text fontWeight="medium" fontSize="sm">
+            <Text
+              fontWeight="medium"
+              fontSize="sm"
+              isTruncated
+              maxW="12rem"
+              // textDecoration={speaker?.isAbsent ? 'line-through' : undefined}
+            >
               {speaker?.name}
             </Text>
             <Text w={45}>
@@ -156,38 +170,25 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
               size="xs"
             />
             <Portal>
-              <MenuList color="gray.700" bg="gray.200">
+              <MenuList>
+                {!isAbsent && (
+                  <MenuItem icon={<FiWatch />} onClick={() => resetStopwatch()}>
+                    Réinitialiser
+                  </MenuItem>
+                )}
                 <MenuItem
-                  _hover={{ bg: 'gray.300' }}
-                  _focus={{ bg: 'gray.400' }}
-                  icon={<FiWatch />}
-                  onClick={() => resetStopwatch()}
+                  icon={isAbsent ? <FiUserCheck /> : <FiUserX />}
+                  onClick={() => handleAbsent()}
                 >
-                  Réinitialiser
+                  {isAbsent ? 'Mettre présent' : 'Mettre absent'}
                 </MenuItem>
                 <ConfirmMenuItem
-                  _hover={{ bg: 'gray.300' }}
-                  _focus={{ bg: 'gray.400' }}
                   icon={<FiTrash />}
                   confirmContent="Confirmer la suppression"
                   onClick={() => handleDeleteSpeaker()}
                 >
                   Supprimer
                 </ConfirmMenuItem>
-                <MenuItem
-                  _hover={{ bg: 'gray.300' }}
-                  _focus={{ bg: 'gray.400' }}
-                  icon={
-                    speaker.isAbsent ? (
-                      <FiUserX color="red" />
-                    ) : (
-                      <FiUserCheck color="green " />
-                    )
-                  }
-                  onClick={() => handleAbsent()}
-                >
-                  absent
-                </MenuItem>
               </MenuList>
             </Portal>
           </Menu>

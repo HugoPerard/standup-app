@@ -11,7 +11,7 @@ const externalsStyles = (props: GlobalStyleProps) =>
 export const styles = {
   global: (props) => ({
     html: {
-      bg: 'gray.800',
+      bg: mode('gray.50', 'gray.800')(props),
     },
     body: {
       bg: mode('gray.50', 'gray.800')(props),

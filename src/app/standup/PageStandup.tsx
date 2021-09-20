@@ -1,13 +1,25 @@
 import React from 'react';
 
-import { Box, Button, Stack, Flex, Spinner } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  IconButton,
+  Flex,
+  Stack,
+  Spinner,
+  Text,
+  useDisclosure,
+} from '@chakra-ui/react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { BsArrowsAngleContract, BsArrowsAngleExpand } from 'react-icons/bs';
 import { FiPlus } from 'react-icons/fi';
 
 import { Loader, Page, PageContent } from '@/app/layout';
 import { Icon, PopoverInput, useToastSuccess } from '@/components';
+import { useDarkMode } from '@/hooks/useDarkMode';
 import { sortByIndex } from '@/utils/sortByIndex';
 
+import { EmptySpeakerCard } from './_partials/SpeakerCard';
 import { SpeakerGroup } from './_partials/SpeakerGroup';
 import {
   useProjects,
@@ -18,6 +30,8 @@ import {
 } from './standup.firebase';
 
 export const PageStandup = () => {
+  const { colorModeValue } = useDarkMode();
+
   const { data: projects, isLoading: isLoadingProjects } = useProjects();
   const toastSuccess = useToastSuccess();
 
@@ -101,131 +115,136 @@ export const PageStandup = () => {
     isLoading: isLoadingSpeakers,
     isError: isErrorSpeakers,
   } = useSpeakers(null, { refetchInterval: 15000 });
-  let absentSpeakers = [];
-  if (!isLoadingSpeakers && speakers?.length > 0) {
-    absentSpeakers = speakers.filter((speaker) => {
-      return speaker.isAbsent;
-    });
-  }
+
+  const absentSpeakers = speakers?.filter((speaker) => speaker.isAbsent);
+
+  const {
+    isOpen: isOpenAbsentsContainer,
+    onToggle: onToggleAbsentsContainer,
+  } = useDisclosure({ defaultIsOpen: true });
 
   return (
     <Page containerSize="full">
       <PageContent>
+        <Stack
+          position="absolute"
+          left={5}
+          right={5}
+          bottom={5}
+          bg={colorModeValue('gray.300', 'gray.700')}
+          spacing={0}
+          maxW={isOpenAbsentsContainer ? 300 : 150}
+          padding={3}
+          borderRadius="md"
+          border="1px solid"
+          borderColor="gray.400"
+          zIndex={10}
+          cursor="pointer"
+        >
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            mb={isOpenAbsentsContainer ? 2 : 0}
+          >
+            <Text fontWeight="bold">
+              Absent{absentSpeakers?.length > 1 && 's'}
+              {isFetchingSpeakers && <Spinner size="xs" ml={2} />}
+            </Text>
+            <IconButton
+              aria-label={isOpenAbsentsContainer ? 'Contracter' : 'Étendre'}
+              onClick={() => onToggleAbsentsContainer()}
+              icon={
+                isOpenAbsentsContainer ? (
+                  <BsArrowsAngleContract />
+                ) : (
+                  <BsArrowsAngleExpand />
+                )
+              }
+              variant="ghost"
+              size="xs"
+            />
+          </Stack>
+          {isOpenAbsentsContainer &&
+            (isLoadingSpeakers ? (
+              <Loader />
+            ) : absentSpeakers?.length > 0 ? (
+              absentSpeakers?.map((speaker) => (
+                <Text key={speaker.id} isTruncated>
+                  {speaker.name}
+                </Text>
+              ))
+            ) : (
+              <EmptySpeakerCard>Personne n'est absent</EmptySpeakerCard>
+            ))}
+        </Stack>
+
         {isLoadingProjects ? (
           <Loader />
         ) : (
-          <DragDropContext onDragEnd={handleDragEnd}>
-            <Droppable
-              droppableId="board"
-              type="PROJECT"
-              direction="horizontal"
-            >
-              {(droppableProvided) => (
-                <Stack
-                  ref={droppableProvided.innerRef}
-                  direction="row"
-                  spacing={1}
-                  overflow="scroll"
-                  position="fixed"
-                  left="64"
-                  right={5}
-                  h="full"
+          <Flex position="fixed" h="full" left={5} right={5} overflowX="scroll">
+            <Box minW="10rem">
+              <PopoverInput
+                onSubmit={(value) => handleAddProject(value)}
+                label="Nom"
+                submitLabel="Ajouter un projet"
+                placeholder="Saisir le nom du projet"
+                placement="bottom-start"
+              >
+                <Button
+                  variant="@primary"
+                  size="sm"
+                  isLoading={isLoadingAddProject}
                 >
-                  <Stack direction="row" h="full">
-                    <Flex direction="column">
-                      <Stack
-                        padding="3"
-                        bg="gray.700"
-                        width="2xs"
-                        color="yellow.500"
-                        h="full"
-                        position="fixed"
-                        left={1}
-                        borderRadius="md"
-                      >
-                        <Box>
-                          <Box h={12}>
-                            <PopoverInput
-                              onSubmit={handleAddProject}
-                              label="Nom"
-                              submitLabel="Ajouter un projet"
-                              placeholder="Saisir le nom du projet"
-                              placement="bottom-start"
-                            >
-                              <Button
-                                variant="@primary"
-                                size="full"
-                                isLoading={isLoadingAddProject}
-                                width="full"
-                                height="full"
-                              >
-                                <Icon icon={FiPlus} mr={1} /> Ajouter un projet
-                              </Button>
-                            </PopoverInput>
-                          </Box>
-                          <Flex
-                            mt={7}
-                            justifyContent="space-between"
-                            alignItems="center"
-                          >
-                            <Box size="md" fontWeight="700">
-                              Absent(s)
-                            </Box>
-                            {isFetchingSpeakers && <Spinner size="xs" />}
-                          </Flex>
-                        </Box>
-                        <Stack
-                          height="full"
-                          borderRadius="md"
-                          overflowY="auto"
-                          pb={3}
+                  <Icon icon={FiPlus} mr={1} /> Ajouter un projet
+                </Button>
+              </PopoverInput>
+            </Box>
+            <DragDropContext onDragEnd={handleDragEnd}>
+              <Droppable
+                droppableId="board"
+                type="PROJECT"
+                direction="horizontal"
+              >
+                {(droppableProvided) => (
+                  <Flex ref={droppableProvided.innerRef}>
+                    <Stack direction="row">
+                      {sortByIndex(projects)?.map((project, index) => (
+                        <Draggable
+                          key={project.id}
+                          draggableId={project.id}
+                          index={index}
                         >
-                          {isLoadingSpeakers ? (
-                            <Loader />
-                          ) : (
-                            absentSpeakers?.map((speaker) => (
-                              <Box key={speaker.id}>{speaker.name}</Box>
-                            ))
+                          {(provided) => (
+                            <Box
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              data-react-beautiful-dnd-draggable="0"
+                              data-react-beautiful-dnd-drag-handle="0"
+                              h="fit-content"
+                            >
+                              <SpeakerGroup
+                                project={project}
+                                speakers={speakers?.filter(
+                                  (speaker) =>
+                                    speaker?.projectId === project?.id
+                                )}
+                                isLoading={isLoadingSpeakers}
+                                isError={isErrorSpeakers}
+                              />
+                              {provided.placeholder}
+                            </Box>
                           )}
-                        </Stack>
-                      </Stack>
-                    </Flex>
+                        </Draggable>
+                      ))}
 
-                    {sortByIndex(projects)?.map((project, index) => (
-                      <Draggable
-                        key={project.id}
-                        draggableId={project.id}
-                        index={index}
-                      >
-                        {(provided) => (
-                          <Box
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            data-react-beautiful-dnd-draggable="0"
-                            data-react-beautiful-dnd-drag-handle="0"
-                            h="fit-content"
-                          >
-                            <SpeakerGroup
-                              project={project}
-                              speakers={speakers?.filter(
-                                (speaker) => speaker?.projectId === project?.id
-                              )}
-                              isLoading={isLoadingSpeakers}
-                              isError={isErrorSpeakers}
-                            />
-                            {provided.placeholder}
-                          </Box>
-                        )}
-                      </Draggable>
-                    ))}
-
-                    {droppableProvided.placeholder}
-                  </Stack>
-                </Stack>
-              )}
-            </Droppable>
-          </DragDropContext>
+                      {droppableProvided.placeholder}
+                    </Stack>
+                  </Flex>
+                )}
+              </Droppable>
+            </DragDropContext>
+          </Flex>
         )}
       </PageContent>
     </Page>

@@ -11,8 +11,10 @@ import {
 
 import { MainMenu, useLayoutContext } from '@/app/layout';
 import { Logo } from '@/components';
+import { useDarkMode } from '@/hooks/useDarkMode';
 
 export const NavDrawer = ({ ...rest }) => {
+  const { colorModeValue } = useDarkMode();
   const { navIsOpen, navOnClose } = useLayoutContext();
   return (
     <Drawer
@@ -23,8 +25,7 @@ export const NavDrawer = ({ ...rest }) => {
     >
       <DrawerOverlay>
         <DrawerContent
-          bg="gray.800"
-          color="white"
+          bg={colorModeValue('gray.50', 'gray.800')}
           pt="safe-top"
           pb="safe-bottom"
         >
