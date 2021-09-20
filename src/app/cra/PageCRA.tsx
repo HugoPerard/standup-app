@@ -14,10 +14,10 @@ import {
   Tr,
   Th,
   Td,
+  Text,
 } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import Papa from 'papaparse';
-import { CSVReader } from 'react-papaparse';
 
 import { Page, PageContent } from '@/app/layout';
 
@@ -25,7 +25,6 @@ export const PageCRA = () => {
   const [starDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [cvsArray, setCvsArray] = useState([]);
-  const [csvFile, setCsvFile] = useState();
 
   useEffect(() => {
     const start = dayjs().format('YYYY-MM-DD');
@@ -33,21 +32,11 @@ export const PageCRA = () => {
     const end = dayjs().endOf('month').format('YYYY-MM-DD');
     setEndDate(end);
   }, []);
+  const maj = dayjs(starDate).format('DD-MM-YYYY');
 
   const handleChange = (e) => {
     setStartDate(e.target.value);
   };
-  // const submit = () => {
-  //   const file = csvFile;
-  //   const reader = new FileReader();
-
-  //   reader.onload = function (e) {
-  //     const text = e.target.result;
-  //     console.log(text);
-  //   };
-
-  //   reader.readAsText(file);
-  // };
 
   const handleFileUpload = (e) => {
     const files = e.target.files;
@@ -55,13 +44,12 @@ export const PageCRA = () => {
     if (files) {
       Papa.parse(files[0], {
         complete: function (results) {
-          console.log(results.data);
           setCvsArray(results.data);
-          // submit();
         },
       });
     }
   };
+  const arrayFilter = cvsArray.filter((char) => /[a-zA-Z]/.test(char));
 
   return (
     <Page containerSize="full" width="full">
@@ -78,7 +66,13 @@ export const PageCRA = () => {
               check Assholes
             </Button>
           </Box>
+
           <Box alignItems="center">
+            {cvsArray ? (
+              <Text onChange={handleChange} color="yellow.500">
+                Mis à jour le : {maj}
+              </Text>
+            ) : null}
             <Input
               type="file"
               bg="gray.800"
@@ -143,35 +137,36 @@ export const PageCRA = () => {
           mt="20px"
           borderColor="yellow.500"
         >
-          <Table
-            onLoad={(e) => {
-              e.preventDefault();
-            }}
-          >
-            <Thead>
-              <Tr>
-                <Th>Adress Email</Th>
-                <Th>Date</Th>
-                <Th>Remarque</Th>
-                <Th>Nom du projet</Th>
-                <Th>Temps en heure</Th>
-                <Th>Taches</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {cvsArray.map((item, i) => {
-                <Tr key={i}>
-                  <Td>{item.EmailAdress}</Td>
-                  <Td>{item.Date}</Td>
-                  <Td>{item.NomDuProjet}</Td>
-                  <Td>{item.TempsEnHeure}</Td>
-                  <Td>{item.Taches}</Td>
-                </Tr>;
-              })}
-              ;
-            </Tbody>
-          </Table>
-          ;
+          {arrayFilter.length > 0 ? (
+            <>
+              <Table color="yellow.500">
+                <Thead>
+                  <Tr>
+                    <Th textAlign="center">Timestamp</Th>
+                    <Th textAlign="center">Adress Email</Th>
+                    <Th textAlign="center">Date</Th>
+                    <Th textAlign="center">Remarque</Th>
+                    <Th textAlign="center">Nom du projet</Th>
+                    <Th textAlign="center">Temps en heure</Th>
+                    <Th textAlign="center">Taches</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {arrayFilter.map((item, i) => (
+                    <Tr key={i}>
+                      <Td>{item[0]}</Td>
+                      <Td>{item[1]}</Td>
+                      <Td>{item[2]}</Td>
+                      <Td>{item[3]}</Td>
+                      <Td>{item[4]}</Td>
+                      <Td>{item[5]}</Td>
+                      <Td>{item[6]}</Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </>
+          ) : null}
         </Box>
       </PageContent>
     </Page>
