@@ -32,7 +32,6 @@ export const PageCRA = () => {
     const end = dayjs().endOf('month').format('YYYY-MM-DD');
     setEndDate(end);
   }, []);
-  const maj = dayjs(starDate).format('DD-MM-YYYY');
 
   const handleChange = (e) => {
     setStartDate(e.target.value);
@@ -49,8 +48,13 @@ export const PageCRA = () => {
       });
     }
   };
-  const arrayFilter = cvsArray.filter((char) => /[a-zA-Z]/.test(char));
 
+  const arrayFilter = cvsArray.filter((line) =>
+    line.some((lineItem) => /[a-zA-Z]/.test(lineItem))
+  );
+
+  // let myObj = Object.assign({}, arrayFilter);
+  // console.log(myObj);
   return (
     <Page containerSize="full" width="full">
       <PageContent>
@@ -68,11 +72,10 @@ export const PageCRA = () => {
           </Box>
 
           <Box alignItems="center">
-            {cvsArray ? (
-              <Text onChange={handleChange} color="yellow.500">
-                Mis à jour le : {maj}
-              </Text>
-            ) : null}
+            {/* <Text color="yellow.500">
+              Mis à jour le : {dayjs().format('DD-MM-YYYY')}
+            </Text> */}
+
             <Input
               type="file"
               bg="gray.800"
@@ -83,7 +86,7 @@ export const PageCRA = () => {
               id="csvFile"
               pt="4px"
               onChange={handleFileUpload}
-            ></Input>
+            />
           </Box>
         </Flex>
 
@@ -142,7 +145,6 @@ export const PageCRA = () => {
               <Table color="yellow.500">
                 <Thead>
                   <Tr>
-                    <Th textAlign="center">Timestamp</Th>
                     <Th textAlign="center">Adress Email</Th>
                     <Th textAlign="center">Date</Th>
                     <Th textAlign="center">Remarque</Th>
@@ -154,7 +156,6 @@ export const PageCRA = () => {
                 <Tbody>
                   {arrayFilter.map((item, i) => (
                     <Tr key={i}>
-                      <Td>{item[0]}</Td>
                       <Td>{item[1]}</Td>
                       <Td>{item[2]}</Td>
                       <Td>{item[3]}</Td>
