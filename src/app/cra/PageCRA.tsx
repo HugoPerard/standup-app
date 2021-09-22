@@ -52,9 +52,68 @@ export const PageCRA = () => {
   const arrayFilter = cvsArray.filter((line) =>
     line.some((lineItem) => /[a-zA-Z]/.test(lineItem))
   );
+  const craEntries = [];
 
-  // let myObj = Object.assign({}, arrayFilter);
-  // console.log(myObj);
+  arrayFilter.map((line) => {
+    const craEntry1 = {
+      email: line[1],
+      date: line[2],
+      remark: line[3],
+      projectCode: line[4],
+      hour: line[5],
+      projectDetail: line[6],
+    };
+    if (craEntry1.projectCode.trim() !== '') {
+      craEntries.push(craEntry1);
+    }
+
+    const craEntry2 = {
+      email: line[1],
+      date: line[2],
+      remark: line[3],
+      projectCode: line[7],
+      hour: line[8],
+      projectDetail: line[9],
+    };
+    if (craEntry2.projectCode.trim() !== '') {
+      craEntries.push(craEntry2);
+    }
+
+    const craEntry3 = {
+      email: line[1],
+      date: line[2],
+      remark: line[3],
+      projectCode: line[10],
+      hour: line[11],
+      projectDetail: line[12],
+    };
+    if (craEntry3.projectCode.trim() !== '') {
+      craEntries.push(craEntry3);
+    }
+    const craEntry4 = {
+      email: line[1],
+      date: line[2],
+      remark: line[3],
+      projectCode: line[13],
+      hour: line[14],
+      projectDetail: line[15],
+    };
+    if (craEntry4.projectCode.trim() !== '') {
+      craEntries.push(craEntry4);
+    }
+    const craEntry5 = {
+      email: line[1],
+      date: line[2],
+      remark: line[3],
+      projectCode: line[16],
+      hour: line[17],
+      projectDetail: line[18],
+    };
+    if (craEntry5.projectCode.trim() !== '') {
+      craEntries.push(craEntry5);
+    }
+  });
+  console.log(craEntries);
   return (
     <Page containerSize="full" width="full">
       <PageContent>
@@ -72,9 +131,9 @@ export const PageCRA = () => {
           </Box>
 
           <Box alignItems="center">
-            {/* <Text color="yellow.500">
+            <Text color="yellow.500">
               Mis à jour le : {dayjs().format('DD-MM-YYYY')}
-            </Text> */}
+            </Text>
 
             <Input
               type="file"
@@ -82,7 +141,6 @@ export const PageCRA = () => {
               border="opx"
               textColor="gray.800"
               color="yellow.500"
-              accept=".csv"
               id="csvFile"
               pt="4px"
               onChange={handleFileUpload}
@@ -154,7 +212,7 @@ export const PageCRA = () => {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {arrayFilter.map((item, i) => (
+                  {arrayFilter.slice(1).map((item, i) => (
                     <Tr key={i}>
                       <Td>{item[1]}</Td>
                       <Td>{item[2]}</Td>
