@@ -52,7 +52,9 @@ export const PageCRA = () => {
   const arrayFilter = cvsArray.filter((line) =>
     line.some((lineItem) => /[a-zA-Z]/.test(lineItem))
   );
+  arrayFilter.slice(1);
   const craEntries = [];
+  console.log(craEntries);
 
   arrayFilter.map((line) => {
     const craEntry1 = {
@@ -63,6 +65,7 @@ export const PageCRA = () => {
       hour: line[5],
       projectDetail: line[6],
     };
+
     if (craEntry1.projectCode.trim() !== '') {
       craEntries.push(craEntry1);
     }
@@ -113,7 +116,7 @@ export const PageCRA = () => {
       craEntries.push(craEntry5);
     }
   });
-  console.log(craEntries);
+
   return (
     <Page containerSize="full" width="full">
       <PageContent>
@@ -141,6 +144,7 @@ export const PageCRA = () => {
               border="opx"
               textColor="gray.800"
               color="yellow.500"
+              // accept=".csv"
               id="csvFile"
               pt="4px"
               onChange={handleFileUpload}
@@ -212,14 +216,14 @@ export const PageCRA = () => {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {arrayFilter.slice(1).map((item, i) => (
+                  {craEntries.slice(5).map((obj, i) => (
                     <Tr key={i}>
-                      <Td>{item[1]}</Td>
-                      <Td>{item[2]}</Td>
-                      <Td>{item[3]}</Td>
-                      <Td>{item[4]}</Td>
-                      <Td>{item[5]}</Td>
-                      <Td>{item[6]}</Td>
+                      <Td>{obj.email}</Td>
+                      <Td>{obj.date}</Td>
+                      <Td>{obj.remark}</Td>
+                      <Td>{obj.projectCode}</Td>
+                      <Td>{obj.hour}</Td>
+                      <Td>{obj.projectDetail}</Td>
                     </Tr>
                   ))}
                 </Tbody>
