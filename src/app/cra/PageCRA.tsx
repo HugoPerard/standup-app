@@ -25,6 +25,7 @@ export const PageCRA = () => {
   const [starDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [cvsArray, setCvsArray] = useState([]);
+  const [isProject, setIsProject] = useState();
 
   useEffect(() => {
     const start = dayjs().format('YYYY-MM-DD');
@@ -48,74 +49,95 @@ export const PageCRA = () => {
       });
     }
   };
+  const handleChangeProject = (projectCode) => {
+    setIsProject(projectCode);
+    console.log(projectCode);
+  };
 
-  const arrayFilter = cvsArray.filter((line) =>
+  let arrayFilter = cvsArray.filter((line) =>
     line.some((lineItem) => /[a-zA-Z]/.test(lineItem))
   );
-  arrayFilter.slice(1);
+  arrayFilter = arrayFilter.slice(1);
   const craEntries = [];
   console.log(craEntries);
 
-  arrayFilter.map((line) => {
-    const craEntry1 = {
-      email: line[1],
-      date: line[2],
-      remark: line[3],
-      projectCode: line[4],
-      hour: line[5],
-      projectDetail: line[6],
-    };
+  arrayFilter.forEach((line) => {
+    for (let i = 4; i <= 16; i += 3) {
+      const craEntry = {
+        email: line[1],
+        date: line[2],
+        remark: line[3],
+        projectCode: line[i + 0],
+        hour: line[i + 1],
+        projectDetail: line[i + 2],
+      };
+      if (craEntry.projectCode.trim() !== '') {
+        craEntries.push(craEntry);
+      }
+    }
+    //   const craEntry1 = {
+    //     email: line[1],
+    //     date: line[2],
+    //     remark: line[3],
+    //     projectCode: line[4],
+    //     hour: line[5],
+    //     projectDetail: line[6],
+    //   };
 
-    if (craEntry1.projectCode.trim() !== '') {
-      craEntries.push(craEntry1);
-    }
+    //   if (craEntry1.projectCode.trim() !== '') {
+    //     craEntries.push(craEntry1);
+    //   }
 
-    const craEntry2 = {
-      email: line[1],
-      date: line[2],
-      remark: line[3],
-      projectCode: line[7],
-      hour: line[8],
-      projectDetail: line[9],
-    };
-    if (craEntry2.projectCode.trim() !== '') {
-      craEntries.push(craEntry2);
-    }
+    //   const craEntry2 = {
+    //     email: line[1],
+    //     date: line[2],
+    //     remark: line[3],
+    //     projectCode: line[7],
+    //     hour: line[8],
+    //     projectDetail: line[9],
+    //   };
+    //   if (craEntry2.projectCode.trim() !== '') {
+    //     craEntries.push(craEntry2);
+    //   }
 
-    const craEntry3 = {
-      email: line[1],
-      date: line[2],
-      remark: line[3],
-      projectCode: line[10],
-      hour: line[11],
-      projectDetail: line[12],
-    };
-    if (craEntry3.projectCode.trim() !== '') {
-      craEntries.push(craEntry3);
-    }
-    const craEntry4 = {
-      email: line[1],
-      date: line[2],
-      remark: line[3],
-      projectCode: line[13],
-      hour: line[14],
-      projectDetail: line[15],
-    };
-    if (craEntry4.projectCode.trim() !== '') {
-      craEntries.push(craEntry4);
-    }
-    const craEntry5 = {
-      email: line[1],
-      date: line[2],
-      remark: line[3],
-      projectCode: line[16],
-      hour: line[17],
-      projectDetail: line[18],
-    };
-    if (craEntry5.projectCode.trim() !== '') {
-      craEntries.push(craEntry5);
-    }
+    //   const craEntry3 = {
+    //     email: line[1],
+    //     date: line[2],
+    //     remark: line[3],
+    //     projectCode: line[10],
+    //     hour: line[11],
+    //     projectDetail: line[12],
+    //   };
+    //   if (craEntry3.projectCode.trim() !== '') {
+    //     craEntries.push(craEntry3);
+    //   }
+    //   const craEntry4 = {
+    //     email: line[1],
+    //     date: line[2],
+    //     remark: line[3],
+    //     projectCode: line[13],
+    //     hour: line[14],
+    //     projectDetail: line[15],
+    //   };
+    //   if (craEntry4.projectCode.trim() !== '') {
+    //     craEntries.push(craEntry4);
+    //   }
+    //   const craEntry5 = {
+    //     email: line[1],
+    //     date: line[2],
+    //     remark: line[3],
+    //     projectCode: line[16],
+    //     hour: line[17],
+    //     projectDetail: line[18],
+    //   };
+    //   if (craEntry5.projectCode.trim() !== '') {
+    //     craEntries.push(craEntry5);
+    //   }
   });
+
+  const projectCodes = Array.from(
+    new Set(craEntries.map((project) => project.projectCode))
+  );
 
   return (
     <Page containerSize="full" width="full">
@@ -174,8 +196,15 @@ export const PageCRA = () => {
             color="gray.700"
             flex="1"
             mr="20px"
-            placeholder="projet"
-          ></Select>
+            placeholder="selectionner un projet"
+            onChange={(event) => handleChangeProject(event.target.value)}
+          >
+            {projectCodes.map((projectCode) => (
+              <option value={projectCode} key={projectCode}>
+                {projectCode}
+              </option>
+            ))}
+          </Select>
 
           <Input
             width="auto"
@@ -216,16 +245,18 @@ export const PageCRA = () => {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {craEntries.slice(5).map((obj, i) => (
-                    <Tr key={i}>
-                      <Td>{obj.email}</Td>
-                      <Td>{obj.date}</Td>
-                      <Td>{obj.remark}</Td>
-                      <Td>{obj.projectCode}</Td>
-                      <Td>{obj.hour}</Td>
-                      <Td>{obj.projectDetail}</Td>
-                    </Tr>
-                  ))}
+                  {craEntries
+                    .filter((entry) => isProject === entry.projectCode)
+                    .map((entry, i) => (
+                      <Tr key={i}>
+                        <Td>{entry.email}</Td>
+                        <Td>{entry.date}</Td>
+                        <Td>{entry.remark}</Td>
+                        <Td>{entry.projectCode}</Td>
+                        <Td>{entry.hour}</Td>
+                        <Td>{entry.projectDetail}</Td>
+                      </Tr>
+                    ))}
                 </Tbody>
               </Table>
             </>
