@@ -133,7 +133,7 @@ export const PageStandup = () => {
           bottom={5}
           bg={colorModeValue('gray.300', 'gray.700')}
           spacing={0}
-          maxW={isOpenAbsentsContainer ? 300 : 150}
+          maxW={isOpenAbsentsContainer && !isLoadingSpeakers ? 300 : 150}
           padding={3}
           borderRadius="md"
           border="1px solid"
@@ -165,9 +165,8 @@ export const PageStandup = () => {
             />
           </Stack>
           {isOpenAbsentsContainer &&
-            (isLoadingSpeakers ? (
-              <Loader />
-            ) : absentSpeakers?.length > 0 ? (
+            !isLoadingSpeakers &&
+            (absentSpeakers?.length > 0 ? (
               absentSpeakers?.map((speaker) => (
                 <Text key={speaker.id} isTruncated>
                   {speaker.name}

@@ -121,7 +121,7 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
           {...rest}
         >
           {isAbsent ? (
-            <Flex w={4}>
+            <Flex w={4} pl={0.5}>
               <Icon icon={FiUserX} />
             </Flex>
           ) : (
