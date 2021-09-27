@@ -18,8 +18,10 @@ import {
   useLayoutContext,
 } from '@/app/layout';
 import { Logo } from '@/components';
+import { useDarkMode } from '@/hooks/useDarkMode';
 
 const MenuButton = (props) => {
+  const { colorModeValue } = useDarkMode();
   const { navOnOpen } = useLayoutContext();
   return (
     <IconButton
@@ -27,8 +29,9 @@ const MenuButton = (props) => {
       icon={<FiMenu size="1.5em" />}
       onClick={navOnOpen}
       bg="transparent"
-      _active={{ bg: 'gray.700' }}
-      _hover={{ bg: 'gray.900' }}
+      color="gray.300"
+      _active={{ bg: colorModeValue('gray.2OO', 'gray.700') }}
+      _hover={{ bg: colorModeValue('gray.400', 'gray.900') }}
       {...props}
     />
   );

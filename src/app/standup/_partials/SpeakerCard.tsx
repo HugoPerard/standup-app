@@ -22,9 +22,9 @@ import {
   useDisclosure,
   Spacer,
 } from '@chakra-ui/react';
-import { Formiz, useForm } from '@formiz/core';
+import { Formiz } from '@formiz/core';
 import { BsThreeDotsVertical } from 'react-icons/bs';
-import { FiEdit, FiTrash, FiWatch } from 'react-icons/fi';
+import { FiTrash, FiWatch, FiUserX, FiUserCheck } from 'react-icons/fi';
 import { useStopwatch } from 'react-timer-hook';
 
 import {
@@ -36,6 +36,7 @@ import {
   ConfirmMenuItem,
   EmptyItem,
   FieldInput,
+  Icon,
   MenuItem,
   useToastSuccess,
 } from '@/components';
@@ -45,19 +46,23 @@ interface SpeakerCardProps extends StackProps {
   speaker: Speaker;
   index: number;
 }
-
 export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
   ({ speaker, index, ...rest }, ref) => {
     const { colorModeValue } = useDarkMode();
     const toastSuccess = useToastSuccess();
-    const { isOpen, onClose, onOpen } = useDisclosure();
+    const { isOpen, onClose } = useDisclosure();
 
     const { seconds, minutes, isRunning, start, pause, reset } = useStopwatch({
       autoStart: false,
     });
     const [isSpeaked, setIsSpeaked] = useState(false);
 
+    const isAbsent = speaker?.isAbsent;
+
     const controlStopWatch = () => {
+      if (isAbsent) {
+        return;
+      }
       if (isRunning) {
         pause();
         setIsSpeaked(true);
@@ -65,11 +70,16 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
         start();
       }
     };
-
     const resetStopwatch = () => {
       reset();
       setIsSpeaked(false);
       pause();
+    };
+    const handleAbsent = () => {
+      updateSpeaker({
+        id: speaker.id,
+        payload: { isAbsent: !isAbsent },
+      });
     };
 
     const { mutate: deleteSpeaker } = useSpeakerDelete();
@@ -101,27 +111,34 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
           bg={colorModeValue('gray.200', 'gray.600')}
           p={2}
           borderRadius="md"
-          opacity={isSpeaked && '0.5'}
+          opacity={(isSpeaked && !isRunning) || isAbsent ? '0.5' : undefined}
           {...(isRunning
             ? {
-                border: '1px solid',
+                border: '1 solid',
                 borderColor: 'yellow.500',
               }
             : {})}
           {...rest}
         >
-          <Flex
-            onClick={() => {
-              pause();
-              setIsSpeaked(true);
-            }}
-          >
-            <Checkbox
-              isIndeterminate={isRunning}
-              isChecked={isSpeaked}
-              borderColor={colorModeValue('gray.400', undefined)}
-            />
-          </Flex>
+          {isAbsent ? (
+            <Flex w={4}>
+              <Icon icon={FiUserX} />
+            </Flex>
+          ) : (
+            <Flex
+              onClick={() => {
+                pause();
+                setIsSpeaked(true);
+              }}
+              w={4}
+            >
+              <Checkbox
+                isIndeterminate={isRunning}
+                isChecked={isSpeaked}
+                borderColor={colorModeValue('gray.400', undefined)}
+              />
+            </Flex>
+          )}
           <Stack
             onClick={controlStopWatch}
             direction="row"
@@ -131,7 +148,13 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
             justifyContent="space-between"
             alignItems="center"
           >
-            <Text fontWeight="medium" fontSize="sm">
+            <Text
+              fontWeight="medium"
+              fontSize="sm"
+              isTruncated
+              maxW="12rem"
+              // textDecoration={speaker?.isAbsent ? 'line-through' : undefined}
+            >
               {speaker?.name}
             </Text>
             <Text w={45}>
@@ -148,11 +171,16 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
             />
             <Portal>
               <MenuList>
-                <MenuItem icon={<FiWatch />} onClick={() => resetStopwatch()}>
-                  Réinitialiser
-                </MenuItem>
-                <MenuItem icon={<FiEdit />} onClick={onOpen}>
-                  Éditer
+                {!isAbsent && (
+                  <MenuItem icon={<FiWatch />} onClick={() => resetStopwatch()}>
+                    Réinitialiser
+                  </MenuItem>
+                )}
+                <MenuItem
+                  icon={isAbsent ? <FiUserCheck /> : <FiUserX />}
+                  onClick={() => handleAbsent()}
+                >
+                  {isAbsent ? 'Mettre présent' : 'Mettre absent'}
                 </MenuItem>
                 <ConfirmMenuItem
                   icon={<FiTrash />}
@@ -196,7 +224,6 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
     );
   }
 );
-
 export const EmptySpeakerCard = (props) => {
   return <EmptyItem fontSize="xs" fontWeight="medium" {...props} />;
 };
