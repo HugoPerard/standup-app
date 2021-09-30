@@ -75,64 +75,6 @@ export const PageCRA = () => {
         craEntries.push(craEntry);
       }
     }
-    //   const craEntry1 = {
-    //     email: line[1],
-    //     date: line[2],
-    //     remark: line[3],
-    //     projectCode: line[4],
-    //     hour: line[5],
-    //     projectDetail: line[6],
-    //   };
-
-    //   if (craEntry1.projectCode.trim() !== '') {
-    //     craEntries.push(craEntry1);
-    //   }
-
-    //   const craEntry2 = {
-    //     email: line[1],
-    //     date: line[2],
-    //     remark: line[3],
-    //     projectCode: line[7],
-    //     hour: line[8],
-    //     projectDetail: line[9],
-    //   };
-    //   if (craEntry2.projectCode.trim() !== '') {
-    //     craEntries.push(craEntry2);
-    //   }
-
-    //   const craEntry3 = {
-    //     email: line[1],
-    //     date: line[2],
-    //     remark: line[3],
-    //     projectCode: line[10],
-    //     hour: line[11],
-    //     projectDetail: line[12],
-    //   };
-    //   if (craEntry3.projectCode.trim() !== '') {
-    //     craEntries.push(craEntry3);
-    //   }
-    //   const craEntry4 = {
-    //     email: line[1],
-    //     date: line[2],
-    //     remark: line[3],
-    //     projectCode: line[13],
-    //     hour: line[14],
-    //     projectDetail: line[15],
-    //   };
-    //   if (craEntry4.projectCode.trim() !== '') {
-    //     craEntries.push(craEntry4);
-    //   }
-    //   const craEntry5 = {
-    //     email: line[1],
-    //     date: line[2],
-    //     remark: line[3],
-    //     projectCode: line[16],
-    //     hour: line[17],
-    //     projectDetail: line[18],
-    //   };
-    //   if (craEntry5.projectCode.trim() !== '') {
-    //     craEntries.push(craEntry5);
-    //   }
   });
 
   const projectCodes = Array.from(
@@ -178,25 +120,25 @@ export const PageCRA = () => {
           <Flex direction="column" flex="1" mr="20px">
             <Select color="gray.700" placeholder="Email" width="full"></Select>
             <Flex color="gray.700">
-              <Link marginRight="10px" color="yellow.500">
+              <Link marginRight="2.5" color="yellow.500">
                 Tunisie
               </Link>
-              <Link marginRight="10px" color="yellow.500">
+              <Link marginRight="2.5" color="yellow.500">
                 Peons
               </Link>
-              <Link marginRight="10px" color="yellow.500">
+              <Link marginRight="2.5" color="yellow.500">
                 Maroc
               </Link>
-              <Link marginRight="10px" color="yellow.500">
+              <Link marginRight="2.5" color="yellow.500">
                 France
               </Link>
             </Flex>
           </Flex>
           <Select
-            color="gray.700"
             flex="1"
-            mr="20px"
+            mr="3"
             placeholder="selectionner un projet"
+            color="black"
             onChange={(event) => handleChangeProject(event.target.value)}
           >
             {projectCodes.map((projectCode) => (
@@ -208,7 +150,7 @@ export const PageCRA = () => {
 
           <Input
             width="auto"
-            mr="20px"
+            mr="3"
             type="date"
             color="black"
             textAlign="center"
@@ -224,13 +166,7 @@ export const PageCRA = () => {
           />
         </Flex>
 
-        <Box
-          width="100%"
-          h="full"
-          border="4px"
-          mt="20px"
-          borderColor="yellow.500"
-        >
+        <Box width="100%" h="full" border="2px" mt="6" borderColor="yellow.500">
           {arrayFilter.length > 0 ? (
             <>
               <Table color="yellow.500">
@@ -249,12 +185,14 @@ export const PageCRA = () => {
                     .filter((entry) => isProject === entry.projectCode)
                     .map((entry, i) => (
                       <Tr key={i}>
-                        <Td>{entry.email}</Td>
-                        <Td>{entry.date}</Td>
-                        <Td>{entry.remark}</Td>
-                        <Td>{entry.projectCode}</Td>
-                        <Td>{entry.hour}</Td>
-                        <Td>{entry.projectDetail}</Td>
+                        <Td textAlign="center">{entry.email}</Td>
+                        <Td textAlign="center">
+                          {dayjs(entry.date).format('DD/MM/YYYY')}
+                        </Td>
+                        <Td textAlign="center">{entry.remark}</Td>
+                        <Td textAlign="center">{entry.projectCode}</Td>
+                        <Td textAlign="center">{entry.hour}</Td>
+                        <Td textAlign="center">{entry.projectDetail}</Td>
                       </Tr>
                     ))}
                 </Tbody>
