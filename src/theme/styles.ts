@@ -1,17 +1,20 @@
+import { GlobalStyleProps, mode } from '@chakra-ui/theme-tools';
+
 import * as externals from './externals';
 
-const externalsStyles = Object.values(externals).reduce(
-  (acc, cur) => ({ ...acc, ...cur }),
-  {}
-);
+const externalsStyles = (props: GlobalStyleProps) =>
+  Object.values(externals).reduce(
+    (acc, cur) => ({ ...acc, ...cur(props) }),
+    {}
+  );
 
 export const styles = {
-  global: {
+  global: (props) => ({
     html: {
-      bg: 'gray.800',
+      bg: mode('gray.50', 'gray.800')(props),
     },
     body: {
-      bg: 'gray.50',
+      bg: mode('gray.50', 'gray.800')(props),
       WebkitTapHighlightColor: 'transparent',
     },
     '#chakra-toast-portal > *': {
@@ -20,6 +23,6 @@ export const styles = {
       pr: 'safe-right',
       pb: 'safe-bottom',
     },
-    ...externalsStyles,
-  },
+    ...externalsStyles(props),
+  }),
 };

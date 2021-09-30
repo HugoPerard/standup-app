@@ -1,6 +1,11 @@
+import { mode } from '@chakra-ui/theme-tools';
+import { GlobalStyleProps } from '@chakra-ui/theme-tools';
 import 'react-day-picker/lib/style.css';
 
-export const reactDayPicker = {
+export const reactDayPicker = (props: GlobalStyleProps) => ({
+  '.DayPicker *': {
+    outline: 'none',
+  },
   '.DayPickerInput': {
     display: 'inline-block',
     fontSize: '0.1em',
@@ -13,7 +18,7 @@ export const reactDayPicker = {
     right: { base: 0, sm: 'auto' },
     marginLeft: 'auto',
     marginRight: 'auto',
-    marginTop: '3em',
+    top: '3em',
     width: '100%',
     maxWidth: '90vw',
   },
@@ -24,62 +29,133 @@ export const reactDayPicker = {
     zIndex: 2,
     borderRadius: 'md',
     boxShadow: 'lg',
+    bg: mode(undefined, 'gray.700')(props),
   },
 
   '.DayPicker': {
     display: 'inline-block',
-    fontSize: { base: '0.8rem', sm: '1rem' },
-    border: '1px solid',
-    borderColor: 'gray.200',
+    fontSize: { base: '0.75rem', sm: '0.875rem' },
     borderRadius: 'md',
-    maxWidth: '90vw',
+    width: 'min-content',
   },
 
-  '.DayPicker-Day--disabled': {
+  '.DayPicker-Months': {
+    display: 'grid',
+    gridTemplateColumns: {
+      base: 'repeat(1, 1fr)',
+      md: 'repeat(2, 1fr)',
+      xl: 'repeat(4, 1fr)',
+    },
+  },
+
+  '.DayPicker-Day--outside': {
+    backgroundColor: 'transparent!important',
+  },
+
+  '.DayPicker-Day--disabled, .DayPicker-Day--today.DayPicker-Day--disabled': {
     pointerEvents: 'none',
   },
 
-  '.DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside)': {
-    position: 'relative',
-    backgroundColor: 'brand.500',
-    borderRadius: '100%',
-  },
-
-  '.DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside):hover': {
-    backgroundColor: 'brand.500',
-    borderRadius: '100%',
-    color: 'white',
+  '.DayPicker-Day--today.DayPicker-Day--disabled': {
+    color: 'gray.300',
   },
 
   '.DayPicker:not(.DayPicker--interactionDisabled)': {
     '.DayPicker-Day:not(.DayPicker-Day--disabled):not(.DayPicker-Day--selected):not(.DayPicker-Day--outside):hover': {
-      backgroundColor: 'brand.100',
+      backgroundColor: 'yellow.100',
       borderRadius: '100%',
       color: 'black',
     },
   },
 
+  '.DayPicker-Day--vacations:not(.DayPicker-Day--disabled):not(.DayPicker-Day--weekend), .DayPicker-Day--today.DayPicker-Day--vacations:not(.DayPicker-Day--disabled):not(.DayPicker-Day--weekend)': {
+    color: 'warning.600',
+    borderRadius: '100%',
+    backgroundColor: 'warning.50',
+  },
+
+  '.DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside), .DayPicker-Day--vacations.DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside)': {
+    position: 'relative',
+    backgroundColor: 'yellow.600',
+    borderRadius: '100%',
+    color: 'white',
+  },
+
+  '.DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside):hover': {
+    backgroundColor: 'yellow.700',
+    borderRadius: '100%',
+    color: 'white',
+  },
+
+  '.DayPicker-Day--weekend:.DayPicker-Day--selected': {
+    color: 'white',
+  },
+
+  '.DayPicker-Day--weekend': {
+    color: 'gray.400',
+  },
+
   '.DayPicker-Day': {
+    display: 'block',
     borderRadius: 'full',
     cursor: 'pointer',
-    height: '2.8em',
-    width: '2.8em',
+    height: '2rem',
+    minWidth: '2rem',
     transition: '0.2s',
+    padding: 0,
+    lineHeight: '2rem',
   },
 
   '.DayPicker-Day--today': {
-    color: 'black',
+    color: 'yellow.500',
     fontWeight: 'bold',
   },
 
+  '.DayPicker-Caption': {
+    display: 'block',
+  },
+
   '.DayPicker-Caption > div': {
-    fontWeight: '400',
-    fontSize: '1em',
+    fontWeight: '700',
+    color: 'gray.600',
+    fontSize: 'md',
+  },
+
+  '.DayPicker-Weekdays': {
+    display: 'block',
+  },
+
+  '.DayPicker-WeekdaysRow': {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(7, 1fr)',
   },
 
   '.DayPicker-Weekday': {
-    fontWeight: '350',
-    color: 'black',
+    display: 'block',
+    fontWeight: 'medium',
+    color: mode('gray.900', 'gray.50')(props),
     fontSize: '0.875em',
   },
-};
+
+  '.DayPicker-Body': {
+    display: 'grid',
+  },
+
+  '.DayPicker-Week': {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(7, 1fr)',
+    gridGap: '0.1rem',
+  },
+
+  '.DayPicker-Footer': {
+    px: 4,
+  },
+
+  '.DayPicker-TodayButton': {
+    width: 'full',
+    fontWeight: '500',
+    borderRadius: 'md',
+    ...props.theme.components.Button.sizes.sm,
+    ...props.theme.components.Button.variants['@primary'],
+  },
+});

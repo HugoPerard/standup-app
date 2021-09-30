@@ -63,6 +63,7 @@ export const MainMenu = ({ ...rest }) => {
       <MainMenuItem to={Routes.STANDUP}>Stand-up</MainMenuItem>
       <MainMenuItem to={Routes.OFFICES}>Bureaux</MainMenuItem>
       <MainMenuItem to={Routes.CRA}>CRA</MainMenuItem>
+      <MainMenuItem to={Routes.ADMINISTRATIVE}>Administratif</MainMenuItem>
     </Stack>
   );
 };

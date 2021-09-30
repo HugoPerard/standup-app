@@ -6,6 +6,8 @@ import {
   TagProps,
 } from '@chakra-ui/react';
 
+import { useDarkMode } from '@/hooks/useDarkMode';
+
 interface PersonTagProps extends TagProps {
   onRemove?(): void;
   isLoadingRemove?: boolean;
@@ -17,12 +19,14 @@ export const PersonTag: React.FC<PersonTagProps> = ({
   isLoadingRemove = false,
   ...rest
 }) => {
+  const { colorModeValue } = useDarkMode();
+
   return (
     <Tag
       borderRadius="full"
       variant="solid"
       bg="yellow.500"
-      color="gray.800"
+      color={colorModeValue('gray.100', 'gray.800')}
       width="fit-content"
       overflow="hidden"
       {...rest}

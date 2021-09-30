@@ -2,6 +2,7 @@ import { Stack, StackProps, Text, Wrap } from '@chakra-ui/react';
 
 import { useCurrentUser } from '@/app/auth/useAuth';
 import { EmptyItem, PersonTag } from '@/components';
+import { useDarkMode } from '@/hooks/useDarkMode';
 
 interface OfficeSectionProps extends StackProps {
   title: string;
@@ -13,11 +14,13 @@ export const OfficeSection: React.FC<OfficeSectionProps> = ({
   presence,
   ...rest
 }) => {
+  const { colorModeValue } = useDarkMode();
   const { username } = useCurrentUser();
+
   return (
     <Stack
       role="group"
-      bg="gray.600"
+      bg={colorModeValue('gray.200', 'gray.600')}
       p={2}
       spacing={3}
       borderRadius="md"
@@ -51,14 +54,20 @@ export const OfficeSection: React.FC<OfficeSectionProps> = ({
             })
             .map((person) => (
               <PersonTag
-                bg={username === person?.name ? 'yellow.500' : 'gray.300'}
+                bg={
+                  username === person?.name
+                    ? 'yellow.500'
+                    : colorModeValue('gray.400', 'gray.300')
+                }
               >
                 {person?.name}
               </PersonTag>
             ))}
         </Wrap>
       ) : (
-        <EmptyItem bg="gray.700">Personne n'est présent</EmptyItem>
+        <EmptyItem bg={colorModeValue('gray.300', 'gray.700')}>
+          Personne n'est présent
+        </EmptyItem>
       )}
     </Stack>
   );

@@ -14,6 +14,12 @@ export const OFFICES = '/offices';
 
 export const CRA = '/cra';
 
+// Administrative
+
+export const ADMINISTRATIVE = '/administrative';
+
+export const ADMINISTRATIVE_LEAVE = `${ADMINISTRATIVE}/leave`;
+
 export const Routes = {
   STANDUP,
   STANDUP_GOALS,
@@ -21,4 +27,6 @@ export const Routes = {
   STANDUP_THANKS,
   OFFICES,
   CRA,
+  ADMINISTRATIVE,
+  ADMINISTRATIVE_LEAVE,
 };

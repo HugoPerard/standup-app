@@ -15,6 +15,7 @@ import {
   useToastError,
   useToastSuccess,
 } from '@/components';
+import { useDarkMode } from '@/hooks/useDarkMode';
 
 import { EmptyGoalCard, GoalCard } from './GoalCard';
 import { GoalModal } from './GoalModal';
@@ -35,6 +36,7 @@ export const GoalGroup: React.FC<GoalGroupProps> = ({
   areCompletesClearable = false,
   ...rest
 }) => {
+  const { colorModeValue } = useDarkMode();
   const toastSuccess = useToastSuccess();
   const toastError = useToastError();
   const isToday = dayjs()?.format(DATE_FORMAT) === date;
@@ -84,7 +86,7 @@ export const GoalGroup: React.FC<GoalGroupProps> = ({
   return (
     <>
       <Stack
-        bg="gray.700"
+        bg={colorModeValue('gray.300', 'gray.700')}
         p={3}
         borderRadius="md"
         border={isToday && '2px solid'}

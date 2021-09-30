@@ -1,6 +1,14 @@
 import React from 'react';
 
-import { Button, chakra, Flex, Link } from '@chakra-ui/react';
+import {
+  Button,
+  Flex,
+  Link,
+  Text,
+  Stack,
+  useBreakpointValue,
+} from '@chakra-ui/react';
+import dayjs from 'dayjs';
 import { SiGooglehangoutsmeet } from 'react-icons/si';
 
 import { InternalBar, InternalBarItem } from '@/app/layout';
@@ -10,27 +18,32 @@ import { Icon } from '@/components';
 import { formatExternalUrl } from '@/utils/link';
 
 export const StandupNav = ({ ...rest }) => {
+  const isMobile = useBreakpointValue({ base: true, md: false });
+  const start = dayjs().format(isMobile ? 'DD/MM/YYYY' : 'dddd LL');
+
   return (
     <InternalBar {...rest}>
-      <Link
-        href={formatExternalUrl(STANDUP_MEET_URL)}
-        isExternal
-        alignSelf="center"
-      >
-        <Button variant="@primary" size="sm">
-          <Icon icon={SiGooglehangoutsmeet} />
-          <chakra.span ml={1} fontWeight="medium">
-            Meet
-          </chakra.span>
-        </Button>
-      </Link>
-      <Flex>
+      <Flex flex="1">
         <InternalBarItem to={Routes.STANDUP_GOALS}>Objectifs</InternalBarItem>
         <InternalBarItem to={Routes.STANDUP_SPEAKING}>Stand-up</InternalBarItem>
         <InternalBarItem to={Routes.STANDUP_THANKS}>
           Remerciements
         </InternalBarItem>
       </Flex>
+
+      <Stack direction="row" spacing={3} alignItems="center">
+        <Text fontWeight="medium">{start}</Text>
+        <Link
+          href={formatExternalUrl(STANDUP_MEET_URL)}
+          isExternal
+          alignSelf="center"
+        >
+          <Button variant="@primary" size="xs" fontWeight="bold">
+            <Icon icon={SiGooglehangoutsmeet} mr={1} />
+            Meet
+          </Button>
+        </Link>
+      </Stack>
     </InternalBar>
   );
 };

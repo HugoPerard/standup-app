@@ -9,7 +9,6 @@ import {
   Popover,
   PopoverTrigger,
   PopoverContent,
-  PopoverHeader,
   PopoverBody,
   PopoverFooter,
   PopoverArrow,
@@ -61,8 +60,8 @@ export const PageThanks = () => {
                     Tout supprimer
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent bg="gray.600" color="gray.100">
-                  <PopoverArrow bg="gray.600" />
+                <PopoverContent>
+                  <PopoverArrow />
                   <PopoverCloseButton onClick={onClose} />
                   <PopoverBody>
                     Êtes vous sûr de vouloir tout supprimer ?
@@ -71,7 +70,7 @@ export const PageThanks = () => {
                     <Button
                       onClick={handleClearAllThanks}
                       isLoading={isLoadingClearAllThanks}
-                      colorScheme="red"
+                      variant="@danger"
                     >
                       Supprimer
                     </Button>
@@ -90,9 +89,6 @@ export const PageThanks = () => {
                 onChange={(e) =>
                   localStorage.setItem('thanks-notes', e.target.value)
                 }
-                bg="gray.600"
-                color="gray.100"
-                borderColor="gray.800"
                 flex={1}
               />
               <Stack

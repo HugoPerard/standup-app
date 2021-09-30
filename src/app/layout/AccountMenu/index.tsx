@@ -12,14 +12,17 @@ import {
   Text,
   useClipboard,
   Portal,
+  useColorMode,
 } from '@chakra-ui/react';
-import { FiCheck, FiCopy, FiLogOut } from 'react-icons/fi';
+import { FiCheck, FiCopy, FiLogOut, FiMoon, FiSun } from 'react-icons/fi';
 
 import appBuild from '@/../app-build.json';
 import { useAuth } from '@/app/auth/useAuth';
 import { Icon } from '@/components';
+import { useDarkMode } from '@/hooks/useDarkMode';
 
 const AppVersion = ({ ...rest }) => {
+  const { colorModeValue } = useDarkMode();
   const { hasCopied, onCopy } = useClipboard(JSON.stringify(appBuild, null, 2));
 
   if (!appBuild?.version) {
@@ -40,11 +43,10 @@ const AppVersion = ({ ...rest }) => {
         my="-2"
         fontSize="0.7rem"
         fontWeight="medium"
-        bg="white"
-        color="gray.400"
+        color={colorModeValue('gray.500', 'gray.200')}
         outline="none"
-        _hover={{ bg: 'gray.50', color: 'gray.500' }}
-        _focus={{ bg: 'gray.50', color: 'gray.500' }}
+        _hover={{ bg: colorModeValue('gray.50', 'gray.800') }}
+        _focus={{ bg: colorModeValue('gray.50', 'gray.800') }}
         onClick={onCopy}
         {...rest}
       >
@@ -59,8 +61,10 @@ const AppVersion = ({ ...rest }) => {
           py="2"
           px="3"
           fontWeight="bold"
-          bg="white"
-          color={hasCopied ? 'success.500' : undefined}
+          bg={colorModeValue('gray.50', 'gray.800')}
+          color={
+            hasCopied ? colorModeValue('success.500', 'success.300') : undefined
+          }
           transition="0.2s"
           _groupHover={{ d: 'flex' }}
         >
@@ -76,6 +80,9 @@ const AppVersion = ({ ...rest }) => {
 };
 
 export const AccountMenu = ({ ...rest }) => {
+  const { colorModeValue } = useDarkMode();
+  const { colorMode, toggleColorMode } = useColorMode();
+
   const { currentUser, signOut } = useAuth();
 
   return (
@@ -90,8 +97,25 @@ export const AccountMenu = ({ ...rest }) => {
         )}
       </MenuButton>
       <Portal>
-        <MenuList color="gray.800" maxW="12rem" overflow="hidden" zIndex="10">
+        <MenuList
+          color={colorModeValue('gray.800', 'white')}
+          maxW="12rem"
+          overflow="hidden"
+          zIndex="10"
+        >
           <MenuGroup title={currentUser?.displayName} pb={1} />
+          <MenuItem
+            icon={
+              <Icon
+                icon={colorMode === 'dark' ? FiSun : FiMoon}
+                fontSize="lg"
+                color="gray.400"
+              />
+            }
+            onClick={() => toggleColorMode()}
+          >
+            Passer en mode {colorMode === 'dark' ? 'lumineux' : 'sombre'}
+          </MenuItem>
           <MenuDivider />
           <MenuItem
             icon={<Icon icon={FiLogOut} fontSize="lg" color="gray.400" />}
