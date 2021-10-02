@@ -19,3 +19,9 @@ const getPeoples = async (): Promise<any> => {
     ...doc.data(),
   }));
 };
+export const usePeoples = (config: UseQueryOptions<People[]> = {}) => {
+  return useQuery(['people'], (): Promise<People[]> => getPeoples(), {
+    ...config,
+  });
+};
+console.log('coucou');

@@ -21,6 +21,9 @@ import Papa from 'papaparse';
 
 import { Page, PageContent } from '@/app/layout';
 
+import { usePeoples } from './people.firebase';
+import { People } from './people.type';
+
 export const PageCRA = () => {
   const [starDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -51,7 +54,6 @@ export const PageCRA = () => {
   };
   const handleChangeProject = (projectCode) => {
     setIsProject(projectCode);
-    console.log(projectCode);
   };
 
   let arrayFilter = cvsArray.filter((line) =>
@@ -59,7 +61,6 @@ export const PageCRA = () => {
   );
   arrayFilter = arrayFilter.slice(1);
   const craEntries = [];
-  console.log(craEntries);
 
   arrayFilter.forEach((line) => {
     for (let i = 4; i <= 16; i += 3) {
