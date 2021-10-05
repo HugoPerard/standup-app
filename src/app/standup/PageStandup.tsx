@@ -9,6 +9,7 @@ import {
   Spinner,
   Text,
   useDisclosure,
+  Input,
 } from '@chakra-ui/react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { BsArrowsAngleContract, BsArrowsAngleExpand } from 'react-icons/bs';
@@ -34,7 +35,6 @@ export const PageStandup = () => {
 
   const { data: projects, isLoading: isLoadingProjects } = useProjects();
   const toastSuccess = useToastSuccess();
-
   const {
     mutate: addProject,
     isLoading: isLoadingAddProject,

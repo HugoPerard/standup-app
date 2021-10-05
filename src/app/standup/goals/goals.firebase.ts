@@ -19,13 +19,12 @@ const getGoals = async (): Promise<any> => {
     ...doc.data(),
   }));
 };
-
+console.log(goalsCollectionRef);
 export const useGoals = (config: UseQueryOptions<Goal[]> = {}) => {
   return useQuery(['goals'], (): Promise<Goal[]> => getGoals(), {
     ...config,
   });
 };
-
 const addGoal = (payload: Goal): any => {
   return goalsCollectionRef?.add(payload);
 };

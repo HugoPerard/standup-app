@@ -24,4 +24,7 @@ export const usePeoples = (config: UseQueryOptions<People[]> = {}) => {
     ...config,
   });
 };
-console.log('coucou');
+console.log(peoplesCollectionRef);
+const addPeople = (payload: People): any => {
+  return peoplesCollectionRef?.add(payload);
+};

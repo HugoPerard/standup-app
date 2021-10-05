@@ -6,7 +6,6 @@ import {
   Button,
   Input,
   Flex,
-  Select,
   Link,
   Table,
   Thead,
@@ -20,15 +19,16 @@ import dayjs from 'dayjs';
 import Papa from 'papaparse';
 
 import { Page, PageContent } from '@/app/layout';
+import { Select } from '@/components/Select';
 
 import { usePeoples } from './people.firebase';
-import { People } from './people.type';
 
 export const PageCRA = () => {
   const [starDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [cvsArray, setCvsArray] = useState([]);
-  const [isProject, setIsProject] = useState();
+  const [csvArray, setCsvArray] = useState([]);
+  const [selectedProject, setSelectedProject] = useState();
+  const [selectedPeople, setSelectedPeople] = useState([]);
 
   useEffect(() => {
     const start = dayjs().format('YYYY-MM-DD');
@@ -47,18 +47,16 @@ export const PageCRA = () => {
     if (files) {
       Papa.parse(files[0], {
         complete: function (results) {
-          setCvsArray(results.data);
+          setCsvArray(results.data);
         },
       });
     }
   };
-  const handleChangeProject = (projectCode) => {
-    setIsProject(projectCode);
-  };
 
-  let arrayFilter = cvsArray.filter((line) =>
+  let arrayFilter = csvArray.filter((line) =>
     line.some((lineItem) => /[a-zA-Z]/.test(lineItem))
   );
+
   arrayFilter = arrayFilter.slice(1);
   const craEntries = [];
 
@@ -72,6 +70,7 @@ export const PageCRA = () => {
         hour: line[i + 1],
         projectDetail: line[i + 2],
       };
+
       if (craEntry.projectCode.trim() !== '') {
         craEntries.push(craEntry);
       }
@@ -79,9 +78,59 @@ export const PageCRA = () => {
   });
 
   const projectCodes = Array.from(
-    new Set(craEntries.map((project) => project.projectCode))
-  );
+    new Set((craEntries || []).map((project) => project.projectCode))
+  ).map((projectCode) => ({
+    label: projectCode,
+    value: projectCode,
+  }));
+  console.log(projectCodes);
 
+  const { data: people } = usePeoples();
+
+  const mailAddresses = (people || []).map((people) => ({
+    label: people.email,
+    value: people.email,
+    status: people.status,
+  }));
+
+  const filterEmployees = () => {
+    const employeesPeople = mailAddresses?.filter(
+      (person) => person.status === 'salarie'
+    );
+
+    setSelectedPeople(employeesPeople);
+  };
+
+  const filterStudents = () => {
+    const studentsPeople = mailAddresses?.filter(
+      (person) => person.status === 'alternant'
+    );
+
+    setSelectedPeople(studentsPeople);
+  };
+
+  const filterTunisianPerson = () => {
+    const camelStudioPeople = mailAddresses?.filter(
+      (person) => person.status === 'Tunisie'
+    );
+
+    setSelectedPeople(camelStudioPeople);
+  };
+
+  const filterExpensivePerson = () => {
+    const expensivePeople = mailAddresses?.filter(
+      (person) => person.status === 'personne couteuse'
+    );
+
+    setSelectedPeople(expensivePeople);
+  };
+  const handleSelectUserChange = (newSelectedPeople) => {
+    setSelectedPeople(newSelectedPeople);
+  };
+  const handleChangeProject = (newProjectCode) => {
+    setSelectedProject(newProjectCode);
+  };
+  // console.log(selectedPeople);
   return (
     <Page containerSize="full" width="full">
       <PageContent>
@@ -119,36 +168,60 @@ export const PageCRA = () => {
 
         <Flex justifyContent="space-around" mt="20px">
           <Flex direction="column" flex="1" mr="20px">
-            <Select color="gray.700" placeholder="Email" width="full"></Select>
+            <Select
+              isMulti
+              color="gray.700"
+              placeholder="Email"
+              value={selectedPeople}
+              options={mailAddresses}
+              onChange={handleSelectUserChange}
+              width="26rem"
+            />
+
             <Flex color="gray.700">
-              <Link marginRight="2.5" color="yellow.500">
+              <Button
+                marginRight="2.5"
+                color="yellow.500"
+                onClick={filterTunisianPerson}
+                variant="link"
+              >
                 Tunisie
-              </Link>
-              <Link marginRight="2.5" color="yellow.500">
-                Peons
-              </Link>
-              <Link marginRight="2.5" color="yellow.500">
-                Maroc
-              </Link>
-              <Link marginRight="2.5" color="yellow.500">
-                France
-              </Link>
+              </Button>
+              <Button
+                variant="link"
+                marginRight="2.5"
+                color="yellow.500"
+                onClick={filterExpensivePerson}
+              >
+                couteux
+              </Button>
+              <Button
+                variant="link"
+                marginRight="2.5"
+                color="yellow.500"
+                onClick={filterStudents}
+              >
+                alternants
+              </Button>
+              <Button
+                variant="link"
+                marginRight="2.5"
+                color="yellow.500"
+                onClick={filterEmployees}
+              >
+                Salariés
+              </Button>
             </Flex>
           </Flex>
           <Select
-            flex="1"
-            mr="3"
+            mr="8rem"
             placeholder="selectionner un projet"
             color="black"
-            onChange={(event) => handleChangeProject(event.target.value)}
-          >
-            {projectCodes.map((projectCode) => (
-              <option value={projectCode} key={projectCode}>
-                {projectCode}
-              </option>
-            ))}
-          </Select>
-
+            onChange={handleChangeProject}
+            value={selectedProject}
+            options={projectCodes}
+            width="30rem"
+          />
           <Input
             width="auto"
             mr="3"
@@ -183,7 +256,9 @@ export const PageCRA = () => {
                 </Thead>
                 <Tbody>
                   {craEntries
-                    .filter((entry) => isProject === entry.projectCode)
+                    .filter(
+                      (entry) => selectedProject?.value === entry.projectCode
+                    )
                     .map((entry, i) => (
                       <Tr key={i}>
                         <Td textAlign="center">{entry.email}</Td>
