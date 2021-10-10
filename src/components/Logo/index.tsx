@@ -9,7 +9,7 @@ import { Text } from '@chakra-ui/react';
 // );
 
 export const Logo = (props) => (
-  <Text fontWeight="extrabold" fontSize="xl" color="yellow.500" {...props}>
+  <Text fontWeight="extrabold" fontSize="xl" color="brand.500" {...props}>
     🐻 BEARSTUDIO
   </Text>
 );

@@ -97,7 +97,7 @@ export const PageContent = ({ children, ...rest }: PageContentProps) => {
     <Flex zIndex="1" direction="column" flex="1" py="4" {...rest}>
       <PageContainer>
         <Stack
-          direction={{ base: 'column', lg: 'row' }}
+          // direction={{ base: 'column', lg: 'row' }}
           spacing={{ base: '4', lg: '8' }}
           flex="1"
         >

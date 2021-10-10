@@ -3,7 +3,7 @@ import { forwardRef } from 'react';
 import { Stack, StackProps } from '@chakra-ui/react';
 
 import { useCurrentUser } from '@/app/auth/useAuth';
-import { useSpeakers } from '@/app/standup/standup.firebase';
+import { useSpeakers } from '@/app/standup/standup/standup.firebase';
 import { FieldMultiSelect } from '@/components';
 import { FieldTextarea } from '@/components/FieldTextarea';
 

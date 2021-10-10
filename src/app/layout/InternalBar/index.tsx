@@ -54,7 +54,7 @@ export const InternalBarItem = ({ to, ...rest }) => {
       fontSize="sm"
       fontWeight="medium"
       px="3"
-      color={isActive ? colorModeValue('yellow.600', 'yellow.500') : undefined}
+      color={isActive ? colorModeValue('brand.600', 'brand.500') : undefined}
       transition="0.2s"
       _before={{
         content: '""',
@@ -63,7 +63,7 @@ export const InternalBarItem = ({ to, ...rest }) => {
         left: 0,
         bottom: 0,
         transition: '0.2s',
-        bg: isActive ? colorModeValue('yellow.600', 'yellow.500') : undefined,
+        bg: isActive ? colorModeValue('brand.600', 'brand.500') : undefined,
         h: '3px',
       }}
       {...rest}

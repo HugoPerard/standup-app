@@ -13,7 +13,7 @@ import { SiGooglehangoutsmeet } from 'react-icons/si';
 
 import { InternalBar, InternalBarItem } from '@/app/layout';
 import { Routes } from '@/app/routes';
-import { STANDUP_MEET_URL } from '@/app/standup/constants';
+import { STANDUP_MEET_URL } from '@/app/standup/standup/constants';
 import { Icon } from '@/components';
 import { formatExternalUrl } from '@/utils/link';
 

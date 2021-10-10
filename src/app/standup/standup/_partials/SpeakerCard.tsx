@@ -24,14 +24,20 @@ import {
 } from '@chakra-ui/react';
 import { Formiz } from '@formiz/core';
 import { BsThreeDotsVertical } from 'react-icons/bs';
-import { FiTrash, FiWatch, FiUserX, FiUserCheck, FiEdit } from 'react-icons/fi';
+import {
+  FiTrash2,
+  FiWatch,
+  FiUserX,
+  FiUserCheck,
+  FiEdit,
+} from 'react-icons/fi';
 import { useStopwatch } from 'react-timer-hook';
 
 import {
   useSpeakerDelete,
   useSpeakerUpdate,
-} from '@/app/standup/standup.firebase';
-import { Speaker } from '@/app/standup/standup.types';
+} from '@/app/standup/standup/standup.firebase';
+import { Speaker } from '@/app/standup/standup/standup.types';
 import {
   ConfirmMenuItem,
   EmptyItem,
@@ -115,7 +121,7 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
           {...(isRunning
             ? {
                 border: '1 solid',
-                borderColor: 'yellow.500',
+                borderColor: 'brand.500',
               }
             : {})}
           {...rest}
@@ -186,7 +192,7 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
                   {isAbsent ? 'Mettre présent' : 'Mettre absent'}
                 </MenuItem>
                 <ConfirmMenuItem
-                  icon={<FiTrash />}
+                  icon={<FiTrash2 />}
                   confirmContent="Confirmer la suppression"
                   onClick={() => handleDeleteSpeaker()}
                 >

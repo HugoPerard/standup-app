@@ -6,7 +6,7 @@ import { styles } from './styles';
 
 export default extendTheme(
   withDefaultColorScheme({
-    colorScheme: 'yellow',
+    colorScheme: 'brand',
     components: ['Button', 'Checkbox'],
   }),
   {

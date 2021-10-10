@@ -90,7 +90,7 @@ export const GoalGroup: React.FC<GoalGroupProps> = ({
         p={3}
         borderRadius="md"
         border={isToday && '2px solid'}
-        borderColor="yellow.500"
+        borderColor="brand.500"
         {...rest}
       >
         <Stack direction="row" spacing={3} justifyContent="space-between">

@@ -33,7 +33,7 @@ export const OfficeSection: React.FC<OfficeSectionProps> = ({
         <Text
           fontWeight="bold"
           _groupHover={{
-            color: 'yellow.500',
+            color: 'brand.500',
             textDecoration: 'underline',
           }}
         >
@@ -56,7 +56,7 @@ export const OfficeSection: React.FC<OfficeSectionProps> = ({
               <PersonTag
                 bg={
                   username === person?.name
-                    ? 'yellow.500'
+                    ? 'brand.500'
                     : colorModeValue('gray.400', 'gray.300')
                 }
               >

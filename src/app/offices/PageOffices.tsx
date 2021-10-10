@@ -128,7 +128,7 @@ export const PageOffices = () => {
                   <Text
                     fontSize="lg"
                     fontWeight="bold"
-                    color="yellow.500"
+                    color="brand.500"
                     alignSelf="center"
                   >
                     {weekday}

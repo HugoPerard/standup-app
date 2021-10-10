@@ -16,8 +16,8 @@ import {
   useProjectDelete,
   useProjectUpdate,
   useSpeakerAdd,
-} from '@/app/standup/standup.firebase';
-import { Project, Speaker } from '@/app/standup/standup.types';
+} from '@/app/standup/standup/standup.firebase';
+import { Project, Speaker } from '@/app/standup/standup/standup.types';
 import { Icon, PopoverInput, useToastSuccess } from '@/components';
 import { useDarkMode } from '@/hooks/useDarkMode';
 import { sortByIndex } from '@/utils/sortByIndex';
@@ -107,7 +107,7 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
           p={3}
           borderRadius="md"
           border={droppableSnapshot?.isDraggingOver ? '1px solid' : undefined}
-          borderColor="yellow.500"
+          borderColor="brand.500"
           shadow="md"
           spacing={3}
           minW="14rem"
