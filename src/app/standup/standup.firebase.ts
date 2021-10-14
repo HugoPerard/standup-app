@@ -1,3 +1,4 @@
+import axios from 'axios';
 import {
   useMutation,
   UseMutationOptions,
@@ -5,6 +6,7 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from 'react-query';
+import async from 'react-select/async';
 
 import firebase from '@/firebase';
 
@@ -13,11 +15,10 @@ import { Project, Speaker } from './standup.types';
 const projectsCollectionRef = firebase?.firestore?.()?.collection('projects');
 
 const getProjects = async (): Promise<any> => {
-  const snapshot = await projectsCollectionRef.get();
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
+  const response = await axios.get('https://localhost:8000/projects');
+  // const snapshot = await projectsCollectionRef.get();
+  console.log('PROJECTS...', response);
+  return response;
 };
 
 export const useProjects = (config: UseQueryOptions<Project[]> = {}) => {
@@ -137,14 +138,16 @@ export const useProjectReplace = (
 
 const speakersCollectionRef = firebase?.firestore?.()?.collection('speakers');
 
-const getSpeakers = async (projectId = null): Promise<any> => {
-  const snapshot = projectId
-    ? await speakersCollectionRef.where('projectId', '==', projectId).get()
-    : await speakersCollectionRef.get();
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
+const getSpeakers = async (): Promise<any> => {
+  // const snapshot = projectId
+  //   ? await speakersCollectionRef.where('projectId', '==', projectId).get()
+  //   : await speakersCollectionRef.get();
+  // return snapshot.docs.map((doc) => ({
+  //   id: doc.id,
+  //   ...doc.data(),
+  const response = await axios.get('https://localhost:8000/speakers');
+  return response;
+  // }));
 };
 
 export const useSpeakers = (
@@ -153,7 +156,13 @@ export const useSpeakers = (
 ) => {
   return useQuery(
     ['speakers', projectId],
-    (): Promise<Speaker[]> => getSpeakers(projectId),
+    async (): Promise<Speaker[]> => {
+      const speakers = await getSpeakers();
+      return speakers.map((speaker) => ({
+        ...speaker,
+        projectId: speaker.projectId.id,
+      }));
+    },
     {
       ...config,
     }

@@ -97,7 +97,11 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
   };
 
   return (
-    <Droppable droppableId={project?.id} type="SPEAKER" direction="vertical">
+    <Droppable
+      droppableId={`${project?.id}`}
+      type="SPEAKER"
+      direction="vertical"
+    >
       {(provided, droppableSnapshot) => (
         <Stack
           ref={provided.innerRef}
@@ -150,7 +154,7 @@ export const SpeakerGroup: React.FC<SpeakerGroupProps> = ({
               {sortByIndex(speakers)?.map((speaker, index) => (
                 <Draggable
                   key={speaker?.id}
-                  draggableId={speaker?.id}
+                  draggableId={`${speaker?.id}`}
                   index={index}
                 >
                   {({

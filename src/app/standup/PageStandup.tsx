@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   Box,
@@ -11,9 +11,11 @@ import {
   useDisclosure,
   Input,
 } from '@chakra-ui/react';
+import axios from 'axios';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { BsArrowsAngleContract, BsArrowsAngleExpand } from 'react-icons/bs';
 import { FiPlus } from 'react-icons/fi';
+import { useQuery } from 'react-query';
 
 import { Loader, Page, PageContent } from '@/app/layout';
 import { Icon, PopoverInput, useToastSuccess } from '@/components';
@@ -29,11 +31,51 @@ import {
   useProjectReplace,
   useSpeakers,
 } from './standup.firebase';
+import { Project } from './standup.types';
 
 export const PageStandup = () => {
   const { colorModeValue } = useDarkMode();
+  // const [isErrorSpeakers, setIsErrorSpeakers] = useState(false);
+  // const [isLoadingSpeakers, setIsloadingSpeakers] = useState(false);
+  // const [speakers, setSpeakers] = useState([]);
+
+  //requete pour récuperer les spreakers sur l'API
+
+  // const { data, isLoading: isFetchingSpeakers } = useQuery('new-speakers', () =>
+  //   axios.get('https://localhost:8000/speakers')
+  // );
+  // console.log(data);
+
+  // requete pour récuperer les spreakers sur l'API
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     setIsErrorSpeakers(false);
+  //     setIsloadingSpeakers(true);
+  //     try {
+  //       const response = await axios('https://localhost:8000/speakers');
+
+  //       setSpeakers(response);
+  //       console.log('useEffect', response);
+  //     } catch (error) {
+  //       setIsErrorSpeakers(true);
+  //     }
+  //     setIsloadingSpeakers(false);
+  //   };
+  //   fetchData();
+  // }, []);
 
   const { data: projects, isLoading: isLoadingProjects } = useProjects();
+  console.log('projeccst', projects);
+
+  // const { data: projects, isLoading: isLoadingProjects } = useQuery<Project[]>(
+  //   'new-project',
+  //   async () => {
+  //     const response = await axios.get('https://localhost:8000/projects');
+  //     console.log(response);
+  //     return projects;
+  //   }
+  // );
+
   const toastSuccess = useToastSuccess();
   const {
     mutate: addProject,
@@ -115,6 +157,21 @@ export const PageStandup = () => {
     isLoading: isLoadingSpeakers,
     isError: isErrorSpeakers,
   } = useSpeakers(null, { refetchInterval: 15000 });
+  // const {
+  //   data: speakers,
+  //   isFetching: isFetchingSpeakers,
+  //   isLoading: isLoadingSpeakers,
+  //   isError: isErrorSpeakers,
+  // } = useQuery<any>('new-speakers', () =>
+  //   axios.get('https://localhost:8000/speakers')
+  // );
+
+  console.log({
+    speakers,
+    isFetchingSpeakers,
+    isLoadingSpeakers,
+    isErrorSpeakers,
+  });
 
   const absentSpeakers = speakers?.filter((speaker) => speaker.isAbsent);
 
@@ -210,7 +267,7 @@ export const PageStandup = () => {
                       {sortByIndex(projects)?.map((project, index) => (
                         <Draggable
                           key={project.id}
-                          draggableId={project.id}
+                          draggableId={`${project.id}`}
                           index={index}
                         >
                           {(provided) => (

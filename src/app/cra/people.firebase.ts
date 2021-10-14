@@ -1,10 +1,4 @@
-import {
-  useMutation,
-  UseMutationOptions,
-  useQuery,
-  useQueryClient,
-  UseQueryOptions,
-} from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 
 import firebase from '@/firebase';
 
@@ -24,7 +18,6 @@ export const usePeoples = (config: UseQueryOptions<People[]> = {}) => {
     ...config,
   });
 };
-console.log(peoplesCollectionRef);
 const addPeople = (payload: People): any => {
   return peoplesCollectionRef?.add(payload);
 };

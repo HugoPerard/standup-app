@@ -15,8 +15,10 @@ import {
   Td,
   Text,
 } from '@chakra-ui/react';
+import axios from 'axios';
 import dayjs from 'dayjs';
 import Papa from 'papaparse';
+import { useQuery } from 'react-query';
 
 import { Page, PageContent } from '@/app/layout';
 import { Select } from '@/components/Select';
@@ -83,11 +85,14 @@ export const PageCRA = () => {
     label: projectCode,
     value: projectCode,
   }));
-  console.log(projectCodes);
 
-  const { data: people } = usePeoples();
+  // const { data: people } = usePeoples();
 
-  const mailAddresses = (people || []).map((people) => ({
+  const { data: peoples } = useQuery<any>('new-people', () =>
+    axios.get('https://localhost:8000/peoples')
+  );
+
+  const mailAddresses = (peoples || []).map((people: { email; status }) => ({
     label: people.email,
     value: people.email,
     status: people.status,
@@ -95,7 +100,7 @@ export const PageCRA = () => {
 
   const filterEmployees = () => {
     const employeesPeople = mailAddresses?.filter(
-      (person) => person.status === 'salarie'
+      (person) => person.status === 'salarié'
     );
 
     setSelectedPeople(employeesPeople);
@@ -111,7 +116,7 @@ export const PageCRA = () => {
 
   const filterTunisianPerson = () => {
     const camelStudioPeople = mailAddresses?.filter(
-      (person) => person.status === 'Tunisie'
+      (person) => person.status === 'tunisie'
     );
 
     setSelectedPeople(camelStudioPeople);
@@ -119,7 +124,7 @@ export const PageCRA = () => {
 
   const filterExpensivePerson = () => {
     const expensivePeople = mailAddresses?.filter(
-      (person) => person.status === 'personne couteuse'
+      (person) => person.status === 'couteux'
     );
 
     setSelectedPeople(expensivePeople);
@@ -130,7 +135,6 @@ export const PageCRA = () => {
   const handleChangeProject = (newProjectCode) => {
     setSelectedProject(newProjectCode);
   };
-  // console.log(selectedPeople);
   return (
     <Page containerSize="full" width="full">
       <PageContent>
@@ -143,7 +147,7 @@ export const PageCRA = () => {
               check week
             </Button>
             <Button type="submit" bg="yellow.500">
-              check Assholes
+              check absent of the day
             </Button>
           </Box>
 
