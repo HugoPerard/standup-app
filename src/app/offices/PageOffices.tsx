@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import {
   Badge,
   Box,
@@ -9,11 +11,14 @@ import {
   Stack,
   Text,
   Wrap,
+  Avatar,
+  useForceUpdate,
 } from '@chakra-ui/react';
 import { FiPlus } from 'react-icons/fi';
 
 import { useCurrentUser } from '@/app/auth/useAuth';
 import { Loader, Page, PageContent } from '@/app/layout';
+import { useToastError } from '@/components';
 import { Icon, PersonTag, PopoverInput } from '@/components';
 import { useDarkMode } from '@/hooks/useDarkMode';
 
@@ -40,6 +45,7 @@ export const PageOffices = () => {
   } = useOfficeDelete();
 
   const { data: offices, isLoading: isLoadingOffices } = useOffices();
+  const toastError = useToastError();
 
   const { mutate: addPersonOnOffice } = useAddPersonOnOffice();
   const { mutate: removePersonOnOffice } = useRemovePersonOnOffice();
@@ -100,17 +106,41 @@ export const PageOffices = () => {
             <Wrap>
               <Text fontWeight="medium">Liste des bureaux :</Text>
               {offices?.map((office) => (
-                <PersonTag
-                  size="sm"
-                  onRemove={() => deleteOffice(office?.id)}
-                  isLoadingRemove={isLoadingDeleteOffice}
+                <div
+                  style={{
+                    alignContent: 'center',
+                    display: 'table',
+                    textAlign: 'center',
+                    verticalAlign: 'middle',
+                  }}
                 >
-                  {office.name}
-                </PersonTag>
+                  <PersonTag
+                    size="sm"
+                    onRemove={() => deleteOffice(office?.id)}
+                    isLoadingRemove={isLoadingDeleteOffice}
+                  >
+                    <Avatar
+                      style={{ marginRight: '5px' }}
+                      size="2xs"
+                      name={currentUser?.username}
+                      src={currentUser?.photoUrl}
+                    />
+                    {office.name}
+                  </PersonTag>
+                </div>
               ))}
               <Box minW="10rem">
                 <PopoverInput
-                  onSubmit={(value) => addOffice({ name: value, presence: {} })}
+                  onSubmit={(value) => {
+                    {
+                      const checkOffices = offices.find(
+                        ({ name }) => name === value
+                      );
+                      checkOffices
+                        ? toastError({ title: 'Office is already existing' })
+                        : addOffice({ name: value, presence: {} });
+                    }
+                  }}
                   label="Nom"
                   submitLabel="Ajouter un bureau"
                   placeholder="Saisir le nom du bureau"
