@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-
 import {
   Badge,
   Box,
@@ -11,8 +9,6 @@ import {
   Stack,
   Text,
   Wrap,
-  Avatar,
-  useForceUpdate,
 } from '@chakra-ui/react';
 import { FiPlus } from 'react-icons/fi';
 
@@ -106,28 +102,15 @@ export const PageOffices = () => {
             <Wrap>
               <Text fontWeight="medium">Liste des bureaux :</Text>
               {offices?.map((office) => (
-                <div
-                  style={{
-                    alignContent: 'center',
-                    display: 'table',
-                    textAlign: 'center',
-                    verticalAlign: 'middle',
-                  }}
-                >
+                <Box d="flex">
                   <PersonTag
                     size="sm"
                     onRemove={() => deleteOffice(office?.id)}
                     isLoadingRemove={isLoadingDeleteOffice}
                   >
-                    <Avatar
-                      style={{ marginRight: '5px' }}
-                      size="2xs"
-                      name={currentUser?.username}
-                      src={currentUser?.photoUrl}
-                    />
                     {office.name}
                   </PersonTag>
-                </div>
+                </Box>
               ))}
               <Box minW="10rem">
                 <PopoverInput
