@@ -169,37 +169,54 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
             </Text>
           </Stack>
           <Menu>
-            <MenuButton
-              as={IconButton}
-              icon={<BsThreeDotsVertical />}
-              variant="@link"
-              size="xs"
-            />
-            <Portal>
-              <MenuList>
-                <MenuItem icon={<FiEdit />} onClick={onOpen}>
-                  Éditer
-                </MenuItem>
-                {!isAbsent && (
-                  <MenuItem icon={<FiWatch />} onClick={() => resetStopwatch()}>
-                    Réinitialiser
-                  </MenuItem>
+            {({ isOpen, onClose }) => (
+              <>
+                <MenuButton
+                  as={IconButton}
+                  icon={<BsThreeDotsVertical />}
+                  variant="@link"
+                  size="xs"
+                />
+                {isOpen && (
+                  <Portal>
+                    <MenuList>
+                      <MenuItem icon={<FiEdit />} onClick={onOpen}>
+                        Éditer
+                      </MenuItem>
+                      {!isAbsent && (
+                        <MenuItem
+                          icon={<FiWatch />}
+                          onClick={() => resetStopwatch()}
+                        >
+                          Réinitialiser
+                        </MenuItem>
+                      )}
+                      <MenuItem
+                        icon={isAbsent ? <FiUserCheck /> : <FiUserX />}
+                        onClick={(event) => {
+                          onClose();
+                          event.stopPropagation();
+                          handleAbsent();
+                        }}
+                      >
+                        {isAbsent ? 'Mettre présent' : 'Mettre absent'}
+                      </MenuItem>
+                      <ConfirmMenuItem
+                        icon={<FiTrash2 />}
+                        confirmContent="Confirmer la suppression"
+                        onClick={(event) => {
+                          onClose();
+                          event.stopPropagation();
+                          handleDeleteSpeaker();
+                        }}
+                      >
+                        Supprimer
+                      </ConfirmMenuItem>
+                    </MenuList>
+                  </Portal>
                 )}
-                <MenuItem
-                  icon={isAbsent ? <FiUserCheck /> : <FiUserX />}
-                  onClick={() => handleAbsent()}
-                >
-                  {isAbsent ? 'Mettre présent' : 'Mettre absent'}
-                </MenuItem>
-                <ConfirmMenuItem
-                  icon={<FiTrash2 />}
-                  confirmContent="Confirmer la suppression"
-                  onClick={() => handleDeleteSpeaker()}
-                >
-                  Supprimer
-                </ConfirmMenuItem>
-              </MenuList>
-            </Portal>
+              </>
+            )}
           </Menu>
         </Stack>
         <Modal isOpen={isOpen} onClose={onClose}>

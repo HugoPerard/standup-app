@@ -1,7 +1,16 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
-import { IconButton, Divider, Spinner, Stack, Text } from '@chakra-ui/react';
+import {
+  IconButton,
+  Divider,
+  Flex,
+  Spinner,
+  Stack,
+  Text,
+  useBreakpointValue,
+} from '@chakra-ui/react';
 import { DragDropContext } from 'react-beautiful-dnd';
+import { Scrollbars } from 'react-custom-scrollbars';
 import { FiUserCheck, FiUserPlus } from 'react-icons/fi';
 
 import { Loader, Page, PageContent } from '@/app/layout';
@@ -110,87 +119,114 @@ export const PageStandup = () => {
     return;
   };
 
+  const projectsRefs = useRef([]);
+
+  const containerSize: 'full' | 'xl' = useBreakpointValue({
+    base: 'full',
+    xl: 'xl',
+  });
+
+  const isMobile = useBreakpointValue({ base: true, md: false });
+
   return (
-    <Page containerSize="xl">
-      <PageContent>
-        {isLoading && <Loader />}
-        {isError && (
-          <EmptyItem>
-            Une erreur est survenue lors de la récupération des personnes
-          </EmptyItem>
-        )}
-        {!isLoading && !isError && (
-          <DragDropContext onDragEnd={handleDragEnd}>
-            <Stack spacing={10} direction="row" py={4}>
-              <ProjectsBar
-                projects={sortedProjects}
-                currentIndex={currentIndex}
-                setCurrentIndex={setCurrentIndex}
-                flex={2}
-              />
-              <Stack
-                direction="column"
-                divider={<Divider pt={40} pb={3} />}
-                flex={4}
-                maxW={800}
-              >
-                {sortedProjects?.map((project) => (
-                  <ProjectDetails
-                    project={project}
-                    speakers={speakers?.filter(
-                      (speaker) => speaker?.projectId === project?.id
-                    )}
-                  />
-                ))}
-              </Stack>
-              <Stack
-                bg={colorModeValue('gray.200', 'gray.600')}
-                color={colorModeValue('gray.800', 'gray.50')}
-                borderRadius="md"
-                p={3}
-                height="fit-content"
-                flex={1}
-              >
-                <Stack direction="row" justifyContent="space-between" mb={2}>
-                  <Text fontWeight="medium">
-                    Absents
-                    {isFetchingSpeakers && <Spinner ml={1} size="sm" />}
-                  </Text>
-                  <IconButton
-                    aria-label="Ajouter un absent"
-                    icon={<FiUserPlus />}
-                    variant="@secondary"
-                    size="xs"
-                  />
-                </Stack>
-                {absentSpeakers?.length > 0 ? (
-                  <Stack spacing={1}>
-                    {absentSpeakers?.map((absentSpeaker) => (
-                      <Stack direction="row" spacing={2} alignItems="center">
-                        <IconButton
-                          aria-label="Retirer des absents"
-                          icon={<FiUserCheck />}
-                          onClick={() => handleAbsent(absentSpeaker?.id, false)}
-                          variant="@secondary"
-                          size="xs"
-                        />
-                        <Text>{absentSpeaker?.name}</Text>
-                      </Stack>
+    <DragDropContext onDragEnd={handleDragEnd}>
+      <Page containerSize={containerSize}>
+        <PageContent alignContent="center">
+          {isLoading && <Loader />}
+          {isError && (
+            <EmptyItem>
+              Une erreur est survenue lors de la récupération des personnes
+            </EmptyItem>
+          )}
+          {!isLoading && !isError && (
+            <Stack direction="row" spacing={5} py={4} h="78vh">
+              {!isMobile && (
+                <ProjectsBar
+                  projects={sortedProjects}
+                  currentIndex={currentIndex}
+                  setCurrentIndex={setCurrentIndex}
+                  projectsRefs={projectsRefs}
+                  flex={1}
+                />
+              )}
+              <Flex flex={5}>
+                <Scrollbars autoHide>
+                  <Stack
+                    direction="column"
+                    divider={<Divider pt={40} pb={10} />}
+                    px={3}
+                  >
+                    {sortedProjects?.map((project, index) => (
+                      <ProjectDetails
+                        ref={(el) => (projectsRefs.current[index] = el)}
+                        id={`project-${project?.id}`}
+                        key={project?.id}
+                        project={project}
+                        speakers={speakers?.filter(
+                          (speaker) => speaker?.projectId === project?.id
+                        )}
+                      />
                     ))}
                   </Stack>
-                ) : (
-                  <EmptySpeakerCard
-                    bg={colorModeValue('gray.100', 'gray.500')}
-                    color={colorModeValue('gray.800', 'gray.50')}
-                  >
-                    Aucune personne n'est absent
-                  </EmptySpeakerCard>
-                )}
-              </Stack>
+                </Scrollbars>
+              </Flex>
+              {!isMobile && (
+                <Stack
+                  bg={colorModeValue('gray.200', 'gray.600')}
+                  color={colorModeValue('gray.800', 'gray.50')}
+                  borderRadius="md"
+                  p={3}
+                  height="fit-content"
+                  flex={1}
+                >
+                  <Stack direction="row" justifyContent="space-between" mb={2}>
+                    <Text fontWeight="medium">
+                      Absents
+                      {isFetchingSpeakers && <Spinner ml={1} size="sm" />}
+                    </Text>
+                    <IconButton
+                      aria-label="Ajouter un absent"
+                      icon={<FiUserPlus />}
+                      variant="@secondary"
+                      size="xs"
+                    />
+                  </Stack>
+                  {absentSpeakers?.length > 0 ? (
+                    <Stack spacing={1}>
+                      {absentSpeakers?.map((absentSpeaker) => (
+                        <Stack
+                          key={absentSpeaker?.id}
+                          direction="row"
+                          spacing={2}
+                          alignItems="center"
+                        >
+                          <IconButton
+                            aria-label="Retirer des absents"
+                            icon={<FiUserCheck />}
+                            onClick={() =>
+                              handleAbsent(absentSpeaker?.id, false)
+                            }
+                            variant="@secondary"
+                            size="xs"
+                          />
+                          <Text>{absentSpeaker?.name}</Text>
+                        </Stack>
+                      ))}
+                    </Stack>
+                  ) : (
+                    <EmptySpeakerCard
+                      bg={colorModeValue('gray.100', 'gray.500')}
+                      color={colorModeValue('gray.800', 'gray.50')}
+                    >
+                      Aucune personne n'est absent
+                    </EmptySpeakerCard>
+                  )}
+                </Stack>
+              )}
             </Stack>
-          </DragDropContext>
-        )}
-      </PageContent>
-    </Page>
+          )}
+        </PageContent>
+      </Page>
+    </DragDropContext>
   );
 };

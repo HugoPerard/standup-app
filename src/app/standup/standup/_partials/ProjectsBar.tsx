@@ -11,12 +11,14 @@ interface ProjectsBarProps extends StackProps {
   projects: Project[];
   currentIndex: number;
   setCurrentIndex(index: number): void;
+  projectsRefs: any;
 }
 
 export const ProjectsBar: React.FC<ProjectsBarProps> = ({
   projects,
   currentIndex,
   setCurrentIndex,
+  projectsRefs,
   ...rest
 }) => {
   const { colorModeValue } = useDarkMode();
@@ -85,9 +87,20 @@ export const ProjectsBar: React.FC<ProjectsBarProps> = ({
                     }
                     borderRadius="md"
                     bg={colorModeValue('gray.200', 'gray.600')}
-                    onClick={() => setCurrentIndex(project?.index)}
+                    onClick={() => {
+                      setCurrentIndex(project?.index);
+                      projectsRefs.current[index].scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start',
+                      });
+                    }}
                   >
-                    <Text fontSize="xs" fontWeight="medium" isTruncated>
+                    <Text
+                      fontSize="xs"
+                      fontWeight="medium"
+                      maxW={200}
+                      isTruncated
+                    >
                       {project.name}
                     </Text>
                   </Stack>
