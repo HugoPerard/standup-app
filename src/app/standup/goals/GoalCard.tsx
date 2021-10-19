@@ -16,6 +16,7 @@ import {
 import { Fireworks, FireworksOptions } from 'fireworks-js/dist/react';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
+import ReactMarkdown from 'react-markdown';
 
 import { ConfirmMenuItem, EmptyItem, useToastSuccess } from '@/components';
 import { useDarkMode } from '@/hooks/useDarkMode';
@@ -111,7 +112,7 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, ...rest }) => {
           borderColor={colorModeValue('gray.400', undefined)}
         />
         <Stack flex="1" overflow="hidden">
-          <Text>{goal?.description}</Text>
+          <ReactMarkdown>{goal?.description}</ReactMarkdown>
           <Text as="span" fontWeight="bold" textAlign="end">
             {goal?.people?.join(' - ')}
           </Text>
