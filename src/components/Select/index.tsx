@@ -205,7 +205,7 @@ export const Select = forwardRef<HTMLElement, Props>((props, ref) => {
         : {})}
       {...(loadingMessage ? { loadingMessage: () => loadingMessage } : {})}
       {...(formatCreateLabel ? { formatCreateLabel } : {})}
-      placeholder={placeholder ? String(placeholder) : 'Select...'}
+      placeholder={placeholder ? String(placeholder) : 'Selectionner...'}
       menuPlacement="auto"
       ref={ref}
       {...asyncProps}

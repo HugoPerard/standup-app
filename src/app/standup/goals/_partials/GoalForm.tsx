@@ -18,6 +18,7 @@ export const GoalForm = forwardRef<HTMLElement, GoalFormProps>((props, ref) => {
   const currentUser = useCurrentUser();
 
   const { data: speakers } = useSpeakers();
+
   const peopleOptions = [
     ...(speakers || []).map((speaker) => ({
       value: speaker?.name,
@@ -27,7 +28,7 @@ export const GoalForm = forwardRef<HTMLElement, GoalFormProps>((props, ref) => {
   ];
 
   return (
-    <Stack spacing={3} {...props}>
+    <Stack {...props}>
       <FieldTextarea
         ref={ref}
         name="description"
@@ -40,6 +41,7 @@ export const GoalForm = forwardRef<HTMLElement, GoalFormProps>((props, ref) => {
         label="Personnes concernées"
         placeholder="Sélectionner les personnes concernées"
         options={peopleOptions}
+        defaultValue={[currentUser?.username]}
       />
     </Stack>
   );

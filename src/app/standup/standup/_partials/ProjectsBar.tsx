@@ -1,10 +1,17 @@
-import { Box, Button, Stack, StackProps, Text } from '@chakra-ui/react';
+import {
+  Button,
+  Stack,
+  StackProps,
+  Text,
+  useDisclosure,
+} from '@chakra-ui/react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
+import { Scrollbars } from 'react-custom-scrollbars';
 import { FiPlus } from 'react-icons/fi';
 
 import { useProjectAdd } from '@/app/standup/standup/standup.firebase';
 import { Project } from '@/app/standup/standup/standup.types';
-import { PopoverInput, useToastSuccess } from '@/components';
+import { FieldInput, FormModal, useToastSuccess } from '@/components';
 import { useDarkMode } from '@/hooks/useDarkMode';
 
 interface ProjectsBarProps extends StackProps {
@@ -23,6 +30,12 @@ export const ProjectsBar: React.FC<ProjectsBarProps> = ({
 }) => {
   const { colorModeValue } = useDarkMode();
   const toastSuccess = useToastSuccess();
+
+  const {
+    isOpen: isOpenAddProjectModal,
+    onOpen: onOpenAddProjectModal,
+    onClose: onCloseAddProjectModal,
+  } = useDisclosure();
 
   const isCurrentProject = (project: Project) => {
     return project?.index === currentIndex;
@@ -48,67 +61,70 @@ export const ProjectsBar: React.FC<ProjectsBarProps> = ({
 
   return (
     <Stack {...rest}>
-      <Box>
-        <PopoverInput
-          label="Nom"
-          submitLabel="Ajouter un projet"
-          placeholder="Saisir le nom du projet"
-          onSubmit={(value) => handleAddProject(value)}
-        >
-          <Button
-            leftIcon={<FiPlus />}
-            variant="@primary"
-            size="xs"
-            isLoading={isLoadingAddProject}
-          >
-            Ajouter un projet
-          </Button>
-        </PopoverInput>
-      </Box>
+      <Button
+        leftIcon={<FiPlus />}
+        variant="@primary"
+        size="sm"
+        onClick={() => onOpenAddProjectModal()}
+        isLoading={isLoadingAddProject}
+      >
+        Ajouter un projet
+      </Button>
+      <FormModal
+        isOpen={isOpenAddProjectModal}
+        onClose={onCloseAddProjectModal}
+        title="Ajouter un projet"
+        submitLabel="Ajouter"
+        onSubmit={({ name }) => handleAddProject(name)}
+      >
+        <FieldInput name="name" label="Nom" />
+      </FormModal>
       <Droppable droppableId="board" type="PROJECT" direction="vertical">
         {(droppableProvided) => (
-          <Stack ref={droppableProvided.innerRef} direction="column">
-            {projects?.map((project, index) => (
-              <Draggable
-                key={project.id}
-                draggableId={project.id}
-                index={index}
-              >
-                {(provided) => (
-                  <Stack
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                    key={project?.id}
-                    p={2}
-                    border={isCurrentProject(project) ? '1px solid' : undefined}
-                    borderColor={
-                      isCurrentProject(project) ? 'brand.500' : undefined
-                    }
-                    borderRadius="md"
-                    bg={colorModeValue('gray.200', 'gray.600')}
-                    onClick={() => {
-                      setCurrentIndex(project?.index);
-                      projectsRefs.current[index].scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start',
-                      });
-                    }}
-                  >
-                    <Text
-                      fontSize="xs"
-                      fontWeight="medium"
-                      maxW={200}
-                      isTruncated
+          <Scrollbars autoHide>
+            <Stack ref={droppableProvided.innerRef} direction="column">
+              {projects?.map((project, index) => (
+                <Draggable
+                  key={project.id}
+                  draggableId={project.id}
+                  index={index}
+                >
+                  {(draggableProvided) => (
+                    <Stack
+                      ref={draggableProvided.innerRef}
+                      {...draggableProvided.draggableProps}
+                      {...draggableProvided.dragHandleProps}
+                      key={project?.id}
+                      border={
+                        isCurrentProject(project) ? '1px solid' : undefined
+                      }
+                      borderColor="brand.500"
+                      borderRadius="md"
+                      bg={colorModeValue('gray.200', 'gray.600')}
+                      onClick={() => {
+                        setCurrentIndex(project?.index);
+                        projectsRefs.current[index].scrollIntoView({
+                          behavior: 'smooth',
+                          block: 'start',
+                        });
+                      }}
+                      p={2}
                     >
-                      {project.name}
-                    </Text>
-                  </Stack>
-                )}
-              </Draggable>
-            ))}
-            {droppableProvided.placeholder}
-          </Stack>
+                      <Text
+                        fontSize="xs"
+                        fontWeight="medium"
+                        maxW={200}
+                        isTruncated
+                      >
+                        {project.name}
+                      </Text>
+                    </Stack>
+                  )}
+                </Draggable>
+              ))}
+              {droppableProvided.placeholder}
+            </Stack>
+          </Scrollbars>
         )}
       </Droppable>
     </Stack>

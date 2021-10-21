@@ -8,7 +8,7 @@ import {
 
 import firebase from '@/firebase';
 
-import { Goal } from './goal.types';
+import { Goal } from './goals.types';
 
 const goalsCollectionRef = firebase?.firestore?.()?.collection('goals');
 

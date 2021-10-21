@@ -40,7 +40,7 @@ export const FieldInput = forwardRef((props: FieldInputProps, ref) => {
     type,
     placeholder,
     helper,
-    size = 'sm',
+    size = 'md',
     ...rest
   } = otherProps;
   const { required } = props;

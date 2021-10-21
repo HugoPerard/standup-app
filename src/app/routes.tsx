@@ -2,13 +2,13 @@
 
 export const STANDUP = '/standup';
 
-export const STANDUP_GOALS = `${STANDUP}/goals`;
-export const STANDUP_SPEAKING = `${STANDUP}/speaking`;
-export const STANDUP_THANKS = `${STANDUP}/thanks`;
+export const STANDUP_GOALS = `${STANDUP}/objectif`;
+export const STANDUP_SPEAKING = `${STANDUP}/standup`;
+export const STANDUP_THANKS = `${STANDUP}/remerciements`;
 
 // Offices
 
-export const OFFICES = '/offices';
+export const OFFICES = '/bureaux';
 
 // CRA
 
@@ -16,9 +16,9 @@ export const CRA = '/cra';
 
 // Administrative
 
-export const ADMINISTRATIVE = '/administrative';
+export const ADMINISTRATIVE = '/administratif';
 
-export const ADMINISTRATIVE_LEAVE = `${ADMINISTRATIVE}/leave`;
+export const ADMINISTRATIVE_LEAVE = `${ADMINISTRATIVE}/congés`;
 
 export const Routes = {
   STANDUP,

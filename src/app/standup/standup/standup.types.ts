@@ -4,6 +4,7 @@ export interface Speaker {
   projectId: string;
   index: number;
   isAbsent: boolean;
+  photoUrl: string;
 }
 
 export interface Project {

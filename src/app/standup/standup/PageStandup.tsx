@@ -8,13 +8,19 @@ import {
   Stack,
   Text,
   useBreakpointValue,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { Scrollbars } from 'react-custom-scrollbars';
 import { FiUserCheck, FiUserPlus } from 'react-icons/fi';
 
 import { Loader, Page, PageContent } from '@/app/layout';
-import { EmptyItem, useToastSuccess } from '@/components';
+import {
+  EmptyItem,
+  FieldMultiSelect,
+  FormModal,
+  useToastSuccess,
+} from '@/components';
 import { useDarkMode } from '@/hooks/useDarkMode';
 import { sortByIndex } from '@/utils/sortByIndex';
 
@@ -128,6 +134,12 @@ export const PageStandup = () => {
 
   const isMobile = useBreakpointValue({ base: true, md: false });
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const handleSubmitAbsents = (values) => {
+    values?.absents?.forEach((speakerId) => handleAbsent(speakerId, true));
+  };
+
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <Page containerSize={containerSize}>
@@ -139,7 +151,7 @@ export const PageStandup = () => {
             </EmptyItem>
           )}
           {!isLoading && !isError && (
-            <Stack direction="row" spacing={5} py={4} h="78vh">
+            <Stack direction="row" spacing={5} py={4} h="79vh">
               {!isMobile && (
                 <ProjectsBar
                   projects={sortedProjects}
@@ -153,7 +165,7 @@ export const PageStandup = () => {
                 <Scrollbars autoHide>
                   <Stack
                     direction="column"
-                    divider={<Divider pt={40} pb={10} />}
+                    divider={<Divider pt={20} pb={10} />}
                     px={3}
                   >
                     {sortedProjects?.map((project, index) => (
@@ -185,10 +197,11 @@ export const PageStandup = () => {
                       {isFetchingSpeakers && <Spinner ml={1} size="sm" />}
                     </Text>
                     <IconButton
-                      aria-label="Ajouter un absent"
+                      aria-label="Ajouter des absents"
                       icon={<FiUserPlus />}
                       variant="@secondary"
                       size="xs"
+                      onClick={onOpen}
                     />
                   </Stack>
                   {absentSpeakers?.length > 0 ? (
@@ -209,9 +222,29 @@ export const PageStandup = () => {
                             variant="@secondary"
                             size="xs"
                           />
-                          <Text>{absentSpeaker?.name}</Text>
+                          <Text maxW={150} isTruncated>
+                            {absentSpeaker?.name}
+                          </Text>
                         </Stack>
                       ))}
+                      <FormModal
+                        isOpen={isOpen}
+                        onClose={onClose}
+                        onSubmit={handleSubmitAbsents}
+                        title="Ajouter des absents"
+                      >
+                        <FieldMultiSelect
+                          label="Personnes absentes"
+                          name="absents"
+                          required="Le nom de la personne est requis"
+                          options={speakers
+                            ?.filter(({ isAbsent }) => !isAbsent)
+                            .map((speaker) => ({
+                              label: speaker.name,
+                              value: speaker.id,
+                            }))}
+                        />
+                      </FormModal>
                     </Stack>
                   ) : (
                     <EmptySpeakerCard

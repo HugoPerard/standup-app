@@ -18,13 +18,17 @@ import { BsThreeDotsVertical } from 'react-icons/bs';
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 import ReactMarkdown from 'react-markdown';
 
-import { ConfirmMenuItem, EmptyItem, useToastSuccess } from '@/components';
+import {
+  ConfirmMenuItem,
+  EmptyItem,
+  FormModal,
+  useToastSuccess,
+} from '@/components';
 import { useDarkMode } from '@/hooks/useDarkMode';
 
-import { GoalFormValues } from './GoalForm';
-import { GoalModal } from './GoalModal';
-import { Goal } from './goal.types';
-import { useGoalDelete, useGoalUpdate } from './goals.firebase';
+import { GoalForm, GoalFormValues } from '../_partials/GoalForm';
+import { useGoalDelete, useGoalUpdate } from '../goals.firebase';
+import { Goal } from '../goals.types';
 
 interface GoalCardProps extends StackProps {
   goal: Goal;
@@ -147,15 +151,16 @@ export const GoalCard: React.FC<GoalCardProps> = ({ goal, ...rest }) => {
           </Portal>
         </Menu>
       </Stack>
-      {isOpenGoalModal && (
-        <GoalModal
-          onClose={onCloseGoalModal}
-          onSubmit={handleEdit}
-          title="Modifier un objectif"
-          confirmText="Modifier"
-          initialsValues={goal}
-        />
-      )}
+      <FormModal
+        isOpen={isOpenGoalModal}
+        onClose={onCloseGoalModal}
+        onSubmit={handleEdit}
+        title="Modifier un objectif"
+        submitLabel="Modifier"
+        initialValues={goal}
+      >
+        <GoalForm />
+      </FormModal>
       {isFireworksOn && <Fireworks options={options} style={style} />}
     </>
   );

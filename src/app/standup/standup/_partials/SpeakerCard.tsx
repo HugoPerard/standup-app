@@ -1,8 +1,8 @@
-import { forwardRef, useState } from 'react';
+import { forwardRef } from 'react';
 
 import {
-  Flex,
-  Checkbox,
+  Avatar,
+  AvatarBadge,
   IconButton,
   Menu,
   MenuButton,
@@ -11,25 +11,15 @@ import {
   Stack,
   StackProps,
   Text,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  Button,
-  ModalFooter,
   useDisclosure,
-  Spacer,
 } from '@chakra-ui/react';
-import { Formiz } from '@formiz/core';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import {
   FiTrash2,
   FiWatch,
-  FiUserX,
-  FiUserCheck,
   FiEdit,
+  FiPlayCircle,
+  FiPauseCircle,
 } from 'react-icons/fi';
 import { useStopwatch } from 'react-timer-hook';
 
@@ -42,7 +32,7 @@ import {
   ConfirmMenuItem,
   EmptyItem,
   FieldInput,
-  Icon,
+  FormModal,
   MenuItem,
   useToastSuccess,
 } from '@/components';
@@ -50,10 +40,9 @@ import { useDarkMode } from '@/hooks/useDarkMode';
 
 interface SpeakerCardProps extends StackProps {
   speaker: Speaker;
-  index: number;
 }
 export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
-  ({ speaker, index, ...rest }, ref) => {
+  ({ speaker, ...rest }, ref) => {
     const { colorModeValue } = useDarkMode();
     const toastSuccess = useToastSuccess();
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -61,26 +50,22 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
     const { seconds, minutes, isRunning, start, pause, reset } = useStopwatch({
       autoStart: false,
     });
-    const [isSpeaked, setIsSpeaked] = useState(false);
 
     const isAbsent = speaker?.isAbsent;
 
-    const controlStopWatch = () => {
-      if (isAbsent) {
-        return;
-      }
+    const toggleTimer = () => {
       if (isRunning) {
         pause();
-        setIsSpeaked(true);
       } else {
         start();
       }
     };
+
     const resetStopwatch = () => {
       reset();
-      setIsSpeaked(false);
       pause();
     };
+
     const handleAbsent = () => {
       updateSpeaker({
         id: speaker.id,
@@ -111,141 +96,110 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
         <Stack
           ref={ref}
           id={speaker?.id}
-          direction="row"
-          spacing={3}
-          alignItems="center"
           bg={colorModeValue('gray.200', 'gray.600')}
-          p={2}
+          opacity={isAbsent ? 0.5 : 1}
+          p={4}
           borderRadius="md"
-          opacity={(isSpeaked && !isRunning) || isAbsent ? '0.5' : undefined}
-          {...(isRunning
-            ? {
-                border: '1 solid',
-                borderColor: 'brand.500',
-              }
-            : {})}
+          alignItems="center"
+          maxW={200}
           {...rest}
         >
-          {isAbsent ? (
-            <Flex w={4} pl={0.5}>
-              <Icon icon={FiUserX} />
-            </Flex>
-          ) : (
-            <Flex
-              onClick={() => {
-                pause();
-                setIsSpeaked(true);
-              }}
-              w={4}
-            >
-              <Checkbox
-                isIndeterminate={isRunning}
-                isChecked={isSpeaked}
-                borderColor={colorModeValue('gray.400', undefined)}
-              />
-            </Flex>
-          )}
           <Stack
-            onClick={controlStopWatch}
             direction="row"
-            spacing={3}
-            cursor="pointer"
-            flex="1"
             justifyContent="space-between"
-            alignItems="center"
+            flex={1}
+            w="full"
           >
-            <Text
-              fontWeight="medium"
-              fontSize="sm"
-              isTruncated
-              maxW="12rem"
-              // textDecoration={speaker?.isAbsent ? 'line-through' : undefined}
-            >
-              {speaker?.name}
-            </Text>
-            <Text w={45}>
+            <Menu>
+              {/* Transparent menu for center Avatar */}
+              <MenuButton
+                as={IconButton}
+                icon={<BsThreeDotsVertical />}
+                size="xs"
+                opacity={0}
+              />
+            </Menu>
+            <Avatar src={speaker?.photoUrl} color="brand">
+              <AvatarBadge
+                borderColor={isAbsent ? 'red.100' : 'green.100'}
+                bg={isAbsent ? 'red.500' : 'green.500'}
+                boxSize="1.25em"
+                onClick={() => handleAbsent()}
+                cursor="pointer"
+              />
+            </Avatar>
+            <Menu>
+              {({ isOpen, onClose }) => (
+                <>
+                  <MenuButton
+                    as={IconButton}
+                    icon={<BsThreeDotsVertical />}
+                    variant="@link"
+                    size="xs"
+                  />
+                  {isOpen && (
+                    <Portal>
+                      <MenuList>
+                        <MenuItem icon={<FiEdit />} onClick={onOpen}>
+                          Éditer
+                        </MenuItem>
+                        {!isAbsent && (
+                          <MenuItem
+                            icon={<FiWatch />}
+                            onClick={() => resetStopwatch()}
+                          >
+                            Réinitialiser
+                          </MenuItem>
+                        )}
+                        <ConfirmMenuItem
+                          icon={<FiTrash2 />}
+                          confirmContent="Confirmer la suppression"
+                          onClick={(event) => {
+                            onClose();
+                            event.stopPropagation();
+                            handleDeleteSpeaker();
+                          }}
+                        >
+                          Supprimer
+                        </ConfirmMenuItem>
+                      </MenuList>
+                    </Portal>
+                  )}
+                </>
+              )}
+            </Menu>
+          </Stack>
+          <Text fontWeight="medium" fontSize="sm" maxW={150} isTruncated>
+            {speaker?.name}
+          </Text>
+          <Stack direction="row" alignItems="center">
+            <IconButton
+              icon={isRunning ? <FiPauseCircle /> : <FiPlayCircle />}
+              aria-label="play"
+              variant="ghost"
+              onClick={() => toggleTimer()}
+              size="sm"
+            />
+            <Text fontWeight={isRunning ? 'bold' : 'normal'}>
               {minutes?.toString()?.length === 1 ? `0${minutes}` : minutes}:
               {seconds?.toString()?.length === 1 ? `0${seconds}` : seconds}
             </Text>
           </Stack>
-          <Menu>
-            {({ isOpen, onClose }) => (
-              <>
-                <MenuButton
-                  as={IconButton}
-                  icon={<BsThreeDotsVertical />}
-                  variant="@link"
-                  size="xs"
-                />
-                {isOpen && (
-                  <Portal>
-                    <MenuList>
-                      <MenuItem icon={<FiEdit />} onClick={onOpen}>
-                        Éditer
-                      </MenuItem>
-                      {!isAbsent && (
-                        <MenuItem
-                          icon={<FiWatch />}
-                          onClick={() => resetStopwatch()}
-                        >
-                          Réinitialiser
-                        </MenuItem>
-                      )}
-                      <MenuItem
-                        icon={isAbsent ? <FiUserCheck /> : <FiUserX />}
-                        onClick={(event) => {
-                          onClose();
-                          event.stopPropagation();
-                          handleAbsent();
-                        }}
-                      >
-                        {isAbsent ? 'Mettre présent' : 'Mettre absent'}
-                      </MenuItem>
-                      <ConfirmMenuItem
-                        icon={<FiTrash2 />}
-                        confirmContent="Confirmer la suppression"
-                        onClick={(event) => {
-                          onClose();
-                          event.stopPropagation();
-                          handleDeleteSpeaker();
-                        }}
-                      >
-                        Supprimer
-                      </ConfirmMenuItem>
-                    </MenuList>
-                  </Portal>
-                )}
-              </>
-            )}
-          </Menu>
         </Stack>
-        <Modal isOpen={isOpen} onClose={onClose}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader />
-            <ModalCloseButton />
-            <Formiz autoForm onValidSubmit={handleUpdateUsername}>
-              <ModalBody>
-                <FieldInput
-                  label="Nom de la personne"
-                  name="speaker.name"
-                  required="Le nom de la personne est requis"
-                  defaultValue={speaker.name}
-                />
-              </ModalBody>
-
-              <ModalFooter>
-                <Button mr={3} onClick={onClose} variant="ghost">
-                  Annuler
-                </Button>
-                <Spacer />
-                <Button type="submit" color="white">
-                  Valider
-                </Button>
-              </ModalFooter>
-            </Formiz>
-          </ModalContent>
-        </Modal>
+        <FormModal
+          isOpen={isOpen}
+          onClose={onClose}
+          onSubmit={handleUpdateUsername}
+          title="Modifier une personne"
+          submitLabel="Modifier"
+        >
+          <FieldInput
+            label="Nom"
+            name="speaker.name"
+            required="Le nom est requis"
+            defaultValue={speaker.name}
+          />
+        </FormModal>
       </>
     );
   }

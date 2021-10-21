@@ -1,13 +1,15 @@
 import { forwardRef } from 'react';
 
 import {
+  ButtonGroup,
   Editable,
   EditablePreview,
   EditableInput,
+  Flex,
   Spinner,
   Stack,
   StackProps,
-  ButtonGroup,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { FiTrash2, FiUserPlus } from 'react-icons/fi';
@@ -15,9 +17,16 @@ import { FiTrash2, FiUserPlus } from 'react-icons/fi';
 import {
   useProjectDelete,
   useProjectUpdate,
+  useSpeakerAdd,
 } from '@/app/standup/standup/standup.firebase';
 import { Project, Speaker } from '@/app/standup/standup/standup.types';
-import { ResponsiveIconButton, useToastSuccess } from '@/components';
+import {
+  FieldInput,
+  FormModal,
+  ResponsiveIconButton,
+  useToastSuccess,
+} from '@/components';
+import { sortByIndex } from '@/utils/sortByIndex';
 
 import { EmptySpeakerCard, SpeakerCard } from './SpeakerCard';
 
@@ -29,6 +38,12 @@ export interface ProjectDetailsProps extends StackProps {
 export const ProjectDetails = forwardRef<HTMLDivElement, ProjectDetailsProps>(
   ({ project, speakers, ...rest }, ref) => {
     const toastSuccess = useToastSuccess();
+
+    const {
+      isOpen: isOpenAddSpeakerModal,
+      onOpen: onOpenAddSpeakerModal,
+      onClose: onCloseAddSpeakerModal,
+    } = useDisclosure();
 
     const {
       mutate: deleteProject,
@@ -49,6 +64,26 @@ export const ProjectDetails = forwardRef<HTMLDivElement, ProjectDetailsProps>(
       mutate: updateProject,
       isLoading: isLoadingUpdateProject,
     } = useProjectUpdate();
+
+    const {
+      mutate: addSpeaker,
+      isLoading: isLoadingAddSpeaker,
+    } = useSpeakerAdd();
+
+    const handleAddSpeaker = (name) => {
+      addSpeaker(
+        {
+          name,
+          projectId: project?.id,
+          index: speakers?.length,
+          isAbsent: false,
+        },
+        {
+          onSuccess: async () =>
+            toastSuccess({ title: `${name} a été ajouté avec succès` }),
+        }
+      );
+    };
 
     const handleUpdateProject = (name: string) => {
       if (name === project?.name) {
@@ -87,9 +122,21 @@ export const ProjectDetails = forwardRef<HTMLDivElement, ProjectDetailsProps>(
               icon={<FiUserPlus />}
               variant="@secondary"
               hideTextBreakpoints={{ base: true, lg: false }}
+              onClick={onOpenAddSpeakerModal}
+              isLoading={isLoadingAddSpeaker}
             >
               Ajouter une personne
             </ResponsiveIconButton>
+            <FormModal
+              isOpen={isOpenAddSpeakerModal}
+              onClose={onCloseAddSpeakerModal}
+              onSubmit={({ name }) => handleAddSpeaker(name)}
+              title="Ajouter une personne"
+              submitLabel="Ajouter"
+            >
+              <FieldInput name="name" label="Nom" />
+            </FormModal>
+
             <ResponsiveIconButton
               icon={<FiTrash2 />}
               variant="@primary"
@@ -104,50 +151,54 @@ export const ProjectDetails = forwardRef<HTMLDivElement, ProjectDetailsProps>(
         <Droppable
           droppableId={project?.id}
           type="SPEAKER"
-          direction="vertical"
+          direction="horizontal"
         >
           {(provided, droppableSnapshot) => (
-            <Stack
+            <Flex
               ref={provided.innerRef}
               border={
                 droppableSnapshot?.isDraggingOver ? '1px solid' : undefined
               }
+              borderColor="brand.500"
+              borderRadius="md"
+              flex={1}
             >
-              {speakers?.length > 0 ? (
-                speakers?.map((speaker, index) => (
-                  <Draggable
-                    key={speaker?.id}
-                    draggableId={speaker?.id}
-                    index={index}
-                  >
-                    {({
-                      innerRef,
-                      draggableProps,
-                      dragHandleProps,
-                      placeholder,
-                    }) => (
-                      <>
-                        <SpeakerCard
-                          ref={innerRef}
-                          {...draggableProps}
-                          {...dragHandleProps}
-                          data-react-beautiful-dnd-draggable="0"
-                          data-react-beautiful-dnd-drag-handle="0"
-                          speaker={speaker}
-                          index={speaker.index}
-                        />
-                        {placeholder}
-                      </>
-                    )}
-                  </Draggable>
-                ))
-              ) : (
-                <EmptySpeakerCard>
+              {speakers?.length === 0 ? (
+                <EmptySpeakerCard flex={1}>
                   Aucune personne n'est sur ce projet
                 </EmptySpeakerCard>
+              ) : (
+                <Stack direction="row" overflow="auto" p={1} flex={1}>
+                  {sortByIndex(speakers)?.map((speaker) => (
+                    <Draggable
+                      key={speaker?.id}
+                      draggableId={speaker?.id}
+                      index={speaker?.index}
+                    >
+                      {({
+                        innerRef,
+                        draggableProps,
+                        dragHandleProps,
+                        placeholder,
+                      }) => (
+                        <>
+                          <SpeakerCard
+                            ref={innerRef}
+                            {...draggableProps}
+                            {...dragHandleProps}
+                            data-react-beautiful-dnd-draggable="0"
+                            data-react-beautiful-dnd-drag-handle="0"
+                            speaker={speaker}
+                          />
+                          {placeholder}
+                        </>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </Stack>
               )}
-              {provided.placeholder}
-            </Stack>
+            </Flex>
           )}
         </Droppable>
       </Stack>
