@@ -35,6 +35,7 @@ export const GoalForm = forwardRef<HTMLElement, GoalFormProps>((props, ref) => {
         label="Description"
         placeholder="Saisir la description de l'objectif"
         required="La description est requise"
+        textareaProps={{ autoFocus: true }}
       />
       <FieldMultiSelect
         name="people"

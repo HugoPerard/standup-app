@@ -22,7 +22,7 @@ export const useAuth = () => {
           ? callback({
               username: authUser.displayName,
               email: authUser.email,
-              photoUrl: authUser.photoURL,
+              photoURL: authUser.photoURL,
             })
           : callback(null)
       ),
@@ -32,7 +32,7 @@ export const useAuth = () => {
           ? callback({
               username: authUser.displayName,
               email: authUser.email,
-              photoUrl: authUser.photoURL,
+              photoURL: authUser.photoURL,
             })
           : callback(null)
       ),
@@ -47,6 +47,6 @@ export const useCurrentUser = () => {
   return {
     username: currentUser.displayName,
     email: currentUser.email,
-    photoUrl: currentUser.photoURL,
+    photoURL: currentUser.photoURL,
   };
 };

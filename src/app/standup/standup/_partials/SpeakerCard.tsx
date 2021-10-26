@@ -31,12 +31,13 @@ import { Speaker } from '@/app/standup/standup/standup.types';
 import {
   ConfirmMenuItem,
   EmptyItem,
-  FieldInput,
   FormModal,
   MenuItem,
   useToastSuccess,
 } from '@/components';
 import { useDarkMode } from '@/hooks/useDarkMode';
+
+import { SpeakerForm, SpeakerFormValues } from './SpeakerForm';
 
 interface SpeakerCardProps extends StackProps {
   speaker: Speaker;
@@ -85,9 +86,8 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
       });
     };
 
-    const handleUpdateUsername = (values) => {
-      const name = values.speaker.name;
-      updateSpeaker({ id: speaker?.id, payload: { name } });
+    const handleUpdateSpeaker = (values: SpeakerFormValues) => {
+      updateSpeaker({ id: speaker?.id, payload: values });
       onClose();
     };
 
@@ -104,12 +104,7 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
           maxW={200}
           {...rest}
         >
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            flex={1}
-            w="full"
-          >
+          <Stack direction="row" justifyContent="space-between" w="full">
             <Menu>
               {/* Transparent menu for center Avatar */}
               <MenuButton
@@ -119,7 +114,7 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
                 opacity={0}
               />
             </Menu>
-            <Avatar src={speaker?.photoUrl} color="brand">
+            <Avatar src={speaker?.photoURL} color="brand">
               <AvatarBadge
                 borderColor={isAbsent ? 'red.100' : 'green.100'}
                 bg={isAbsent ? 'red.500' : 'green.500'}
@@ -172,33 +167,37 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
           <Text fontWeight="medium" fontSize="sm" maxW={150} isTruncated>
             {speaker?.name}
           </Text>
-          <Stack direction="row" alignItems="center">
-            <IconButton
-              icon={isRunning ? <FiPauseCircle /> : <FiPlayCircle />}
-              aria-label="play"
-              variant="ghost"
-              onClick={() => toggleTimer()}
-              size="sm"
-            />
-            <Text fontWeight={isRunning ? 'bold' : 'normal'}>
-              {minutes?.toString()?.length === 1 ? `0${minutes}` : minutes}:
-              {seconds?.toString()?.length === 1 ? `0${seconds}` : seconds}
-            </Text>
-          </Stack>
+          {!isAbsent && (
+            <Stack direction="row" alignItems="center" flex={1}>
+              <IconButton
+                icon={isRunning ? <FiPauseCircle /> : <FiPlayCircle />}
+                aria-label="play"
+                variant="ghost"
+                onClick={() => toggleTimer()}
+                size="xs"
+                fontSize="xl"
+              />
+              <Text
+                fontWeight={
+                  isRunning || seconds > 0 || minutes > 0 ? 'bold' : 'normal'
+                }
+                width={50}
+              >
+                {minutes?.toString()?.length === 1 ? `0${minutes}` : minutes}:
+                {seconds?.toString()?.length === 1 ? `0${seconds}` : seconds}
+              </Text>
+            </Stack>
+          )}
         </Stack>
         <FormModal
           isOpen={isOpen}
           onClose={onClose}
-          onSubmit={handleUpdateUsername}
+          onSubmit={handleUpdateSpeaker}
           title="Modifier une personne"
           submitLabel="Modifier"
+          initialValues={speaker}
         >
-          <FieldInput
-            label="Nom"
-            name="speaker.name"
-            required="Le nom est requis"
-            defaultValue={speaker.name}
-          />
+          <SpeakerForm />
         </FormModal>
       </>
     );

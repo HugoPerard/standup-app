@@ -20,15 +20,11 @@ import {
   useSpeakerAdd,
 } from '@/app/standup/standup/standup.firebase';
 import { Project, Speaker } from '@/app/standup/standup/standup.types';
-import {
-  FieldInput,
-  FormModal,
-  ResponsiveIconButton,
-  useToastSuccess,
-} from '@/components';
+import { FormModal, ResponsiveIconButton, useToastSuccess } from '@/components';
 import { sortByIndex } from '@/utils/sortByIndex';
 
 import { EmptySpeakerCard, SpeakerCard } from './SpeakerCard';
+import { SpeakerForm } from './SpeakerForm';
 
 export interface ProjectDetailsProps extends StackProps {
   project: Project;
@@ -85,12 +81,12 @@ export const ProjectDetails = forwardRef<HTMLDivElement, ProjectDetailsProps>(
       );
     };
 
-    const handleUpdateProject = (name: string) => {
+    const handleUpdateProjectName = (name: string) => {
       if (name === project?.name) {
         return;
       }
       updateProject(
-        { id: project?.id, name },
+        { id: project?.id, payload: { name } },
         {
           onSuccess: async () =>
             toastSuccess({
@@ -111,7 +107,7 @@ export const ProjectDetails = forwardRef<HTMLDivElement, ProjectDetailsProps>(
             fontSize={{ base: 'sm', md: 'xl' }}
             fontWeight="bold"
             defaultValue={project?.name}
-            onSubmit={(value) => handleUpdateProject(value)}
+            onSubmit={(value) => handleUpdateProjectName(value)}
           >
             <EditablePreview />
             <EditableInput />
@@ -134,7 +130,7 @@ export const ProjectDetails = forwardRef<HTMLDivElement, ProjectDetailsProps>(
               title="Ajouter une personne"
               submitLabel="Ajouter"
             >
-              <FieldInput name="name" label="Nom" />
+              <SpeakerForm />
             </FormModal>
 
             <ResponsiveIconButton

@@ -3,7 +3,7 @@
 export const STANDUP = '/standup';
 
 export const STANDUP_GOALS = `${STANDUP}/objectif`;
-export const STANDUP_SPEAKING = `${STANDUP}/standup`;
+export const STANDUP_STANDUP = `${STANDUP}/standup`;
 export const STANDUP_THANKS = `${STANDUP}/remerciements`;
 
 // Offices
@@ -23,7 +23,7 @@ export const ADMINISTRATIVE_LEAVE = `${ADMINISTRATIVE}/congés`;
 export const Routes = {
   STANDUP,
   STANDUP_GOALS,
-  STANDUP_SPEAKING,
+  STANDUP_STANDUP,
   STANDUP_THANKS,
   OFFICES,
   CRA,

@@ -14,6 +14,8 @@ import { Project } from '@/app/standup/standup/standup.types';
 import { FieldInput, FormModal, useToastSuccess } from '@/components';
 import { useDarkMode } from '@/hooks/useDarkMode';
 
+import { ProjectFormValues } from './ProjectForm';
+
 interface ProjectsBarProps extends StackProps {
   projects: Project[];
   currentIndex: number;
@@ -46,14 +48,11 @@ export const ProjectsBar: React.FC<ProjectsBarProps> = ({
     isLoading: isLoadingAddProject,
   } = useProjectAdd();
 
-  const handleAddProject = (projectName: string) => {
-    if (!projectName) {
-      return;
-    }
-    addProject(projectName, {
+  const handleAddProject = (project: ProjectFormValues) => {
+    addProject(project, {
       onSuccess: () => {
         toastSuccess({
-          title: `Le projet ${projectName} a été créé avec succès`,
+          title: `Le projet ${project?.name} a été créé avec succès`,
         });
       },
     });
@@ -77,7 +76,7 @@ export const ProjectsBar: React.FC<ProjectsBarProps> = ({
         submitLabel="Ajouter"
         onSubmit={({ name }) => handleAddProject(name)}
       >
-        <FieldInput name="name" label="Nom" />
+        <FieldInput name="name" label="Nom" inputProps={{ autoFocus: true }} />
       </FormModal>
       <Droppable droppableId="board" type="PROJECT" direction="vertical">
         {(droppableProvided) => (
