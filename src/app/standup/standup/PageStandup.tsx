@@ -189,7 +189,6 @@ export const PageStandup = () => {
                   color={colorModeValue('gray.800', 'gray.50')}
                   borderRadius="md"
                   p={3}
-                  height="fit-content"
                   flex={1}
                 >
                   <Stack direction="row" justifyContent="space-between" mb={2}>
@@ -206,48 +205,50 @@ export const PageStandup = () => {
                     />
                   </Stack>
                   {absentSpeakers?.length > 0 ? (
-                    <Stack spacing={1}>
-                      {absentSpeakers?.map((absentSpeaker) => (
-                        <Stack
-                          key={absentSpeaker?.id}
-                          direction="row"
-                          spacing={2}
-                          alignItems="center"
+                    <Scrollbars autoHide>
+                      <Stack spacing={1}>
+                        {absentSpeakers?.map((absentSpeaker) => (
+                          <Stack
+                            key={absentSpeaker?.id}
+                            direction="row"
+                            spacing={2}
+                            alignItems="center"
+                          >
+                            <IconButton
+                              aria-label="Retirer l'absent"
+                              icon={<FiCheck />}
+                              onClick={() =>
+                                handleAbsent(absentSpeaker?.id, false)
+                              }
+                              variant="@secondary"
+                              size="xs"
+                            />
+                            <SpeakerAvatar speaker={absentSpeaker} size="sm" />
+                            <Text maxW={150} isTruncated>
+                              {absentSpeaker?.name}
+                            </Text>
+                          </Stack>
+                        ))}
+                        <FormModal
+                          isOpen={isOpen}
+                          onClose={onClose}
+                          onSubmit={handleSubmitAbsents}
+                          title="Ajouter des absents"
                         >
-                          <IconButton
-                            aria-label="Retirer l'absent"
-                            icon={<FiCheck />}
-                            onClick={() =>
-                              handleAbsent(absentSpeaker?.id, false)
-                            }
-                            variant="@secondary"
-                            size="xs"
+                          <FieldMultiSelect
+                            label="Personnes absentes"
+                            name="absents"
+                            required="Le nom de la personne est requis"
+                            options={speakers
+                              ?.filter(({ isAbsent }) => !isAbsent)
+                              .map((speaker) => ({
+                                label: speaker.name,
+                                value: speaker.id,
+                              }))}
                           />
-                          <SpeakerAvatar speaker={absentSpeaker} size="sm" />
-                          <Text maxW={150} isTruncated>
-                            {absentSpeaker?.name}
-                          </Text>
-                        </Stack>
-                      ))}
-                      <FormModal
-                        isOpen={isOpen}
-                        onClose={onClose}
-                        onSubmit={handleSubmitAbsents}
-                        title="Ajouter des absents"
-                      >
-                        <FieldMultiSelect
-                          label="Personnes absentes"
-                          name="absents"
-                          required="Le nom de la personne est requis"
-                          options={speakers
-                            ?.filter(({ isAbsent }) => !isAbsent)
-                            .map((speaker) => ({
-                              label: speaker.name,
-                              value: speaker.id,
-                            }))}
-                        />
-                      </FormModal>
-                    </Stack>
+                        </FormModal>
+                      </Stack>
+                    </Scrollbars>
                   ) : (
                     <EmptySpeakerCard
                       bg={colorModeValue('gray.100', 'gray.500')}
