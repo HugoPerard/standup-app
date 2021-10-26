@@ -1,8 +1,6 @@
 import { forwardRef } from 'react';
 
 import {
-  Avatar,
-  AvatarBadge,
   IconButton,
   Menu,
   MenuButton,
@@ -37,6 +35,7 @@ import {
 } from '@/components';
 import { useDarkMode } from '@/hooks/useDarkMode';
 
+import { SpeakerAvatar } from './SpeakerAvatar';
 import { SpeakerForm, SpeakerFormValues } from './SpeakerForm';
 
 interface SpeakerCardProps extends StackProps {
@@ -65,13 +64,6 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
     const resetStopwatch = () => {
       reset();
       pause();
-    };
-
-    const handleAbsent = () => {
-      updateSpeaker({
-        id: speaker.id,
-        payload: { isAbsent: !isAbsent },
-      });
     };
 
     const { mutate: deleteSpeaker } = useSpeakerDelete();
@@ -114,15 +106,7 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
                 opacity={0}
               />
             </Menu>
-            <Avatar src={speaker?.photoURL} color="brand">
-              <AvatarBadge
-                borderColor={isAbsent ? 'red.100' : 'green.100'}
-                bg={isAbsent ? 'red.500' : 'green.500'}
-                boxSize="1.25em"
-                onClick={() => handleAbsent()}
-                cursor="pointer"
-              />
-            </Avatar>
+            <SpeakerAvatar speaker={speaker} hasBadge={true} />
             <Menu>
               {({ isOpen, onClose }) => (
                 <>
@@ -173,6 +157,7 @@ export const SpeakerCard = forwardRef<HTMLDivElement, SpeakerCardProps>(
                 icon={isRunning ? <FiPauseCircle /> : <FiPlayCircle />}
                 aria-label="play"
                 variant="ghost"
+                colorScheme="gray"
                 onClick={() => toggleTimer()}
                 size="xs"
                 fontSize="xl"

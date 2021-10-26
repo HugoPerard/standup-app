@@ -12,9 +12,19 @@ import {
 } from '@chakra-ui/react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { Scrollbars } from 'react-custom-scrollbars';
-import { FiUserCheck, FiUserPlus } from 'react-icons/fi';
+import { FiCheck, FiPlus } from 'react-icons/fi';
 
 import { Loader, Page, PageContent } from '@/app/layout';
+import { ProjectDetails } from '@/app/standup/standup/_partials/ProjectDetails';
+import { ProjectsBar } from '@/app/standup/standup/_partials/ProjectsBar';
+import { SpeakerAvatar } from '@/app/standup/standup/_partials/SpeakerAvatar';
+import { EmptySpeakerCard } from '@/app/standup/standup/_partials/SpeakerCard';
+import {
+  useProjectReplace,
+  useProjects,
+  useSpeakers,
+  useSpeakerUpdate,
+} from '@/app/standup/standup/standup.firebase';
 import {
   EmptyItem,
   FieldMultiSelect,
@@ -23,16 +33,6 @@ import {
 } from '@/components';
 import { useDarkMode } from '@/hooks/useDarkMode';
 import { sortByIndex } from '@/utils/sortByIndex';
-
-import { ProjectDetails } from './_partials/ProjectDetails';
-import { ProjectsBar } from './_partials/ProjectsBar';
-import { EmptySpeakerCard } from './_partials/SpeakerCard';
-import {
-  useProjectReplace,
-  useProjects,
-  useSpeakers,
-  useSpeakerUpdate,
-} from './standup.firebase';
 
 export const PageStandup = () => {
   const { colorModeValue } = useDarkMode();
@@ -158,10 +158,11 @@ export const PageStandup = () => {
                   currentIndex={currentIndex}
                   setCurrentIndex={setCurrentIndex}
                   projectsRefs={projectsRefs}
+                  speakers={speakers}
                   flex={1}
                 />
               )}
-              <Flex flex={5}>
+              <Flex flex={4}>
                 <Scrollbars autoHide>
                   <Stack
                     direction="column"
@@ -198,7 +199,7 @@ export const PageStandup = () => {
                     </Text>
                     <IconButton
                       aria-label="Ajouter des absents"
-                      icon={<FiUserPlus />}
+                      icon={<FiPlus />}
                       variant="@secondary"
                       size="xs"
                       onClick={onOpen}
@@ -214,14 +215,15 @@ export const PageStandup = () => {
                           alignItems="center"
                         >
                           <IconButton
-                            aria-label="Retirer des absents"
-                            icon={<FiUserCheck />}
+                            aria-label="Retirer l'absent"
+                            icon={<FiCheck />}
                             onClick={() =>
                               handleAbsent(absentSpeaker?.id, false)
                             }
                             variant="@secondary"
                             size="xs"
                           />
+                          <SpeakerAvatar speaker={absentSpeaker} size="sm" />
                           <Text maxW={150} isTruncated>
                             {absentSpeaker?.name}
                           </Text>
@@ -251,7 +253,7 @@ export const PageStandup = () => {
                       bg={colorModeValue('gray.100', 'gray.500')}
                       color={colorModeValue('gray.800', 'gray.50')}
                     >
-                      Aucune personne n'est absent
+                      Personne n'est absent
                     </EmptySpeakerCard>
                   )}
                 </Stack>

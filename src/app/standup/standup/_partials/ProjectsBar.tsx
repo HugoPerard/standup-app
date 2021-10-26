@@ -1,4 +1,5 @@
 import {
+  AvatarGroup,
   Button,
   Stack,
   StackProps,
@@ -10,17 +11,20 @@ import { Scrollbars } from 'react-custom-scrollbars';
 import { FiPlus } from 'react-icons/fi';
 
 import { useProjectAdd } from '@/app/standup/standup/standup.firebase';
-import { Project } from '@/app/standup/standup/standup.types';
+import { Project, Speaker } from '@/app/standup/standup/standup.types';
 import { FieldInput, FormModal, useToastSuccess } from '@/components';
 import { useDarkMode } from '@/hooks/useDarkMode';
+import { sortByIndex } from '@/utils/sortByIndex';
 
 import { ProjectFormValues } from './ProjectForm';
+import { SpeakerAvatar } from './SpeakerAvatar';
 
 interface ProjectsBarProps extends StackProps {
   projects: Project[];
   currentIndex: number;
   setCurrentIndex(index: number): void;
   projectsRefs: any;
+  speakers: Speaker[];
 }
 
 export const ProjectsBar: React.FC<ProjectsBarProps> = ({
@@ -28,6 +32,7 @@ export const ProjectsBar: React.FC<ProjectsBarProps> = ({
   currentIndex,
   setCurrentIndex,
   projectsRefs,
+  speakers,
   ...rest
 }) => {
   const { colorModeValue } = useDarkMode();
@@ -94,6 +99,7 @@ export const ProjectsBar: React.FC<ProjectsBarProps> = ({
                       {...draggableProvided.draggableProps}
                       {...draggableProvided.dragHandleProps}
                       key={project?.id}
+                      direction="row"
                       border={
                         isCurrentProject(project) ? '1px solid' : undefined
                       }
@@ -107,6 +113,8 @@ export const ProjectsBar: React.FC<ProjectsBarProps> = ({
                           block: 'start',
                         });
                       }}
+                      justifyContent="space-between"
+                      alignItems="center"
                       p={2}
                     >
                       <Text
@@ -117,6 +125,15 @@ export const ProjectsBar: React.FC<ProjectsBarProps> = ({
                       >
                         {project.name}
                       </Text>
+                      <AvatarGroup size="sm" fontSize="xs" max={2}>
+                        {sortByIndex(
+                          speakers?.filter(
+                            ({ projectId }) => projectId === project?.id
+                          )
+                        ).map((speaker) => (
+                          <SpeakerAvatar speaker={speaker} />
+                        ))}
+                      </AvatarGroup>
                     </Stack>
                   )}
                 </Draggable>
