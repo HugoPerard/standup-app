@@ -30,20 +30,20 @@ export default {
     // Custom variants
     '@primary': (props) =>
       customVariant({
-        bg: 'yellow.500',
-        bgHover: 'yellow.600',
-        bgActive: 'yellow.700',
-        color: mode('white', 'yellow.900')(props),
-        boxShadowFocus: 'outline-yellow',
+        bg: 'brand.500',
+        bgHover: 'brand.600',
+        bgActive: 'brand.700',
+        color: mode('white', 'brand.900')(props),
+        boxShadowFocus: 'outline-brand',
       }),
     '@secondary': (props) =>
       customVariant({
-        bg: mode('yellow.50', 'yellow.700')(props),
-        bgHover: mode('yellow.100', 'yellow.800')(props),
-        bgActive: mode('yellow.200', 'yellow.900')(props),
-        color: mode('yellow.600', 'yellow.100')(props),
-        colorHover: mode('yellow.700', 'yellow.200')(props),
-        boxShadowFocus: 'outline-yellow',
+        bg: mode('brand.50', 'brand.100')(props),
+        bgHover: mode('brand.100', 'brand.200')(props),
+        bgActive: mode('brand.200', 'brand.300')(props),
+        color: mode('brand.600', 'brand.800')(props),
+        colorHover: mode('brand.700', 'brand.900')(props),
+        boxShadowFocus: 'outline-brand',
       }),
     '@danger': (props) =>
       customVariant({

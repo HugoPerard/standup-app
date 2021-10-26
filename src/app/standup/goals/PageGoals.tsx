@@ -5,10 +5,10 @@ import dayjs from 'dayjs';
 
 import { Loader, Page, PageContent } from '@/app/layout';
 import { DATE_FORMAT } from '@/app/shared/constants';
+import { GoalGroup } from '@/app/standup/goals/_partials/GoalGroup';
 
-import { GoalGroup } from './GoalGroup';
-import { Goal } from './goal.types';
 import { useGoals } from './goals.firebase';
+import { Goal } from './goals.types';
 
 export const PageGoals = () => {
   const firstDayCurrentWeek = dayjs().startOf('week');

@@ -41,7 +41,9 @@ export const PopoverInput: React.FC<PopoverInputProps> = ({
 
   return (
     <Popover initialFocusRef={initialFocusRef} {...rest}>
-      <PopoverTrigger>{children}</PopoverTrigger>
+      <PopoverTrigger>
+        <>{children}</>
+      </PopoverTrigger>
       <Portal>
         <Formiz connect={internalForm} autoForm onValidSubmit={handleSubmit}>
           <PopoverContent>

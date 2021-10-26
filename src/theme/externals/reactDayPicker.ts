@@ -62,7 +62,7 @@ export const reactDayPicker = (props: GlobalStyleProps) => ({
 
   '.DayPicker:not(.DayPicker--interactionDisabled)': {
     '.DayPicker-Day:not(.DayPicker-Day--disabled):not(.DayPicker-Day--selected):not(.DayPicker-Day--outside):hover': {
-      backgroundColor: 'yellow.100',
+      backgroundColor: 'brand.100',
       borderRadius: '100%',
       color: 'black',
     },
@@ -76,13 +76,13 @@ export const reactDayPicker = (props: GlobalStyleProps) => ({
 
   '.DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside), .DayPicker-Day--vacations.DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside)': {
     position: 'relative',
-    backgroundColor: 'yellow.600',
+    backgroundColor: 'brand.600',
     borderRadius: '100%',
     color: 'white',
   },
 
   '.DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside):hover': {
-    backgroundColor: 'yellow.700',
+    backgroundColor: 'brand.700',
     borderRadius: '100%',
     color: 'white',
   },
@@ -107,7 +107,7 @@ export const reactDayPicker = (props: GlobalStyleProps) => ({
   },
 
   '.DayPicker-Day--today': {
-    color: 'yellow.500',
+    color: 'brand.500',
     fontWeight: 'bold',
   },
 

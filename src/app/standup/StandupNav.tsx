@@ -13,7 +13,7 @@ import { SiGooglehangoutsmeet } from 'react-icons/si';
 
 import { InternalBar, InternalBarItem } from '@/app/layout';
 import { Routes } from '@/app/routes';
-import { STANDUP_MEET_URL } from '@/app/standup/constants';
+import { STANDUP_MEET_URL } from '@/app/standup/standup/constants';
 import { Icon } from '@/components';
 import { formatExternalUrl } from '@/utils/link';
 
@@ -25,14 +25,16 @@ export const StandupNav = ({ ...rest }) => {
     <InternalBar {...rest}>
       <Flex flex="1">
         <InternalBarItem to={Routes.STANDUP_GOALS}>Objectifs</InternalBarItem>
-        <InternalBarItem to={Routes.STANDUP_SPEAKING}>Stand-up</InternalBarItem>
+        <InternalBarItem to={Routes.STANDUP_STANDUP}>Stand-up</InternalBarItem>
         <InternalBarItem to={Routes.STANDUP_THANKS}>
           Remerciements
         </InternalBarItem>
       </Flex>
 
       <Stack direction="row" spacing={3} alignItems="center">
-        <Text fontWeight="medium">{start}</Text>
+        <Text fontWeight="medium" casing="capitalize">
+          {start}
+        </Text>
         <Link
           href={formatExternalUrl(STANDUP_MEET_URL)}
           isExternal

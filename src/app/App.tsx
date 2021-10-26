@@ -16,7 +16,7 @@ import StandupRoutes from './standup/StandupRoutes';
 export const App = () => {
   return (
     <ErrorBoundary>
-      <BrowserRouter basename="/app/">
+      <BrowserRouter basename="/app">
         <Layout>
           <Suspense fallback={<Loader />}>
             <Switch>

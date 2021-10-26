@@ -11,6 +11,12 @@ import { FiPlus, FiTrash2 } from 'react-icons/fi';
 
 import { DATE_FORMAT } from '@/app/shared/constants';
 import {
+  useGoalAdd,
+  useGoalDeleteList,
+} from '@/app/standup/goals/goals.firebase';
+import { Goal } from '@/app/standup/goals/goals.types';
+import {
+  FormModal,
   ResponsiveIconButton,
   useToastError,
   useToastSuccess,
@@ -18,9 +24,7 @@ import {
 import { useDarkMode } from '@/hooks/useDarkMode';
 
 import { EmptyGoalCard, GoalCard } from './GoalCard';
-import { GoalModal } from './GoalModal';
-import { Goal } from './goal.types';
-import { useGoalAdd, useGoalDeleteList } from './goals.firebase';
+import { GoalForm } from './GoalForm';
 
 interface GoalGroupProps extends StackProps {
   name: string;
@@ -90,7 +94,7 @@ export const GoalGroup: React.FC<GoalGroupProps> = ({
         p={3}
         borderRadius="md"
         border={isToday && '2px solid'}
-        borderColor="yellow.500"
+        borderColor="brand.500"
         {...rest}
       >
         <Stack direction="row" spacing={3} justifyContent="space-between">
@@ -132,14 +136,15 @@ export const GoalGroup: React.FC<GoalGroupProps> = ({
           {}
         </SimpleGrid>
       </Stack>
-      {isOpenGoalModal && (
-        <GoalModal
-          onClose={onCloseGoalModal}
-          onSubmit={handleAddGoal}
-          title="Ajouter un objectif"
-          confirmText="Ajouter"
-        />
-      )}
+      <FormModal
+        isOpen={isOpenGoalModal}
+        onClose={onCloseGoalModal}
+        onSubmit={handleAddGoal}
+        title="Ajouter un objectif"
+        submitLabel="Ajouter"
+      >
+        <GoalForm />
+      </FormModal>
     </>
   );
 };
