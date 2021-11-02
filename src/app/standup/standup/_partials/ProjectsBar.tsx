@@ -79,7 +79,7 @@ export const ProjectsBar: React.FC<ProjectsBarProps> = ({
         onClose={onCloseAddProjectModal}
         title="Ajouter un projet"
         submitLabel="Ajouter"
-        onSubmit={({ name }) => handleAddProject(name)}
+        onSubmit={handleAddProject}
       >
         <FieldInput name="name" label="Nom" inputProps={{ autoFocus: true }} />
       </FormModal>
