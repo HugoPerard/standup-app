@@ -12,12 +12,12 @@ import { Project, Speaker } from './standup.types';
 
 const projectsCollectionRef = firebase?.firestore?.()?.collection('projects');
 
-const getProjects = async (): Promise<any> => {
+const getProjects = async (): Promise<Project[]> => {
   const snapshot = await projectsCollectionRef.get();
   return snapshot.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
-  }));
+  })) as Project[];
 };
 
 export const useProjects = (config: UseQueryOptions<Project[]> = {}) => {
@@ -26,19 +26,19 @@ export const useProjects = (config: UseQueryOptions<Project[]> = {}) => {
   });
 };
 
-const addProject = async (projectName: string): Promise<any> => {
+const addProject = async (payload: Partial<Project>): Promise<any> => {
   const snapshot = await projectsCollectionRef?.get();
   snapshot?.docs.map((doc) =>
     updateProject(doc?.id, { index: doc?.get('index') + 1 })
   );
-  return projectsCollectionRef?.add({ name: projectName, index: 0 });
+  projectsCollectionRef?.add({ ...payload, index: 0 });
 };
 
 export const useProjectAdd = (
-  config: UseMutationOptions<string, unknown, string> = {}
+  config: UseMutationOptions<void, unknown, Partial<Project>> = {}
 ) => {
   const queryCache = useQueryClient();
-  return useMutation((name) => addProject(name), {
+  return useMutation((payload) => addProject(payload), {
     ...config,
     onSuccess: () => {
       queryCache.invalidateQueries('projects');
@@ -46,23 +46,24 @@ export const useProjectAdd = (
   });
 };
 
-const updateProject = (id, payload) => {
-  return projectsCollectionRef?.doc(id)?.update({ ...payload });
+const updateProject = (id: string, payload: Partial<Project>) => {
+  return projectsCollectionRef?.doc(id)?.update(payload);
 };
 
 export const useProjectUpdate = (
-  config: UseMutationOptions<any, unknown, any> = {}
+  config: UseMutationOptions<
+    any,
+    unknown,
+    { id: string; payload: Partial<Project> }
+  > = {}
 ) => {
   const queryCache = useQueryClient();
-  return useMutation(
-    (project: Project) => updateProject(project.id, { name: project?.name }),
-    {
-      ...config,
-      onSuccess: () => {
-        queryCache.invalidateQueries('projects');
-      },
-    }
-  );
+  return useMutation(({ id, payload }) => updateProject(id, payload), {
+    ...config,
+    onSuccess: () => {
+      queryCache.invalidateQueries('projects');
+    },
+  });
 };
 
 const deleteProject = async (id: string): Promise<any> => {
@@ -83,7 +84,7 @@ const deleteProject = async (id: string): Promise<any> => {
 };
 
 export const useProjectDelete = (
-  config: UseMutationOptions<string, unknown, string> = {}
+  config: UseMutationOptions<void, unknown, string> = {}
 ) => {
   const queryCache = useQueryClient();
   return useMutation((id) => deleteProject(id), {
@@ -94,7 +95,7 @@ export const useProjectDelete = (
   });
 };
 
-const replaceProject = async (project, newIndex) => {
+const replaceProject = async (project: Partial<Project>, newIndex: number) => {
   if (project?.index === newIndex) {
     return;
   }
@@ -121,7 +122,11 @@ const replaceProject = async (project, newIndex) => {
 };
 
 export const useProjectReplace = (
-  config: UseMutationOptions<any, unknown, any> = {}
+  config: UseMutationOptions<
+    void,
+    unknown,
+    { project: Partial<Project>; newIndex: number }
+  > = {}
 ) => {
   const queryCache = useQueryClient();
   return useMutation(
@@ -137,14 +142,14 @@ export const useProjectReplace = (
 
 const speakersCollectionRef = firebase?.firestore?.()?.collection('speakers');
 
-const getSpeakers = async (projectId = null): Promise<any> => {
+const getSpeakers = async (projectId = null): Promise<Speaker[]> => {
   const snapshot = projectId
     ? await speakersCollectionRef.where('projectId', '==', projectId).get()
     : await speakersCollectionRef.get();
   return snapshot.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
-  }));
+  })) as Speaker[];
 };
 
 export const useSpeakers = (
@@ -160,12 +165,12 @@ export const useSpeakers = (
   );
 };
 
-const addSpeaker = (payload: Speaker): any => {
+const addSpeaker = (payload: Partial<Speaker>): any => {
   return speakersCollectionRef?.add({ ...payload });
 };
 
 export const useSpeakerAdd = (
-  config: UseMutationOptions<any, unknown, any> = {}
+  config: UseMutationOptions<Partial<Speaker>, unknown, Partial<Speaker>> = {}
 ) => {
   const queryCache = useQueryClient();
   return useMutation((payload) => addSpeaker(payload), {
@@ -181,7 +186,7 @@ const deleteSpeaker = (id: string): any => {
 };
 
 export const useSpeakerDelete = (
-  config: UseMutationOptions<string, unknown, string> = {}
+  config: UseMutationOptions<void, unknown, string> = {}
 ) => {
   const queryCache = useQueryClient();
   return useMutation((id) => deleteSpeaker(id), {
@@ -192,7 +197,7 @@ export const useSpeakerDelete = (
   });
 };
 
-const updateSpeaker = async (id, payload) => {
+const updateSpeaker = async (id: string, payload: Partial<Speaker>) => {
   const snapshot = await speakersCollectionRef?.doc(id).get();
   const speaker = snapshot?.data();
 
@@ -257,10 +262,14 @@ const updateSpeaker = async (id, payload) => {
 };
 
 export const useSpeakerUpdate = (
-  config: UseMutationOptions<any, unknown, any> = {}
+  config: UseMutationOptions<
+    Speaker[],
+    unknown,
+    { id: string; payload: Partial<Speaker> }
+  > = {}
 ) => {
   const queryCache = useQueryClient();
-  return useMutation(({ id, payload }) => updateSpeaker(id, { ...payload }), {
+  return useMutation(({ id, payload }) => updateSpeaker(id, payload), {
     ...config,
     onSuccess: () => {
       queryCache.invalidateQueries('speakers');

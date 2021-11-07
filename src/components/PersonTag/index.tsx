@@ -25,7 +25,7 @@ export const PersonTag: React.FC<PersonTagProps> = ({
     <Tag
       borderRadius="full"
       variant="solid"
-      bg="yellow.500"
+      bg="brand.500"
       color={colorModeValue('gray.100', 'gray.800')}
       width="fit-content"
       overflow="hidden"
