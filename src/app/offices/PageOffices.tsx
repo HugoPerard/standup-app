@@ -115,14 +115,12 @@ export const PageOffices = () => {
               <Box minW="10rem">
                 <PopoverInput
                   onSubmit={(value) => {
-                    {
-                      const checkOffices = offices.find(
-                        ({ name }) => name === value
-                      );
-                      checkOffices
-                        ? toastError({ title: 'Office is already existing' })
-                        : addOffice({ name: value, presence: {} });
-                    }
+                    const checkOffices = offices.find(
+                      ({ name }) => name === value
+                    );
+                    checkOffices
+                      ? toastError({ title: 'Office is already existing' })
+                      : addOffice({ name: value, presence: {} });
                   }}
                   label="Nom"
                   submitLabel="Ajouter un bureau"
