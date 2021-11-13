@@ -27,7 +27,7 @@ export const useOffices = (config: UseQueryOptions<Office[]> = {}) => {
 };
 
 const addOffice = (payload: Office): any => {
-  return officesCollectionRef?.add(payload);
+  return officesCollectionRef?.add({ presence: {}, ...payload });
 };
 
 export const useOfficeAdd = (

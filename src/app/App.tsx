@@ -4,23 +4,23 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import { BrowserRouter, Switch, Redirect } from 'react-router-dom';
 
 import { Layout, Loader } from '@/app/layout';
-import { Route, RoutePublic } from '@/app/router';
+import { Route } from '@/app/router';
 import { Error404, ErrorBoundary } from '@/errors';
 
 import AdministrativeRoutes from './administrative/AdministrativeRoutes';
 import { PageCRA } from './cra/PageCRA';
 import OfficesRoutes from './offices/OfficesRoutes';
-import { Routes } from './routes';
+import { OLD_ADMINISTRATIVE, OLD_OFFICES, Routes } from './routes';
 import StandupRoutes from './standup/StandupRoutes';
 
 export const App = () => {
   return (
     <ErrorBoundary>
-      <BrowserRouter basename="/app/">
+      <BrowserRouter basename="/app">
         <Layout>
           <Suspense fallback={<Loader />}>
             <Switch>
-              <RoutePublic
+              <Route
                 exact
                 path="/"
                 render={() => <Redirect to={Routes.STANDUP} />}
@@ -30,14 +30,22 @@ export const App = () => {
 
               <Route path={Routes.CRA} render={() => <PageCRA />} />
 
+              <Route
+                path={OLD_OFFICES}
+                render={() => <Redirect to={Routes.OFFICES} />}
+              />
               <Route path={Routes.OFFICES} render={() => <OfficesRoutes />} />
 
+              <Route
+                path={OLD_ADMINISTRATIVE}
+                render={() => <Redirect to={Routes.ADMINISTRATIVE} />}
+              />
               <Route
                 path={Routes.ADMINISTRATIVE}
                 render={() => <AdministrativeRoutes />}
               />
 
-              <RoutePublic path="*" render={() => <Error404 />} />
+              <Route path="*" render={() => <Error404 />} />
             </Switch>
           </Suspense>
         </Layout>

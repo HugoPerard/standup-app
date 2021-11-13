@@ -20,6 +20,7 @@ export interface FieldInputProps
     Omit<FormGroupProps, 'placeholder'>,
     Pick<InputProps, 'type' | 'placeholder'> {
   size?: 'sm' | 'md' | 'lg';
+  inputProps?: Omit<InputProps, 'type' | 'placeholder'>;
 }
 
 export const FieldInput = forwardRef((props: FieldInputProps, ref) => {
@@ -40,7 +41,8 @@ export const FieldInput = forwardRef((props: FieldInputProps, ref) => {
     type,
     placeholder,
     helper,
-    size = 'sm',
+    size = 'md',
+    inputProps = {},
     ...rest
   } = otherProps;
   const { required } = props;
@@ -73,6 +75,7 @@ export const FieldInput = forwardRef((props: FieldInputProps, ref) => {
           onChange={(e) => setValue(e.target.value)}
           onBlur={() => setIsTouched(true)}
           placeholder={placeholder ? String(placeholder) : ''}
+          {...inputProps}
         />
 
         {type === 'password' && (

@@ -4,7 +4,7 @@ import Head from 'next/head';
 import { Switch, Redirect, useRouteMatch } from 'react-router-dom';
 
 import { Route } from '@/app/router';
-import { Routes } from '@/app/routes';
+import { OLD_ADMINISTRATIVE_LEAVE, Routes } from '@/app/routes';
 import { Error404 } from '@/errors';
 
 import { AdministrativeNav } from './_partials/AdministrativeNav';
@@ -22,6 +22,12 @@ const AdministrativeRoutes = () => {
         <Route
           exact
           path={`${path}/`}
+          render={() => <Redirect to={Routes.ADMINISTRATIVE_LEAVE} />}
+        />
+
+        <Route
+          exact
+          path={OLD_ADMINISTRATIVE_LEAVE}
           render={() => <Redirect to={Routes.ADMINISTRATIVE_LEAVE} />}
         />
         <Route

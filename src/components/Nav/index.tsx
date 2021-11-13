@@ -81,7 +81,7 @@ export const NavItem: ChakraComponent<'span', NavItemProps> = ({
             mt="0.05rem"
             mr="2"
             fontSize="lg"
-            color={isActive ? 'yellow.500' : 'gray.400'}
+            color={isActive ? 'brand.500' : 'gray.400'}
           />
         )}
         <Text as="span" noOfLines={isMenu ? 1 : 2}>

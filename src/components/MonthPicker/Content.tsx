@@ -34,15 +34,15 @@ export const Content: React.FC<ContentProps> = () => {
 
   const selectedStyle: HTMLChakraProps<'button'> = {
     color: 'white',
-    bg: 'yellow.600',
+    bg: 'brand.600',
     _hover: {
-      bg: 'yellow.700',
+      bg: 'brand.700',
     },
     _active: {
-      bg: 'yellow.800',
+      bg: 'brand.800',
     },
     _focus: {
-      boxShadow: 'outline-yellow',
+      boxShadow: 'outline-brand',
     },
   };
 
