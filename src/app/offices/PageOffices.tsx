@@ -15,8 +15,7 @@ import { FiPlus } from 'react-icons/fi';
 
 import { useCurrentUser } from '@/app/auth/useAuth';
 import { Loader, Page, PageContent } from '@/app/layout';
-import { useToastError } from '@/components';
-import { FormModal, Icon, PersonTag, PopoverInput } from '@/components';
+import { FormModal, Icon, PersonTag } from '@/components';
 import { useDarkMode } from '@/hooks/useDarkMode';
 
 import { OfficeForm } from './_partials/OfficeForm';
@@ -49,7 +48,6 @@ export const PageOffices = () => {
   } = useOfficeDelete();
 
   const { data: offices, isLoading: isLoadingOffices } = useOffices();
-  const toastError = useToastError();
 
   const { mutate: addPersonOnOffice } = useAddPersonOnOffice();
   const { mutate: removePersonOnOffice } = useRemovePersonOnOffice();
@@ -106,39 +104,18 @@ export const PageOffices = () => {
             <Wrap>
               <Text fontWeight="medium">Liste des bureaux :</Text>
               {offices?.map((office) => (
-                <Box d="flex">
-                  <PersonTag
-                    size="sm"
-                    onRemove={() => deleteOffice(office?.id)}
-                    isLoadingRemove={isLoadingDeleteOffice}
-                  >
-                    {office.name}
-                  </PersonTag>
-                </Box>
+                <PersonTag
+                  size="sm"
+                  onRemove={() => deleteOffice(office?.id)}
+                  isLoadingRemove={isLoadingDeleteOffice}
+                >
+                  {office.name}
+                </PersonTag>
               ))}
               <Box minW="10rem">
-                <PopoverInput
-                  onSubmit={(value) => {
-                    const checkOffices = offices.find(
-                      ({ name }) => name === value
-                    );
-                    checkOffices
-                      ? toastError({ title: 'Office is already existing' })
-                      : addOffice({ name: value, presence: {} });
-                  }}
-                  label="Nom"
-                  submitLabel="Ajouter un bureau"
-                  placeholder="Saisir le nom du bureau"
-                  placement="right-end"
-                >
-                  <Button
-                    variant="link"
-                    size="xs"
-                    onClick={onOpenAddOfficeModal}
-                  >
-                    <Icon icon={FiPlus} mr={1} /> Ajouter un bureau
-                  </Button>
-                </PopoverInput>
+                <Button variant="link" size="xs" onClick={onOpenAddOfficeModal}>
+                  <Icon icon={FiPlus} mr={1} /> Ajouter un bureau
+                </Button>
               </Box>
             </Wrap>
             <Stack spacing={6}>
