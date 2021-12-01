@@ -61,6 +61,7 @@ export const PageOffices = () => {
     }
   ) => {
     const person = {
+      photoUrl: currentUser?.photoURL,
       name: currentUser?.username,
       ...(params || {}),
     };
@@ -70,7 +71,8 @@ export const PageOffices = () => {
           officeWorker?.name === currentUser.username &&
           params &&
           officeWorker?.onMorning === params?.onMorning &&
-          officeWorker?.onAfternoon === params?.onAfternoon
+          officeWorker?.onAfternoon === params?.onAfternoon &&
+          officeWorker?.photoUrl === currentUser.photoURL
       )
     ) {
       removePersonOnOffice({ person, day, officeId: office?.id });
