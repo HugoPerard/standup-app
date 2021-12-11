@@ -1,4 +1,4 @@
-import { Stack, StackProps, Text, Wrap } from '@chakra-ui/react';
+import { Stack, StackProps, Text, Wrap, Avatar } from '@chakra-ui/react';
 
 import { useCurrentUser } from '@/app/auth/useAuth';
 import { EmptyItem, PersonTag } from '@/components';
@@ -60,6 +60,12 @@ export const OfficeSection: React.FC<OfficeSectionProps> = ({
                     : colorModeValue('gray.400', 'gray.300')
                 }
               >
+                <Avatar
+                  style={{ marginRight: '5px' }}
+                  size="2xs"
+                  name={person?.name}
+                  src={person?.photoUrl}
+                />
                 {person?.name}
               </PersonTag>
             ))}

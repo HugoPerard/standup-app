@@ -2,6 +2,7 @@ export interface OfficeWorker {
   name: string;
   onMorning: boolean;
   onAfternoon: boolean;
+  photoUrl: string;
 }
 
 export interface Presence {
