@@ -15,5 +15,5 @@ export interface Presence {
 export interface Office {
   id?: string;
   name: string;
-  presence?: Presence;
+  presence: Presence;
 }

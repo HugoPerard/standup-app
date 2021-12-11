@@ -54,6 +54,7 @@ export const OfficeSection: React.FC<OfficeSectionProps> = ({
             })
             .map((person) => (
               <PersonTag
+                key={person?.name}
                 bg={
                   username === person?.name
                     ? 'brand.500'

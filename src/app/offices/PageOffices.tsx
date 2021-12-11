@@ -11,17 +11,19 @@ import {
   useDisclosure,
   Wrap,
 } from '@chakra-ui/react';
-import { FiPlus } from 'react-icons/fi';
+import { FiPlus, FiTrash2 } from 'react-icons/fi';
 
 import { useCurrentUser } from '@/app/auth/useAuth';
 import { Loader, Page, PageContent } from '@/app/layout';
-import { FormModal, Icon, PersonTag } from '@/components';
+import { FormModal, Icon, PersonTag, ResponsiveIconButton } from '@/components';
+import { ConfirmModal } from '@/components/ConfirmModal';
 import { useDarkMode } from '@/hooks/useDarkMode';
 
 import { OfficeForm } from './_partials/OfficeForm';
 import { OfficeSection } from './_partials/OfficeSection';
 import {
   useAddPersonOnOffice,
+  useClearPresenceOfAllOffices,
   useOfficeAdd,
   useOfficeDelete,
   useOffices,
@@ -41,6 +43,12 @@ export const PageOffices = () => {
     onClose: onCloseAddOfficeModal,
   } = useDisclosure();
 
+  const {
+    isOpen: isOpenConfirmModal,
+    onOpen: onOpenConfirmModal,
+    onClose: onCloseConfirmModal,
+  } = useDisclosure();
+
   const { mutate: addOffice } = useOfficeAdd();
   const {
     mutate: deleteOffice,
@@ -51,6 +59,7 @@ export const PageOffices = () => {
 
   const { mutate: addPersonOnOffice } = useAddPersonOnOffice();
   const { mutate: removePersonOnOffice } = useRemovePersonOnOffice();
+  const { mutate: clearAllPresences } = useClearPresenceOfAllOffices();
 
   const handleChangePresence = (
     office: Office,
@@ -71,8 +80,7 @@ export const PageOffices = () => {
           officeWorker?.name === currentUser.username &&
           params &&
           officeWorker?.onMorning === params?.onMorning &&
-          officeWorker?.onAfternoon === params?.onAfternoon &&
-          officeWorker?.photoUrl === currentUser.photoURL
+          officeWorker?.onAfternoon === params?.onAfternoon
       )
     ) {
       removePersonOnOffice({ person, day, officeId: office?.id });
@@ -80,6 +88,10 @@ export const PageOffices = () => {
     }
 
     addPersonOnOffice({ person, day, officeId: office?.id });
+  };
+
+  const handleClearOffices = () => {
+    clearAllPresences();
   };
 
   return (
@@ -103,23 +115,38 @@ export const PageOffices = () => {
 
         {!isLoadingOffices && offices?.length !== 0 && (
           <Stack spacing={4}>
-            <Wrap>
-              <Text fontWeight="medium">Liste des bureaux :</Text>
-              {offices?.map((office) => (
-                <PersonTag
-                  size="sm"
-                  onRemove={() => deleteOffice(office?.id)}
-                  isLoadingRemove={isLoadingDeleteOffice}
-                >
-                  {office.name}
-                </PersonTag>
-              ))}
-              <Box minW="10rem">
-                <Button variant="link" size="xs" onClick={onOpenAddOfficeModal}>
-                  <Icon icon={FiPlus} mr={1} /> Ajouter un bureau
-                </Button>
-              </Box>
-            </Wrap>
+            <Stack direction="row" justifyContent="space-between">
+              <Wrap>
+                <Text fontWeight="medium">Liste des bureaux :</Text>
+                {offices?.map((office) => (
+                  <PersonTag
+                    key={office?.id}
+                    size="sm"
+                    onRemove={() => deleteOffice(office?.id)}
+                    isLoadingRemove={isLoadingDeleteOffice}
+                  >
+                    {office.name}
+                  </PersonTag>
+                ))}
+                <Box minW="10rem">
+                  <Button
+                    variant="link"
+                    size="xs"
+                    onClick={onOpenAddOfficeModal}
+                  >
+                    <Icon icon={FiPlus} mr={1} /> Ajouter un bureau
+                  </Button>
+                </Box>
+              </Wrap>
+              <ResponsiveIconButton
+                icon={<FiTrash2 />}
+                onClick={onOpenConfirmModal}
+                size="sm"
+                hideTextBreakpoints={{ base: true, md: false }}
+              >
+                Vider les bureaux
+              </ResponsiveIconButton>
+            </Stack>
             <Stack spacing={6}>
               {weekdays?.map((weekday) => (
                 <Stack key={weekday}>
@@ -214,6 +241,15 @@ export const PageOffices = () => {
       >
         <OfficeForm />
       </FormModal>
+      <ConfirmModal
+        isOpen={isOpenConfirmModal}
+        onClose={onCloseConfirmModal}
+        title="Voulez-vous supprimer les présences de tous les bureaux ?"
+        message="Cette action est irréversible."
+        onConfirm={() => handleClearOffices()}
+        confirmText="Supprimer"
+        confirmVariant="@danger"
+      />
     </Page>
   );
 };

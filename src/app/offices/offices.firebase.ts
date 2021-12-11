@@ -122,3 +122,25 @@ export const useRemovePersonOnOffice = (
     }
   );
 };
+
+const clearPresenceOfAllOffices = async () => {
+  const snapshot = await officesCollectionRef.get();
+  snapshot?.docs?.forEach((doc) => doc.ref.update({ presence: [] }));
+};
+
+export const useClearPresenceOfAllOffices = (
+  config: UseMutationOptions<void> = {}
+) => {
+  const queryCache = useQueryClient();
+  return useMutation(() => clearPresenceOfAllOffices(), {
+    ...config,
+    onSuccess: () => {
+      queryCache.setQueryData('offices', (cachedData) => {
+        return (cachedData as Office[])?.map((office) => ({
+          ...office,
+          presence: {},
+        }));
+      });
+    },
+  });
+};
