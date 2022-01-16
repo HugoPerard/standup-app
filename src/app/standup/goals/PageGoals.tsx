@@ -7,8 +7,10 @@ import { Loader, Page, PageContent } from '@/app/layout';
 import { DATE_FORMAT } from '@/app/shared/constants';
 import { GoalGroup } from '@/app/standup/goals/_partials/GoalGroup';
 
+import { GoalHabitsGroup } from './_partials/GoalHabitsGroup';
 import { useGoals } from './goals.firebase';
 import { Goal } from './goals.types';
+import { useHabitGoals } from './habitGoals.firebase';
 
 export const PageGoals = () => {
   const firstDayCurrentWeek = dayjs().startOf('week');
@@ -16,6 +18,7 @@ export const PageGoals = () => {
     firstDayCurrentWeek?.add(index, 'day').format(DATE_FORMAT)
   );
 
+  const { data: habitGoals, isLoading: isLoadingHabitGoals } = useHabitGoals();
   const { data: goals, isLoading: isLoadingGoals } = useGoals();
   const pastGoals = goals?.filter((goal) =>
     dayjs(goal?.date, DATE_FORMAT)?.isBefore(firstDayCurrentWeek)
@@ -46,7 +49,7 @@ export const PageGoals = () => {
   return (
     <Page containerSize="full">
       <PageContent>
-        {isLoadingGoals ? (
+        {isLoadingGoals || isLoadingHabitGoals ? (
           <Loader />
         ) : (
           <Stack spacing={6}>
@@ -55,6 +58,12 @@ export const PageGoals = () => {
               On répond par oui ou par non, on ne raconte pas sa vie !
               Cordialement !
             </Alert>
+
+            <GoalHabitsGroup
+              name="Objectif d'habitude"
+              habitGoals={habitGoals}
+            />
+
             <GoalGroup
               name="Semaine dernière"
               goals={pastGoals}

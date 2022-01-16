@@ -5,3 +5,11 @@ export interface Goal {
   date: string;
   isComplete: boolean;
 }
+
+export interface HabitGoal {
+  id?: string;
+  description: string;
+  created?: string;
+  dateLastReset?: string;
+  numberOfReset?: number;
+}
