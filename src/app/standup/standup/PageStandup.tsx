@@ -43,7 +43,7 @@ export const PageStandup = () => {
     isLoading: isLoadingProjects,
     isError: isErrorProjects,
   } = useProjects();
-  const sortedProjects = sortByIndex(projects);
+  const sortedProjects = sortByIndex(projects)?.reverse();
 
   const {
     data: speakers,
